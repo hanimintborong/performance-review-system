@@ -1,0 +1,32 @@
+export const mockEmployees = [
+  {
+    employeeId: "EMP001",
+    name: "Amirul Hakim Zulkifli",
+    email: "amirul@company.com",
+    department: "Procurement",
+    jobTitle: "Procurement Executive",
+    managerId: "EMP010",
+    managerName: "Aisha Tan",
+    status: "Employee Submitted",
+  },
+  {
+    employeeId: "EMP002",
+    name: "Nur Aina Rahman",
+    email: "aina@company.com",
+    department: "Finance",
+    jobTitle: "Finance Executive",
+    managerId: "EMP011",
+    managerName: "Farid Iskandar",
+    status: "Manager Reviewing",
+  },
+  {
+    employeeId: "EMP003",
+    name: "Daniel Lee",
+    email: "daniel@company.com",
+    department: "Operations",
+    jobTitle: "Operations Executive",
+    managerId: "EMP012",
+    managerName: "Amirul Nizam",
+    status: "Completed",
+  },
+];
