@@ -1,3 +1,5 @@
+"use client";
+
 import { Badge, Flex, Icon, Text } from "@chakra-ui/react";
 import { FiCircle, FiPaperclip } from "react-icons/fi";
 

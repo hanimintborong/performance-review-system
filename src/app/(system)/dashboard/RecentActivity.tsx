@@ -1,3 +1,5 @@
+"use client";
+
 import { Flex, Icon, Text } from "@chakra-ui/react";
 import { FiAlertTriangle, FiBell, FiCheckCircle, FiSend } from "react-icons/fi";
 import type { IconType } from "react-icons";

@@ -1,3 +1,5 @@
+"use client";
+
 import NextLink from "next/link";
 import { Flex, Icon, Text } from "@chakra-ui/react";
 import { FiArrowRight, FiInfo } from "react-icons/fi";
