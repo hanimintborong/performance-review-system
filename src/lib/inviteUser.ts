@@ -27,5 +27,6 @@ export async function inviteUser({ email, role, employeeId }: InviteUserInput): 
   await clerk.invitations.createInvitation({
     emailAddress: normalizedEmail,
     redirectUrl: `${appUrl}/sign-up`,
+    ignoreExisting: true,
   });
 }
