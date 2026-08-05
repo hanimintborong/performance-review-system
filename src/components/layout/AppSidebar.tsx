@@ -2,49 +2,24 @@
 
 import NextLink from "next/link";
 import { usePathname } from "next/navigation";
+import { SignOutButton } from "@clerk/nextjs";
 
-import {
-  Box,
-  Flex,
-  Icon,
-  Text,
-  VStack,
-} from "@chakra-ui/react";
+import { Box, Flex, Icon, IconButton, Text, VStack } from "@chakra-ui/react";
+import { FiLogOut } from "react-icons/fi";
 
-import {
-  FiBriefcase,
-} from "react-icons/fi";
-
+import { RoleBadge } from "@/components/common/RoleBadge";
+import { UserAvatar } from "@/components/common/UserAvatar";
 import { navigationByRole } from "@/constants/navigation";
 import { useRole } from "@/components/layout/RoleContext";
-
-const roleDetails = {
-  hr: {
-    label: "HR Admin",
-    initials: "NH",
-    name: "Nurul Huda Hassan",
-    position: "HR Manager",
-  },
-  manager: {
-    label: "Manager",
-    initials: "AT",
-    name: "Aisha Tan",
-    position: "Procurement Lead",
-  },
-  employee: {
-    label: "Employee",
-    initials: "AH",
-    name: "Amirul Hakim Zulkifli",
-    position: "Procurement Executive",
-  },
-};
+import { getInitials } from "@/lib/initials";
+import { ROLE_META } from "@/types/role";
 
 export function AppSidebar() {
   const pathname = usePathname();
-  const { role } = useRole();
+  const { role, name, jobTitle } = useRole();
 
   const navigationItems = navigationByRole[role];
-  const currentRole = roleDetails[role];
+  const roleLabel = ROLE_META[role].label;
 
   return (
     <Box
@@ -54,140 +29,62 @@ export function AppSidebar() {
       left="0"
       zIndex="20"
       h="100vh"
-      w="292px"
+      w="232px"
       bg="white"
       borderRightWidth="1px"
-      borderColor="#E4E4E7"
+      borderColor="grey.20"
       px="12px"
-      py="18px"
+      py="16px"
       display="flex"
       flexDirection="column"
+      gap="14px"
     >
-      {/* Logo */}
-      <Flex align="center" gap="12px" px="8px">
-        <Box
-          pr="12px"
-          borderRightWidth="1px"
-          borderColor="#E4E4E7"
-        >
-          <Text
-            fontSize="20px"
-            fontWeight="800"
-            letterSpacing="1px"
-            color="#56408F"
-            lineHeight="1"
-          >
-            b
-            <Text as="span" color="#F28C00">
-              o
-            </Text>
-            rong
-          </Text>
+      <Flex align="center" gap="10px" px="6px">
+        <Text fontSize="20px" fontWeight="800" letterSpacing="0.5px" color="brand.50" lineHeight="1">
+          b<Text as="span" color="orange.50">o</Text>rong
+        </Text>
 
-          <Text
-            mt="4px"
-            fontSize="5px"
-            color="#F28C00"
-            fontWeight="700"
-          >
-            formerly known as dropee
-          </Text>
-        </Box>
-
-        <Text
-          fontSize="13px"
-          fontWeight="600"
-          color="#77727E"
-          lineHeight="1.25"
-        >
-          Performance
-          <br />
-          Review
+        <Text fontSize="10px" fontWeight="700" color="grey.40" borderLeftWidth="1px" borderColor="grey.20" pl="10px" lineHeight="1.3">
+          Performance<br />Review
         </Text>
       </Flex>
 
-      {/* Role badge */}
-      <Flex
-        mt="18px"
-        ml="4px"
-        align="center"
-        gap="7px"
-        alignSelf="flex-start"
-        bg="#F0EEF7"
-        color="#30235C"
-        px="12px"
-        py="6px"
-        borderRadius="full"
-      >
-        <FiBriefcase size={14} />
+      <RoleBadge label={roleLabel} />
 
-        <Text fontSize="14px" fontWeight="600">
-          {currentRole.label}
-        </Text>
-      </Flex>
-
-      {/* Navigation */}
-      <VStack align="stretch" gap="4px" mt="16px">
+      <VStack align="stretch" gap="2px" flex="1">
         {navigationItems.map((item) => {
-          const isActive =
-            pathname === item.href ||
-            pathname.startsWith(`${item.href}/`);
+          const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
 
           return (
-            <NextLink
-              key={item.href}
-              href={item.href}
-              style={{
-                textDecoration: "none",
-              }}
-            >
+            <NextLink key={item.href} href={item.href} style={{ textDecoration: "none" }}>
               <Flex
                 align="center"
-                minH="44px"
-                px="14px"
-                gap="13px"
-                borderRadius="10px"
-                bg={isActive ? "#ECEAF4" : "transparent"}
-                color={isActive ? "#30235C" : "#655F66"}
-                _hover={{
-                  bg: "#F4F3F7",
-                  color: "#30235C",
-                }}
-                transition="all 0.15s ease"
+                minH="36px"
+                px="10px"
+                gap="10px"
+                borderRadius="6px"
+                bg={isActive ? "brand.10" : "transparent"}
+                color={isActive ? "brand.70" : "grey.60"}
+                _hover={{ bg: "grey.10", color: "brand.70" }}
+                transition="background .12s, color .12s"
               >
-                <Icon
-                  as={item.icon}
-                  boxSize="18px"
-                  flexShrink="0"
-                />
+                <Icon as={item.icon} boxSize="17px" flexShrink="0" />
 
-                <Text
-                  flex="1"
-                  fontSize="16px"
-                  fontWeight={isActive ? "700" : "500"}
-                >
+                <Text flex="1" fontSize="13px" fontWeight={isActive ? "700" : "500"}>
                   {item.label}
                 </Text>
 
                 {item.count !== undefined && (
                   <Flex
-                    minW="24px"
-                    h="22px"
-                    px="7px"
+                    minW="20px"
+                    h="17px"
+                    px="6px"
                     align="center"
                     justify="center"
                     borderRadius="full"
-                    bg={
-                      item.label === "Notifications"
-                        ? "#E4E4E4"
-                        : "#F28C00"
-                    }
-                    color={
-                      item.label === "Notifications"
-                        ? "#666666"
-                        : "white"
-                    }
-                    fontSize="12px"
+                    bg={item.label === "Notifications" ? "grey.20" : "warning.50"}
+                    color={item.label === "Notifications" ? "grey.60" : "white"}
+                    fontSize="11px"
                     fontWeight="700"
                   >
                     {item.count}
@@ -199,52 +96,23 @@ export function AppSidebar() {
         })}
       </VStack>
 
-      {/* User profile */}
-      <Flex
-        mt="auto"
-        align="center"
-        gap="12px"
-        p="10px"
-        bg="#FAFAFA"
-        borderRadius="10px"
-      >
-        <Flex
-          w="40px"
-          h="40px"
-          align="center"
-          justify="center"
-          borderRadius="full"
-          bg="#57458E"
-          color="white"
-          fontSize="13px"
-          fontWeight="700"
-          flexShrink="0"
-        >
-          {currentRole.initials}
-        </Flex>
+      <Flex align="center" gap="8px" p="8px" bg="grey.10" borderRadius="8px">
+        <UserAvatar initials={getInitials(name)} bg="brand.50" color="white" />
 
-        <Box minW="0">
-          <Text
-            fontSize="14px"
-            fontWeight="600"
-            color="#18151C"
-            whiteSpace="nowrap"
-            overflow="hidden"
-            textOverflow="ellipsis"
-          >
-            {currentRole.name}
+        <Box minW="0" flex="1">
+          <Text fontSize="12px" fontWeight="600" color="grey.80" whiteSpace="nowrap" overflow="hidden" textOverflow="ellipsis">
+            {name}
           </Text>
-
-          <Text
-            fontSize="13px"
-            color="#655F66"
-            whiteSpace="nowrap"
-            overflow="hidden"
-            textOverflow="ellipsis"
-          >
-            {currentRole.position}
+          <Text fontSize="11px" color="grey.60" whiteSpace="nowrap" overflow="hidden" textOverflow="ellipsis">
+            {jobTitle || roleLabel}
           </Text>
         </Box>
+
+        <SignOutButton>
+          <IconButton aria-label="Sign out" size="xs" variant="ghost" color="grey.60">
+            <FiLogOut />
+          </IconButton>
+        </SignOutButton>
       </Flex>
     </Box>
   );

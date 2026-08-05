@@ -1,32 +1,27 @@
-export const mockEmployees = [
-  {
-    employeeId: "EMP001",
-    name: "Amirul Hakim Zulkifli",
-    email: "amirul@company.com",
-    department: "Procurement",
-    jobTitle: "Procurement Executive",
-    managerId: "EMP010",
-    managerName: "Aisha Tan",
-    status: "Employee Submitted",
-  },
-  {
-    employeeId: "EMP002",
-    name: "Nur Aina Rahman",
-    email: "aina@company.com",
-    department: "Finance",
-    jobTitle: "Finance Executive",
-    managerId: "EMP011",
-    managerName: "Farid Iskandar",
-    status: "Manager Reviewing",
-  },
-  {
-    employeeId: "EMP003",
-    name: "Daniel Lee",
-    email: "daniel@company.com",
-    department: "Operations",
-    jobTitle: "Operations Executive",
-    managerId: "EMP012",
-    managerName: "Amirul Nizam",
-    status: "Completed",
-  },
+import type { Employee } from "@/types/employee";
+
+export const mockEmployees: Employee[] = [
+  { employeeId: "EMP001", name: "Amirul Hakim Zulkifli", email: "amirul.zulkifli@borong.com", department: "Procurement", jobTitle: "Procurement Executive", managerId: "EMP101", managerName: "Aisha Tan", systemRole: "employee", employmentStatus: "active", initials: "AH" },
+  { employeeId: "EMP002", name: "Farah Liyana Musa", email: "farah.musa@borong.com", department: "Procurement", jobTitle: "Senior Buyer", managerId: "EMP101", managerName: "Aisha Tan", systemRole: "employee", employmentStatus: "active", initials: "FL" },
+  { employeeId: "EMP003", name: "Kevin Lim Wei Jie", email: "kevin.lim@borong.com", department: "Procurement", jobTitle: "Procurement Analyst", managerId: "EMP101", managerName: "Aisha Tan", systemRole: "employee", employmentStatus: "active", initials: "KL" },
+  { employeeId: "EMP004", name: "Nadia Roslan", email: "nadia.roslan@borong.com", department: "Procurement", jobTitle: "Supplier Relations Executive", managerId: "EMP101", managerName: "Aisha Tan", systemRole: "employee", employmentStatus: "active", initials: "NR" },
+  { employeeId: "EMP005", name: "Raj Kumar Suresh", email: "raj.suresh@borong.com", department: "Procurement", jobTitle: "Category Lead", managerId: "EMP101", managerName: "Aisha Tan", systemRole: "employee", employmentStatus: "active", initials: "RK" },
+  { employeeId: "EMP006", name: "Mei Ling Chong", email: "meiling.chong@borong.com", department: "Procurement", jobTitle: "Procurement Executive", managerId: "EMP101", managerName: "Aisha Tan", systemRole: "employee", employmentStatus: "active", initials: "MC" },
+  { employeeId: "EMP007", name: "Hafiz Rahman", email: "hafiz.rahman@borong.com", department: "Engineering", jobTitle: "Frontend Engineer", managerId: "EMP102", managerName: "Lim Jia Hui", systemRole: "employee", employmentStatus: "active", initials: "HR" },
+  { employeeId: "EMP008", name: "Aina Syafiqah Idris", email: "aina.idris@borong.com", department: "Engineering", jobTitle: "Backend Engineer", managerId: "EMP102", managerName: "Lim Jia Hui", systemRole: "employee", employmentStatus: "active", initials: "AS" },
+  { employeeId: "EMP009", name: "Priya Nair", email: "priya.nair@borong.com", department: "Product & Design", jobTitle: "Product Designer", managerId: "EMP103", managerName: "Farah Aziz", systemRole: "employee", employmentStatus: "active", initials: "PN" },
+  { employeeId: "EMP010", name: "Zara Iskandar", email: "zara.iskandar@borong.com", department: "Product & Design", jobTitle: "UX Researcher", managerId: "EMP103", managerName: "Farah Aziz", systemRole: "employee", employmentStatus: "active", initials: "ZI" },
+  { employeeId: "EMP011", name: "Daniel Wong", email: "daniel.wong@borong.com", department: "Sales & Partnerships", jobTitle: "Partnerships Manager", managerId: "EMP104", managerName: "Grace Foo", systemRole: "employee", employmentStatus: "active", initials: "DW" },
+  { employeeId: "EMP012", name: "Jason Teoh", email: "jason.teoh@borong.com", department: "Sales & Partnerships", jobTitle: "Sales Executive", managerId: "EMP104", managerName: "Grace Foo", systemRole: "employee", employmentStatus: "active", initials: "JT" },
+  { employeeId: "EMP013", name: "Siti Aminah Bakar", email: "siti.bakar@borong.com", department: "Finance & Ops", jobTitle: "Finance Executive", managerId: "EMP105", managerName: "Farid Iskandar", systemRole: "employee", employmentStatus: "active", initials: "SA" },
+  { employeeId: "EMP014", name: "Marcus Yap", email: "marcus.yap@borong.com", department: "Finance & Ops", jobTitle: "Operations Coordinator", managerId: "EMP105", managerName: "Farid Iskandar", systemRole: "employee", employmentStatus: "active", initials: "MY" },
+
+  { employeeId: "EMP101", name: "Aisha Tan", email: "aisha.tan@borong.com", department: "Procurement", jobTitle: "Procurement Lead", managerId: "EMP000", managerName: "Nurul Huda Hassan", systemRole: "manager", employmentStatus: "active", initials: "AT" },
+  { employeeId: "EMP102", name: "Lim Jia Hui", email: "jiahui.lim@borong.com", department: "Engineering", jobTitle: "Engineering Manager", managerId: "EMP000", managerName: "Nurul Huda Hassan", systemRole: "manager", employmentStatus: "active", initials: "LJ" },
+  { employeeId: "EMP103", name: "Farah Aziz", email: "farah.aziz@borong.com", department: "Product & Design", jobTitle: "Design Lead", managerId: "EMP000", managerName: "Nurul Huda Hassan", systemRole: "manager", employmentStatus: "active", initials: "FA" },
+  { employeeId: "EMP104", name: "Grace Foo", email: "grace.foo@borong.com", department: "Sales & Partnerships", jobTitle: "Head of Sales & Partnerships", managerId: "EMP000", managerName: "Nurul Huda Hassan", systemRole: "manager", employmentStatus: "active", initials: "GF" },
+  { employeeId: "EMP105", name: "Farid Iskandar", email: "farid.iskandar@borong.com", department: "Finance & Ops", jobTitle: "Finance & Ops Manager", managerId: "EMP000", managerName: "Nurul Huda Hassan", systemRole: "manager", employmentStatus: "active", initials: "FI" },
+
+  { employeeId: "EMP000", name: "Nurul Huda Hassan", email: "nurul.hassan@borong.com", department: "Human Resources", jobTitle: "HR Manager", managerId: "EMP900", managerName: "Michael Wong", systemRole: "hr", employmentStatus: "active", initials: "NH" },
+  { employeeId: "EMP900", name: "Michael Wong", email: "michael.wong@borong.com", department: "Executive Office", jobTitle: "Chief Executive Officer", managerId: null, managerName: null, systemRole: "topManagement", employmentStatus: "active", initials: "MW" },
 ];

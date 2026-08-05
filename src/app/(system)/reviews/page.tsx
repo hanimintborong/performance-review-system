@@ -1,12 +1,8 @@
-import { Heading, Text, VStack } from "@chakra-ui/react";
+import { ReviewsClient } from "@/app/(system)/reviews/ReviewsClient";
+import { getReviewPlans, getReviewRows } from "@/data/queries";
 
-export default function ReviewsPage() {
-  return (
-    <VStack align="start" gap="2">
-      <Heading>Performance Reviews</Heading>
-      <Text color="gray.600">
-        View and manage employee review records.
-      </Text>
-    </VStack>
-  );
+export default async function ReviewsPage() {
+  const [allRows, plans] = await Promise.all([getReviewRows(), getReviewPlans()]);
+
+  return <ReviewsClient allRows={allRows} plans={plans} />;
 }

@@ -1,22 +1,23 @@
 import { createSystem, defaultConfig, defineConfig } from "@chakra-ui/react";
 
+import { brand, error, grey, info, orange, success, warning } from "@/constants/colors";
+
+const toTokens = (scale: Record<string, string>) =>
+  Object.fromEntries(
+    Object.entries(scale).map(([key, value]) => [key, { value }]),
+  );
+
 const config = defineConfig({
   theme: {
     tokens: {
       colors: {
-        brand: {
-          50: { value: "#F5F3FF" },
-          100: { value: "#EDE9FE" },
-          200: { value: "#DDD6FE" },
-          300: { value: "#C4B5FD" },
-          400: { value: "#A78BFA" },
-          500: { value: "#7C5CFC" },
-          600: { value: "#6D4EE8" },
-          700: { value: "#5B3EC7" },
-          800: { value: "#46309B" },
-          900: { value: "#342274" },
-          950: { value: "#211747" },
-        },
+        brand: toTokens(brand),
+        grey: toTokens(grey),
+        orange: toTokens(orange),
+        success: toTokens(success),
+        warning: toTokens(warning),
+        error: toTokens(error),
+        info: toTokens(info),
       },
     },
   },

@@ -1,218 +1,87 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
 
-import {
-  Box,
-  Button,
-  Flex,
-  IconButton,
-  Input,
-  Text,
-} from "@chakra-ui/react";
+import { Box, Flex, IconButton, Text } from "@chakra-ui/react";
+import { FiBell, FiChevronRight } from "react-icons/fi";
 
-import {
-  FiBell,
-  FiChevronRight,
-  FiSearch,
-} from "react-icons/fi";
+import { SearchInput } from "@/components/common/SearchInput";
+import { navigationByRole, pageTitleOverrides } from "@/constants/navigation";
+import { useRole } from "@/components/layout/RoleContext";
+import type { SystemRole } from "@/types/role";
 
-import {
-  useRole,
-  type UserRole,
-} from "@/components/layout/RoleContext";
+function getPageTitle(pathname: string, role: SystemRole) {
+  if (pageTitleOverrides[pathname]) return pageTitleOverrides[pathname];
 
-const roleRoute: Record<UserRole, string> = {
-  hr: "/dashboard",
-  manager: "/manager/team",
-  employee: "/employee/reviews",
-};
+  const match = navigationByRole[role].find(
+    (item) => pathname === item.href || pathname.startsWith(`${item.href}/`),
+  );
 
-const pageTitles: Record<string, string> = {
-  "/dashboard": "HR dashboard",
-  "/reviews": "Reviews",
-  "/review-plans": "Review cycles",
-  "/reports": "Analytics",
-  "/roles-access": "Roles & permissions",
-  "/wfh": "WFH requests",
-  "/notifications": "Notifications",
-  "/manager/team": "My team",
-  "/employee/reviews": "My reviews",
-  "/employee/evaluation": "My evaluation",
-};
+  return match?.label ?? "Performance Review";
+}
 
 export function AppHeader() {
   const pathname = usePathname();
-  const router = useRouter();
-  const { role, setRole } = useRole();
+  const { role } = useRole();
+  const [search, setSearch] = useState("");
 
-  const pageTitle = pageTitles[pathname] ?? "Performance Review";
-
-  function changeRole(newRole: UserRole) {
-    setRole(newRole);
-    router.push(roleRoute[newRole]);
-  }
+  const pageTitle = getPageTitle(pathname, role);
 
   return (
     <Flex
       as="header"
       position="fixed"
       top="0"
-      left="292px"
+      left="232px"
       right="0"
       zIndex="15"
-      h="76px"
+      h="64px"
       bg="white"
       borderBottomWidth="1px"
-      borderColor="#E4E4E7"
+      borderColor="grey.20"
       align="center"
       justify="space-between"
-      px="30px"
+      px="24px"
+      gap="12px"
     >
-      {/* Breadcrumb and page title */}
-      <Box>
-        <Flex
-          align="center"
-          gap="8px"
-          color="#9A949D"
-          fontSize="13px"
-        >
+      <Box minW="0">
+        <Flex align="center" gap="6px" color="grey.40" fontSize="11px">
           <Text>Performance Review</Text>
-          <FiChevronRight size={14} />
+          <FiChevronRight size={10} />
           <Text>Mid-Year Review 2026</Text>
         </Flex>
 
-        <Text
-          mt="2px"
-          fontSize="23px"
-          fontWeight="600"
-          color="#18151C"
-          lineHeight="1.2"
-        >
+        <Text mt="2px" fontSize="18px" fontWeight="600" color="grey.80" lineHeight="1.2" whiteSpace="nowrap" overflow="hidden" textOverflow="ellipsis">
           {pageTitle}
         </Text>
       </Box>
 
-      <Flex align="center" gap="14px">
-        {/* Search */}
-        <Flex
-          w="268px"
-          h="42px"
-          align="center"
-          gap="10px"
-          px="14px"
-          bg="#F3F3F3"
-          borderRadius="11px"
-        >
-          <Box color="#8F8992">
-            <FiSearch size={18} />
-          </Box>
+      <Flex align="center" gap="10px" flexShrink="0">
+        <SearchInput
+          placeholder="Search staff…"
+          value={search}
+          onValueChange={setSearch}
+          w="220px"
+          h="34px"
+        />
 
-          <Input
-            placeholder="Search staff..."
-            variant="flushed"
-            border="none"
-            outline="none"
-            fontSize="15px"
-            color="#454047"
-            _placeholder={{
-              color: "#817B84",
-            }}
-            _focus={{
-              boxShadow: "none",
-            }}
-          />
-        </Flex>
-
-        {/* Role switcher */}
-        <Flex
-          h="42px"
-          align="center"
-          bg="#F3F3F3"
-          borderRadius="11px"
-          p="3px"
-        >
-          <RoleButton
-            label="HR Admin"
-            active={role === "hr"}
-            onClick={() => changeRole("hr")}
-          />
-
-          <RoleButton
-            label="Manager"
-            active={role === "manager"}
-            onClick={() => changeRole("manager")}
-          />
-
-          <RoleButton
-            label="Employee"
-            active={role === "employee"}
-            onClick={() => changeRole("employee")}
-          />
-        </Flex>
-
-        {/* Notification */}
         <Box position="relative">
           <IconButton
             aria-label="View notifications"
             variant="outline"
-            borderColor="#E4E4E7"
-            borderRadius="11px"
-            w="44px"
-            h="44px"
-            color="#5B5560"
+            borderColor="grey.20"
+            borderRadius="8px"
+            w="36px"
+            h="36px"
+            color="grey.70"
           >
-            <FiBell />
+            <FiBell size={17} />
           </IconButton>
 
-          <Box
-            position="absolute"
-            top="8px"
-            right="9px"
-            w="7px"
-            h="7px"
-            borderRadius="full"
-            bg="#EF4444"
-            borderWidth="1px"
-            borderColor="white"
-          />
+          <Box position="absolute" top="6px" right="7px" w="8px" h="8px" borderRadius="full" bg="error.50" borderWidth="1.5px" borderColor="white" />
         </Box>
       </Flex>
     </Flex>
-  );
-}
-
-type RoleButtonProps = {
-  label: string;
-  active: boolean;
-  onClick: () => void;
-};
-
-function RoleButton({
-  label,
-  active,
-  onClick,
-}: RoleButtonProps) {
-  return (
-    <Button
-      h="36px"
-      px="16px"
-      bg={active ? "white" : "transparent"}
-      color={active ? "#30235C" : "#514B52"}
-      borderRadius="8px"
-      boxShadow={
-        active
-          ? "0 1px 4px rgba(32, 24, 64, 0.12)"
-          : "none"
-      }
-      fontSize="14px"
-      fontWeight={active ? "700" : "600"}
-      _hover={{
-        bg: active ? "white" : "#EAE8ED",
-      }}
-      onClick={onClick}
-    >
-      {label}
-    </Button>
   );
 }

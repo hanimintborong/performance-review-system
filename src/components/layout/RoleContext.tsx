@@ -1,38 +1,26 @@
 "use client";
 
-import {
-  createContext,
-  useContext,
-  useMemo,
-  useState,
-  type ReactNode,
-} from "react";
+import { createContext, useContext, type ReactNode } from "react";
 
-export type UserRole = "hr" | "manager" | "employee";
+import type { SystemRole } from "@/types/role";
 
 type RoleContextValue = {
-  role: UserRole;
-  setRole: (role: UserRole) => void;
+  role: SystemRole;
+  employeeId: string;
+  name: string;
+  jobTitle: string;
 };
 
 const RoleContext = createContext<RoleContextValue | undefined>(undefined);
 
-export function RoleProvider({ children }: { children: ReactNode }) {
-  const [role, setRole] = useState<UserRole>("hr");
-
-  const value = useMemo(
-    () => ({
-      role,
-      setRole,
-    }),
-    [role],
-  );
-
-  return (
-    <RoleContext.Provider value={value}>
-      {children}
-    </RoleContext.Provider>
-  );
+export function RoleProvider({
+  value,
+  children,
+}: {
+  value: RoleContextValue;
+  children: ReactNode;
+}) {
+  return <RoleContext.Provider value={value}>{children}</RoleContext.Provider>;
 }
 
 export function useRole() {

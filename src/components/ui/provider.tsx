@@ -1,15 +1,14 @@
 "use client";
 
 import { ChakraProvider } from "@chakra-ui/react";
-import { ThemeProvider } from "next-themes";
 import { system } from "@/theme";
+import { Toaster } from "@/components/ui/toaster";
 
 export function Provider(props: { children: React.ReactNode }) {
   return (
     <ChakraProvider value={system}>
-      <ThemeProvider attribute="class" disableTransitionOnChange>
-        {props.children}
-      </ThemeProvider>
+      {props.children}
+      <Toaster />
     </ChakraProvider>
   );
 }

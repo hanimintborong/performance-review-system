@@ -1,12 +1,8 @@
-import { Heading, Text, VStack } from "@chakra-ui/react";
+import { ReviewTemplatesClient } from "@/app/(system)/review-templates/ReviewTemplatesClient";
+import { getReviewTemplates } from "@/data/queries";
 
-export default function ReviewTemplatesPage() {
-  return (
-    <VStack align="start" gap="2">
-      <Heading>Review Templates</Heading>
-      <Text color="gray.600">
-        Create and customise performance review forms.
-      </Text>
-    </VStack>
-  );
+export default async function ReviewTemplatesPage() {
+  const templates = await getReviewTemplates();
+
+  return <ReviewTemplatesClient templates={templates} />;
 }
