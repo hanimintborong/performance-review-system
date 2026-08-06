@@ -3,7 +3,7 @@
 import { useState, useTransition, type ReactNode } from "react";
 import { Dialog, Flex, Input, NativeSelect, Portal, Text } from "@chakra-ui/react";
 
-import { inviteUserAction } from "@/app/(system)/roles-access/actions";
+import { inviteUserAction } from "@/app/(system)/roles-access/userActions";
 import { PrimaryButton } from "@/components/common/PrimaryButton";
 import { SecondaryButton } from "@/components/common/SecondaryButton";
 import { toaster } from "@/components/ui/toaster";

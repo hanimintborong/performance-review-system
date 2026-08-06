@@ -7,7 +7,7 @@ import {
   deleteNotificationRuleAction,
   saveNotificationRuleAction,
   toggleNotificationRuleStatusAction,
-} from "@/app/(system)/notifications/actions";
+} from "@/app/(system)/notifications/notificationActions";
 import { historyColumns } from "@/app/(system)/notifications/historyColumns";
 import { getRulesColumns, type NotificationRuleRow } from "@/app/(system)/notifications/rulesColumns";
 import { RuleFormDialog } from "@/app/(system)/notifications/RuleFormDialog";

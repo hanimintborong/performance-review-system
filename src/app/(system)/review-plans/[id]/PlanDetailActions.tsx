@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import NextLink from "next/link";
 import { Flex } from "@chakra-ui/react";
 
-import { toggleReviewPlanStatusAction } from "@/app/(system)/review-plans/actions";
+import { toggleReviewPlanStatusAction } from "@/app/(system)/review-plans/reviewPlanActions";
 import { PrimaryButton } from "@/components/common/PrimaryButton";
 import { SecondaryButton } from "@/components/common/SecondaryButton";
 import { StatusBadge } from "@/components/common/StatusBadge";

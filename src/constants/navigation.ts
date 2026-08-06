@@ -33,6 +33,7 @@ export const navigationByRole: Record<SystemRole, NavigationItem[]> = {
 
   manager: [
     { label: "My team", href: "/manager/team", icon: FiUsers, count: 4 },
+    { label: "Team review progress", href: "/manager/review-progress", icon: FiBarChart2 },
     { label: "WFH requests", href: "/wfh", icon: FiHome, count: 2 },
     { label: "Notifications", href: "/manager/notifications", icon: FiBell, count: 3 },
   ],

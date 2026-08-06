@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Flex } from "@chakra-ui/react";
 import { FiPlus } from "react-icons/fi";
 
-import { saveReviewTemplateAction } from "@/app/(system)/review-templates/actions";
+import { saveReviewTemplateAction } from "@/app/(system)/review-templates/reviewTemplateActions";
 import { FilterBar } from "@/components/common/FilterBar";
 import { SecondaryButton } from "@/components/common/SecondaryButton";
 import { newSection } from "@/components/template-builder/newSection";

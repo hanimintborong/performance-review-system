@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { Flex, Text } from "@chakra-ui/react";
 
-import { resendInviteAction } from "@/app/(system)/roles-access/actions";
+import { resendInviteAction } from "@/app/(system)/roles-access/userActions";
 import { InviteUserDialog } from "@/app/(system)/roles-access/InviteUserDialog";
 import { getUsersColumns, type SystemUserRow } from "@/app/(system)/roles-access/usersColumns";
 import { AppCard } from "@/components/common/AppCard";

@@ -1,5 +1,5 @@
 import { DEPARTMENTS } from "@/constants/departments";
-import type { NewEmployeeInput } from "@/app/(system)/employees/actions";
+import type { NewEmployeeInput } from "@/app/(system)/employees/employeeActions";
 import type { SystemRole } from "@/types/role";
 
 const VALID_ROLES: SystemRole[] = ["employee", "manager", "hr", "topManagement"];

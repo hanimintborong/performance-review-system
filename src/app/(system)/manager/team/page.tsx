@@ -1,17 +1,12 @@
-import {
-  Box,
-  Heading,
-  Text,
-} from "@chakra-ui/react";
+import { TeamClient } from "@/app/(system)/manager/team/TeamClient";
+import { getReviewRows } from "@/data/queries";
+import { getCurrentSystemUser } from "@/lib/currentSystemUser";
 
-export default function ManagerTeamPage() {
-  return (
-    <Box>
-      <Heading size="lg">My team — Procurement</Heading>
+export default async function ManagerTeamPage() {
+  const systemUser = await getCurrentSystemUser();
+  const allRows = await getReviewRows();
+  const rows = allRows.filter((r) => r.managerId === systemUser?.employeeId);
+  const planTitle = rows[0]?.planTitle ?? "No active review cycle";
 
-      <Text mt="2" color="#6F6972">
-        Mid-Year Review 2026 · window closes 15 Aug 2026
-      </Text>
-    </Box>
-  );
+  return <TeamClient rows={rows} planTitle={planTitle} />;
 }

@@ -6,7 +6,6 @@ import { AppHeader } from "@/components/layout/AppHeader";
 import { AppSidebar } from "@/components/layout/AppSidebar";
 import { RoleProvider } from "@/components/layout/RoleContext";
 import { canvas } from "@/constants/colors";
-import { getEmployeeById } from "@/data/queries";
 import { getCurrentSystemUser } from "@/lib/currentSystemUser";
 
 export default async function SystemLayout({
@@ -15,12 +14,16 @@ export default async function SystemLayout({
   children: React.ReactNode;
 }>) {
   const { userId } = await auth();
-  if (!userId) redirect("/sign-in");
+
+  if (!userId) {
+    redirect("/sign-in");
+  }
 
   const systemUser = await getCurrentSystemUser();
-  if (!systemUser) redirect("/pending-access");
 
-  const employee = await getEmployeeById(systemUser.employeeId);
+  if (!systemUser) {
+    redirect("/pending-access");
+  }
 
   return (
     <RoleProvider
@@ -28,7 +31,7 @@ export default async function SystemLayout({
         role: systemUser.role,
         employeeId: systemUser.employeeId,
         name: systemUser.name,
-        jobTitle: employee?.jobTitle ?? "",
+        jobTitle: "",
       }}
     >
       <Box minH="100vh" bg={canvas}>

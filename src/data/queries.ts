@@ -2,6 +2,7 @@ import "server-only";
 
 export { getEmployeeById, getEmployees, saveEmployee, saveEmployees } from "@/data/employees";
 export {
+  getReviewAssignmentById,
   getReviewAssignments,
   getReviewRowById,
   getReviewRows,
@@ -28,3 +29,4 @@ export {
   getNotificationRules,
   saveNotificationRule,
 } from "@/data/notifications";
+export { getReviewResponse, saveReviewResponse } from "@/data/reviewResponses";

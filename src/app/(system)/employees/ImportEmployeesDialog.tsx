@@ -5,7 +5,7 @@ import Papa from "papaparse";
 import { Dialog, Flex, Portal, Text } from "@chakra-ui/react";
 import { FiUploadCloud } from "react-icons/fi";
 
-import { importEmployeesAction, type NewEmployeeInput } from "@/app/(system)/employees/actions";
+import { importEmployeesAction, type NewEmployeeInput } from "@/app/(system)/employees/employeeActions";
 import { parseEmployeeRow } from "@/app/(system)/employees/parseEmployeeRow";
 import { PrimaryButton } from "@/components/common/PrimaryButton";
 import { SecondaryButton } from "@/components/common/SecondaryButton";

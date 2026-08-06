@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { FiInfo, FiSend } from "react-icons/fi";
 import { Flex, Grid, Input, NativeSelect, Text } from "@chakra-ui/react";
 
-import { saveReviewPlanAction } from "@/app/(system)/review-plans/actions";
+import { saveReviewPlanAction } from "@/app/(system)/review-plans/reviewPlanActions";
 import { AppCard } from "@/components/common/AppCard";
 import { MultiSelectChips } from "@/components/common/MultiSelectChips";
 import { PrimaryButton } from "@/components/common/PrimaryButton";

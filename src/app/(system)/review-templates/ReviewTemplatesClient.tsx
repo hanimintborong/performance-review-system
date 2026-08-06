@@ -9,7 +9,7 @@ import {
   deleteReviewTemplateAction,
   duplicateTemplateAction,
   toggleTemplateStatusAction,
-} from "@/app/(system)/review-templates/actions";
+} from "@/app/(system)/review-templates/reviewTemplateActions";
 import { getTemplateColumns } from "@/app/(system)/review-templates/columns";
 import { AppCard } from "@/components/common/AppCard";
 import { ConfirmationDialog } from "@/components/common/ConfirmationDialog";
