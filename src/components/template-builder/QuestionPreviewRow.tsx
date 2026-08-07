@@ -55,5 +55,21 @@ function ResponsePreview({ question }: { question: TemplateQuestion }) {
     return <Flex h="46px" bg="grey.10" borderRadius="6px" />;
   }
 
+  if (question.type === "okr_list") {
+    return (
+      <Text fontSize="12px" color="grey.40">
+        Employee adds their own objectives here, each with a title and self-chosen weightage adding up to {question.weightage ?? 100}%.
+      </Text>
+    );
+  }
+
+  if (question.type === "core_value_list") {
+    return (
+      <Text fontSize="12px" color="grey.40">
+        Employee rates each value listed in Options above: {question.options?.join(", ") || "add values in Options"}.
+      </Text>
+    );
+  }
+
   return <Flex h="28px" w="70%" bg="grey.10" borderRadius="6px" />;
 }

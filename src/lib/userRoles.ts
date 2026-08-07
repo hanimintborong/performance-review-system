@@ -2,6 +2,7 @@ import "server-only";
 
 import { cache } from "react";
 import { getDb } from "@/lib/firebaseAdmin";
+import type { SystemRole } from "@/types/role";
 import type { SystemUserRecord } from "@/types/systemUser";
 
 const COLLECTION = "users";
@@ -55,4 +56,11 @@ export async function markUserActive(
     .update({
       status: "active",
     });
+}
+
+export async function syncUserRole(email: string, role: SystemRole): Promise<void> {
+  const record = await getUserRoleByEmail(email);
+  if (!record) return;
+
+  await saveSystemUser({ ...record, role });
 }

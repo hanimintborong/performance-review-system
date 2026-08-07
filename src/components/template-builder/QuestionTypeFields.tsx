@@ -14,7 +14,9 @@ export function QuestionTypeFields({ meta, question, onChange }: QuestionTypeFie
     <Flex gap="14px" align="center" pl="2px">
       {meta.hasWeightage && (
         <Flex align="center" gap="6px">
-          <Text fontSize="11px" color="grey.60">Weightage %</Text>
+          <Text fontSize="11px" color="grey.60">
+            {question.type === "okr_list" ? "Total weightage budget %" : "Weightage %"}
+          </Text>
           <Input
             type="number"
             min={0}

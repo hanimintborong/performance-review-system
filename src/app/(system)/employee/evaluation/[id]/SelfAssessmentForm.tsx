@@ -12,6 +12,7 @@ import { SecondaryButton } from "@/components/common/SecondaryButton";
 import { ReviewFormSection } from "@/components/review-form/ReviewFormSection";
 import { toaster } from "@/components/ui/toaster";
 import type { ReviewRow } from "@/data/queries";
+import { findOkrWeightageIssues } from "@/lib/reviewValidation";
 import type { ReviewResponse } from "@/types/reviewResponse";
 import type { TemplateSection } from "@/types/template";
 
@@ -30,16 +31,21 @@ export function SelfAssessmentForm({ row, sections, response }: SelfAssessmentFo
     Object.fromEntries(response.answers.map((a) => [a.questionId, a.value])),
   );
   const [comment, setComment] = useState(response.employeeComment);
+  const weightageIssues = findOkrWeightageIssues(sections, answers);
 
   function persist(submit: boolean) {
     startTransition(async () => {
-      if (submit) {
-        await submitSelfAssessmentAction(row.assignmentId, answers, comment);
-        toaster.create({ title: "Self-assessment submitted", type: "success" });
-        router.push("/employee/reviews");
-      } else {
-        await saveSelfAssessmentDraftAction(row.assignmentId, answers, comment);
-        toaster.create({ title: "Draft saved", type: "success" });
+      try {
+        if (submit) {
+          await submitSelfAssessmentAction(row.assignmentId, answers, comment);
+          toaster.create({ title: "Self-assessment submitted", type: "success" });
+          router.push("/employee/reviews");
+        } else {
+          await saveSelfAssessmentDraftAction(row.assignmentId, answers, comment);
+          toaster.create({ title: "Draft saved", type: "success" });
+        }
+      } catch (error) {
+        toaster.create({ title: "Could not submit", description: error instanceof Error ? error.message : "Please try again.", type: "error" });
       }
     });
   }
@@ -80,9 +86,18 @@ export function SelfAssessmentForm({ row, sections, response }: SelfAssessmentFo
       </AppCard>
 
       {!alreadySubmitted && (
-        <Flex justify="flex-end" gap="10px">
-          <SecondaryButton onClick={() => persist(false)} loading={isPending}>Save draft</SecondaryButton>
-          <PrimaryButton onClick={() => persist(true)} loading={isPending}>Submit self-assessment</PrimaryButton>
+        <Flex direction="column" align="flex-end" gap="6px">
+          {weightageIssues.length > 0 && (
+            <Text fontSize="12px" color="error.50">
+              {weightageIssues.map((i) => `${i.questionText}: ${i.used}% used, needs ${i.target}%`).join(" · ")}
+            </Text>
+          )}
+          <Flex gap="10px">
+            <SecondaryButton onClick={() => persist(false)} loading={isPending}>Save draft</SecondaryButton>
+            <PrimaryButton onClick={() => persist(true)} loading={isPending} disabled={weightageIssues.length > 0}>
+              Submit self-assessment
+            </PrimaryButton>
+          </Flex>
         </Flex>
       )}
     </Flex>

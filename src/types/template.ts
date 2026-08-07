@@ -9,7 +9,11 @@ export type QuestionType =
   | "dropdown"
   | "file_upload"
   | "kpi_okr"
-  | "core_value_rating";
+  | "okr_list"
+  | "core_value_rating"
+  | "core_value_list";
+
+export const MULTI_RESPONDENT_QUESTION_TYPES: QuestionType[] = ["okr_list", "core_value_list"];
 
 export type Respondent = "employee" | "manager";
 

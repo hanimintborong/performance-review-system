@@ -5,7 +5,7 @@ import { getDb } from "@/lib/firebaseAdmin";
 import { getEmployeeById, getEmployees } from "@/data/employees";
 import { getReviewPlanById, getReviewPlans } from "@/data/reviewPlans";
 import type { Employee } from "@/types/employee";
-import type { ReviewAssignment, ReviewStatus } from "@/types/review";
+import type { FinalOutcome, ReviewAssignment, ReviewStatus } from "@/types/review";
 
 const COLLECTION = "reviewAssignments";
 
@@ -57,6 +57,9 @@ export type ReviewRow = {
   employeeScore: number | null;
   managerScore: number | null;
   acknowledged: boolean;
+  finalOutcome: FinalOutcome | null;
+  finalOutcomeNotes: string | null;
+  finalizedAt: string | null;
 };
 
 export const getReviewRows = cache(
@@ -111,6 +114,9 @@ export const getReviewRows = cache(
           employeeScore: assignment.employeeScore,
           managerScore: assignment.managerScore,
           acknowledged: assignment.acknowledged,
+          finalOutcome: assignment.finalOutcome ?? null,
+          finalOutcomeNotes: assignment.finalOutcomeNotes ?? null,
+          finalizedAt: assignment.finalizedAt ?? null,
         };
       })
       .filter(
@@ -152,6 +158,9 @@ export const getReviewRowById = cache(
       employeeScore: assignment.employeeScore,
       managerScore: assignment.managerScore,
       acknowledged: assignment.acknowledged,
+      finalOutcome: assignment.finalOutcome ?? null,
+      finalOutcomeNotes: assignment.finalOutcomeNotes ?? null,
+      finalizedAt: assignment.finalizedAt ?? null,
     };
   },
 );

@@ -2,24 +2,51 @@
 
 import { Flex, Input, NativeSelect, Text, Textarea } from "@chakra-ui/react";
 
+import { CoreValueListField } from "@/components/review-form/CoreValueListField";
 import { KpiOkrFields } from "@/components/review-form/KpiOkrFields";
+import { OkrListField } from "@/components/review-form/OkrListField";
 import { RatingButtons } from "@/components/review-form/RatingButtons";
-import type { TemplateQuestion } from "@/types/template";
+import type { Respondent, TemplateQuestion } from "@/types/template";
 
 type QuestionAnswerFieldProps = {
   question: TemplateQuestion;
   value: string;
   onChange?: (value: string) => void;
   readOnly?: boolean;
+  editableRespondent?: Respondent;
 };
 
-export function QuestionAnswerField({ question, value, onChange, readOnly }: QuestionAnswerFieldProps) {
+export function QuestionAnswerField({ question, value, onChange, readOnly, editableRespondent }: QuestionAnswerFieldProps) {
   const label = (
     <Text fontSize="13px" color="grey.80" fontWeight="600">
       {question.text}
       {question.required && <Text as="span" color="error.50"> *</Text>}
     </Text>
   );
+
+  if (question.type === "okr_list") {
+    return (
+      <Flex direction="column" gap="6px">
+        {label}
+        <OkrListField value={value} onChange={onChange} editableRespondent={editableRespondent} targetWeightage={question.weightage ?? 100} />
+      </Flex>
+    );
+  }
+
+  if (question.type === "core_value_list") {
+    return (
+      <Flex direction="column" gap="6px">
+        {label}
+        <CoreValueListField
+          value={value}
+          onChange={onChange}
+          editableRespondent={editableRespondent}
+          labels={question.options ?? []}
+          ratingScaleMax={question.ratingScaleMax ?? 5}
+        />
+      </Flex>
+    );
+  }
 
   if (question.type === "kpi_okr") {
     return (

@@ -56,7 +56,7 @@ export function AppSidebar() {
           const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
 
           return (
-            <NextLink key={item.href} href={item.href} style={{ textDecoration: "none" }}>
+            <NextLink key={item.href} href={item.href} prefetch={false} style={{ textDecoration: "none" }}>
               <Flex
                 align="center"
                 minH="36px"

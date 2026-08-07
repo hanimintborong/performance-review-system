@@ -67,8 +67,9 @@ export function PlanForm({ initialPlan, initialStart, initialEnd, mode, employee
   function persist(status: ReviewPlan["status"], message: string) {
     const plan = buildPlan(status);
     startTransition(async () => {
-      await saveReviewPlanAction(plan);
-      toaster.create({ title: message, description: `${plan.title || "Untitled cycle"} · ${plan.reviewPeriod}`, type: "success" });
+      const createdCount = await saveReviewPlanAction(plan);
+      const assignmentNote = createdCount > 0 ? ` · ${createdCount} assignment${createdCount === 1 ? "" : "s"} created` : "";
+      toaster.create({ title: message, description: `${plan.title || "Untitled cycle"} · ${plan.reviewPeriod}${assignmentNote}`, type: "success" });
       router.push("/review-plans");
     });
   }

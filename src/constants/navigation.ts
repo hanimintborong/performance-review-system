@@ -34,6 +34,8 @@ export const navigationByRole: Record<SystemRole, NavigationItem[]> = {
   manager: [
     { label: "My team", href: "/manager/team", icon: FiUsers, count: 4 },
     { label: "Team review progress", href: "/manager/review-progress", icon: FiBarChart2 },
+    { label: "My self-assessment", href: "/employee/evaluation", icon: FiEdit3 },
+    { label: "My review results", href: "/employee/reviews", icon: FiClipboard },
     { label: "WFH requests", href: "/wfh", icon: FiHome, count: 2 },
     { label: "Notifications", href: "/manager/notifications", icon: FiBell, count: 3 },
   ],
@@ -47,6 +49,8 @@ export const navigationByRole: Record<SystemRole, NavigationItem[]> = {
 
   topManagement: [
     { label: "Review summary", href: "/management/reviews", icon: FiClipboard },
+    { label: "Managers to evaluate", href: "/manager/team", icon: FiUsers },
+    { label: "Evaluation progress", href: "/manager/review-progress", icon: FiBarChart2 },
   ],
 };
 
@@ -55,10 +59,7 @@ export const pageTitleOverrides: Record<string, string> = {
   "/review-plans": "Review cycles",
   "/notifications": "Notification & Reminder",
   "/reports": "Analytics & reporting",
-  "/manager/team": "My team",
   "/manager/notifications": "Notifications",
-  "/employee/reviews": "My reviews",
-  "/employee/evaluation": "My evaluation",
   "/employee/notifications": "Notifications",
   "/management/reviews": "Review summary",
 };

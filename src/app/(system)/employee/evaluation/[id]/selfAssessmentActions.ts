@@ -4,11 +4,21 @@ import { revalidatePath } from "next/cache";
 
 import { getReviewAssignmentById, getReviewPlanById, getReviewResponse, getReviewTemplateById, saveReviewAssignment, saveReviewResponse } from "@/data/queries";
 import { computeScore } from "@/lib/reviewScoring";
+import { findOkrWeightageIssues } from "@/lib/reviewValidation";
 import { mergeAnswers } from "@/types/reviewResponse";
 
 async function persist(assignmentId: string, answers: Record<string, string>, comment: string, submit: boolean) {
   const [assignment, response] = await Promise.all([getReviewAssignmentById(assignmentId), getReviewResponse(assignmentId)]);
   if (!assignment) return;
+
+  let template;
+  if (submit) {
+    const plan = await getReviewPlanById(assignment.planId);
+    template = plan ? await getReviewTemplateById(plan.templateId) : undefined;
+    if (template && findOkrWeightageIssues(template.sections, answers).length > 0) {
+      throw new Error("Objective weightage must total the required budget before submitting.");
+    }
+  }
 
   const mergedAnswers = mergeAnswers(response.answers, answers);
   await saveReviewResponse({
@@ -19,10 +29,7 @@ async function persist(assignmentId: string, answers: Record<string, string>, co
   });
 
   if (submit) {
-    const plan = await getReviewPlanById(assignment.planId);
-    const template = plan ? await getReviewTemplateById(plan.templateId) : undefined;
     const score = template ? computeScore(template.sections, mergedAnswers, "employee") : null;
-
     await saveReviewAssignment({ ...assignment, employeeScore: score, status: "Employee Submitted" });
   } else if (assignment.status === "Not Started") {
     await saveReviewAssignment({ ...assignment, status: "Self-Assessment In Progress" });

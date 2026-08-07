@@ -9,26 +9,31 @@ import { DataTable } from "@/components/common/DataTable";
 import { FilterBar, type FilterOption } from "@/components/common/FilterBar";
 import type { ReviewRow } from "@/data/queries";
 
+const IN_PROGRESS_STATUSES = ["Not Started", "Self-Assessment In Progress"];
+
 export function TeamClient({ rows, planTitle }: { rows: ReviewRow[]; planTitle: string }) {
-  const [filter, setFilter] = useState("all");
+  const needsAction = rows.filter((r) => r.status === "Employee Submitted").length;
+  const [filter, setFilter] = useState(needsAction > 0 ? "action" : "all");
 
   const options: FilterOption[] = useMemo(() => {
-    const completed = rows.filter((r) => r.status === "Finalised").length;
+    const inProgress = rows.filter((r) => IN_PROGRESS_STATUSES.includes(r.status)).length;
     const overdue = rows.filter((r) => r.status === "Overdue").length;
-    const pending = rows.length - completed - overdue;
+    const completed = rows.filter((r) => r.status === "Finalised").length;
 
     return [
-      { key: "all", label: `All (${rows.length})` },
-      { key: "completed", label: `Completed (${completed})` },
-      { key: "pending", label: `Pending (${pending})` },
+      { key: "action", label: `Needs your review (${needsAction})` },
+      { key: "in_progress", label: `In progress (${inProgress})` },
       { key: "overdue", label: `Overdue (${overdue})` },
+      { key: "completed", label: `Completed (${completed})` },
+      { key: "all", label: `All (${rows.length})` },
     ];
-  }, [rows]);
+  }, [rows, needsAction]);
 
   const filtered = rows.filter((r) => {
-    if (filter === "completed") return r.status === "Finalised";
+    if (filter === "action") return r.status === "Employee Submitted";
+    if (filter === "in_progress") return IN_PROGRESS_STATUSES.includes(r.status);
     if (filter === "overdue") return r.status === "Overdue";
-    if (filter === "pending") return r.status !== "Finalised" && r.status !== "Overdue";
+    if (filter === "completed") return r.status === "Finalised";
     return true;
   });
 

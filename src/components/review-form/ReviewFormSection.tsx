@@ -4,7 +4,7 @@ import { Flex, Text } from "@chakra-ui/react";
 
 import { AppCard } from "@/components/common/AppCard";
 import { QuestionAnswerField } from "@/components/review-form/QuestionAnswerField";
-import type { Respondent, TemplateSection } from "@/types/template";
+import { MULTI_RESPONDENT_QUESTION_TYPES, type Respondent, type TemplateSection } from "@/types/template";
 
 type ReviewFormSectionProps = {
   section: TemplateSection;
@@ -21,13 +21,15 @@ export function ReviewFormSection({ section, answers, onAnswerChange, editableRe
 
       <Flex direction="column" gap="14px" mt="10px">
         {section.questions.map((question) => {
-          const editable = editableRespondent === question.respondent;
+          const isMultiRespondent = MULTI_RESPONDENT_QUESTION_TYPES.includes(question.type);
+          const editable = isMultiRespondent ? Boolean(editableRespondent) : editableRespondent === question.respondent;
           return (
             <QuestionAnswerField
               key={question.questionId}
               question={question}
               value={answers[question.questionId] ?? ""}
               readOnly={!editable}
+              editableRespondent={isMultiRespondent ? editableRespondent : undefined}
               onChange={editable ? (v) => onAnswerChange?.(question.questionId, v) : undefined}
             />
           );

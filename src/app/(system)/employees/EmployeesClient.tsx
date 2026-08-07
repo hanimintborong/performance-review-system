@@ -4,7 +4,8 @@ import { useMemo, useState } from "react";
 import { Flex, Text } from "@chakra-ui/react";
 
 import { AddEmployeeDialog } from "@/app/(system)/employees/AddEmployeeDialog";
-import { employeeColumns } from "@/app/(system)/employees/employeeColumns";
+import { EditEmployeeDialog } from "@/app/(system)/employees/EditEmployeeDialog";
+import { getEmployeeColumns } from "@/app/(system)/employees/employeeColumns";
 import { ImportEmployeesDialog } from "@/app/(system)/employees/ImportEmployeesDialog";
 import { AppCard } from "@/components/common/AppCard";
 import { DataTable } from "@/components/common/DataTable";
@@ -17,6 +18,7 @@ const ALL = "All departments";
 export function EmployeesClient({ employees }: { employees: Employee[] }) {
   const [search, setSearch] = useState("");
   const [department, setDepartment] = useState(ALL);
+  const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
 
   const departmentOptions: FilterOption[] = useMemo(() => {
     const depts = [ALL, ...new Set(employees.map((e) => e.department))];
@@ -28,6 +30,8 @@ export function EmployeesClient({ employees }: { employees: Employee[] }) {
       (department === ALL || e.department === department) &&
       e.name.toLowerCase().includes(search.toLowerCase()),
   );
+
+  const columns = getEmployeeColumns({ onEdit: setEditingEmployee });
 
   return (
     <AppCard>
@@ -46,7 +50,15 @@ export function EmployeesClient({ employees }: { employees: Employee[] }) {
         </Flex>
       </Flex>
 
-      <DataTable columns={employeeColumns} rows={rows} rowKey={(e) => e.employeeId} emptyMessage="No employees match this filter." />
+      <DataTable columns={columns} rows={rows} rowKey={(e) => e.employeeId} emptyMessage="No employees match this filter." />
+
+      {editingEmployee && (
+        <EditEmployeeDialog
+          employee={editingEmployee}
+          employees={employees}
+          onOpenChange={(open) => !open && setEditingEmployee(null)}
+        />
+      )}
     </AppCard>
   );
 }

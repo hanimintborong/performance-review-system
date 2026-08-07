@@ -29,6 +29,8 @@ export type ReviewPlan = {
   status: ReviewPlanStatus;
 };
 
+export type FinalOutcome = "Promoted" | "Increment" | "Maintained" | "Performance Improvement Plan";
+
 export type ReviewAssignment = {
   assignmentId: string;
   planId: string;
@@ -39,4 +41,7 @@ export type ReviewAssignment = {
   managerScore: number | null;
   deadline: string;
   acknowledged: boolean;
+  finalOutcome: FinalOutcome | null;
+  finalOutcomeNotes: string | null;
+  finalizedAt: string | null;
 };
