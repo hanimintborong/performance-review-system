@@ -45,7 +45,7 @@ async function persist(assignmentId: string, answers: Record<string, string>, co
       });
     }
   } else if (assignment.status === "Not Started") {
-    await saveReviewAssignment({ ...assignment, status: "Self-Assessment In Progress" });
+    await saveReviewAssignment({ ...assignment, status: "Self-Assessment" });
   }
 
   revalidatePath("/employee/reviews");

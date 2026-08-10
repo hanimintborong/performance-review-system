@@ -50,8 +50,8 @@ export function InviteUserDialog({ employees, invitedEmployeeIds }: InviteUserDi
         <Dialog.Backdrop />
         <Dialog.Positioner>
           <Dialog.Content borderRadius="12px" maxW="440px">
-            <Dialog.Header><Dialog.Title fontSize="15px">Invite user</Dialog.Title></Dialog.Header>
-            <Dialog.Body>
+            <Dialog.Header p="22px 26px 6px"><Dialog.Title fontSize="15px">Invite user</Dialog.Title></Dialog.Header>
+            <Dialog.Body p="10px 26px">
               <Flex direction="column" gap="10px">
                 <Field label="Employee">
                   <NativeSelect.Root size="sm">
@@ -76,7 +76,7 @@ export function InviteUserDialog({ employees, invitedEmployeeIds }: InviteUserDi
                 </Field>
               </Flex>
             </Dialog.Body>
-            <Dialog.Footer>
+            <Dialog.Footer p="16px 26px 22px">
               <Dialog.ActionTrigger asChild><SecondaryButton>Cancel</SecondaryButton></Dialog.ActionTrigger>
               <PrimaryButton onClick={submit} disabled={!email.trim() || !employeeId} loading={isPending}>
                 Send invitation

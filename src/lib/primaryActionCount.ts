@@ -1,7 +1,7 @@
 import type { ReviewRow } from "@/data/queries";
 import type { SystemRole } from "@/types/role";
 
-const PENDING_EMPLOYEE_STATUSES = ["Not Started", "Self-Assessment In Progress", "Overdue"];
+const PENDING_EMPLOYEE_STATUSES = ["Not Started", "Self-Assessment", "Overdue"];
 
 export function computePrimaryActionCount(role: SystemRole, employeeId: string, rows: ReviewRow[]): number {
   if (role === "hr") return rows.filter((r) => r.status === "Overdue").length;

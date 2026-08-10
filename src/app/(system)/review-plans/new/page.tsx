@@ -5,6 +5,7 @@ import { FiArrowLeft } from "react-icons/fi";
 import { PlanForm } from "@/app/(system)/review-plans/PlanForm";
 import { DEPARTMENTS } from "@/constants/departments";
 import { getEmployees, getReviewPlans, getReviewTemplates } from "@/data/queries";
+import { addDays } from "@/lib/date";
 import type { ReviewPlan } from "@/types/review";
 
 export default async function NewReviewPlanPage() {
@@ -15,6 +16,7 @@ export default async function NewReviewPlanPage() {
   ]);
 
   const planId = `PLAN${String(plans.length + 1).padStart(3, "0")}`;
+  const today = new Date().toISOString().slice(0, 10);
 
   const blankPlan: ReviewPlan = {
     planId,
@@ -41,8 +43,8 @@ export default async function NewReviewPlanPage() {
 
       <PlanForm
         initialPlan={blankPlan}
-        initialStart="2026-09-01"
-        initialEnd="2026-09-30"
+        initialStart={today}
+        initialEnd={addDays(today, 29)}
         mode="create"
         employees={employees}
         templates={templates}

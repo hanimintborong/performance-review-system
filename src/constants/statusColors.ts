@@ -17,13 +17,12 @@ const neutral: StatusStyle = { bg: grey[10], fg: grey[70], dot: grey[40] };
 
 export const REVIEW_STATUS_STYLE: Record<ReviewStatus, StatusStyle> = {
   "Not Started": neutral,
-  "Self-Assessment In Progress": styleOf(info),
+  "Self-Assessment": styleOf(info),
   "Employee Submitted": styleOf(info),
   "Manager Reviewing": styleOf(warning),
   "Manager Submitted": styleOf(info),
-  "Awaiting Discussion": styleOf(warning),
-  "Awaiting HR Review": styleOf(warning),
-  "Awaiting Management Review": styleOf(warning),
+  "P&C Review": styleOf(warning),
+  "Management Review": styleOf(warning),
   Finalised: styleOf(success),
   Overdue: styleOf(error),
 };

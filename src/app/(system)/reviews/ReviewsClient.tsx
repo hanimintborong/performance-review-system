@@ -1,24 +1,27 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Flex, Grid, Icon, NativeSelect, Text } from "@chakra-ui/react";
-import { FiAlertTriangle, FiBell, FiCheckCircle, FiClock } from "react-icons/fi";
+import { useSearchParams } from "next/navigation";
+import { Flex, Icon, NativeSelect, Text } from "@chakra-ui/react";
+import { FiX } from "react-icons/fi";
 
 import { reviewColumns } from "@/app/(system)/reviews/columns";
 import { AppCard } from "@/components/common/AppCard";
 import { DataTable } from "@/components/common/DataTable";
 import { SearchInput } from "@/components/common/SearchInput";
-import { StatCard } from "@/components/common/StatCard";
 import type { ReviewRow } from "@/data/queries";
+import { matchesQuickFilter, readQuickFilter } from "@/lib/reviewQuickFilter";
 import type { ReviewPlan } from "@/types/review";
 
 const ALL = "All";
 
 export function ReviewsClient({ allRows, plans }: { allRows: ReviewRow[]; plans: ReviewPlan[] }) {
+  const searchParams = useSearchParams();
   const [search, setSearch] = useState("");
   const [planId, setPlanId] = useState(ALL);
   const [department, setDepartment] = useState(ALL);
   const [statusFilter, setStatusFilter] = useState("all");
+  const [quickFilter, setQuickFilter] = useState(() => readQuickFilter(searchParams));
 
   const departments = useMemo(() => [ALL, ...new Set(allRows.map((r) => r.employee.department))], [allRows]);
 
@@ -35,15 +38,11 @@ export function ReviewsClient({ allRows, plans }: { allRows: ReviewRow[]; plans:
   const tableRows = scopedRows
     .filter((row) => {
       const matchesStatus = statusFilter === "all" || row.status === statusFilter;
+      const matchesGroup = matchesQuickFilter(row, quickFilter);
       const matchesSearch = row.employee.name.toLowerCase().includes(search.toLowerCase());
-      return matchesStatus && matchesSearch;
+      return matchesStatus && matchesGroup && matchesSearch;
     })
     .sort((a, b) => (a.deadline < b.deadline ? 1 : a.deadline > b.deadline ? -1 : 0));
-
-  const completed = scopedRows.filter((r) => r.status === "Finalised").length;
-  const overdue = scopedRows.filter((r) => r.status === "Overdue").length;
-  const pending = scopedRows.length - completed - overdue;
-  const awaitingAck = scopedRows.filter((r) => r.status === "Finalised" && !r.acknowledged).length;
 
   return (
     <Flex direction="column" gap="14px">
@@ -71,38 +70,14 @@ export function ReviewsClient({ allRows, plans }: { allRows: ReviewRow[]; plans:
             ...Array.from(statusCounts.entries()).map(([status, count]) => ({ value: status, label: `${status} (${count})` })),
           ]}
         />
-      </Flex>
 
-      <Grid templateColumns="repeat(4, 1fr)" gap="12px">
-        <StatCard
-          label="Completed"
-          value={completed}
-          valueColor="success.70"
-          accentColor="success.50"
-          icon={<Icon as={FiCheckCircle} color="success.70" boxSize="15px" />}
-        />
-        <StatCard
-          label="Pending"
-          value={pending}
-          valueColor="warning.70"
-          accentColor="warning.50"
-          icon={<Icon as={FiClock} color="warning.70" boxSize="15px" />}
-        />
-        <StatCard
-          label="Overdue"
-          value={overdue}
-          valueColor="error.70"
-          accentColor="error.50"
-          icon={<Icon as={FiAlertTriangle} color="error.70" boxSize="15px" />}
-        />
-        <StatCard
-          label="Awaiting acknowledgement"
-          value={awaitingAck}
-          valueColor="grey.80"
-          accentColor="grey.40"
-          icon={<Icon as={FiBell} color="grey.70" boxSize="15px" />}
-        />
-      </Grid>
+        {quickFilter && (
+          <Flex align="center" gap="6px" bg="brand.10" color="brand.70" fontSize="12px" fontWeight="600" px="10px" h="34px" borderRadius="full">
+            {quickFilter.label}
+            <Icon as={FiX} boxSize="12px" cursor="pointer" onClick={() => setQuickFilter(null)} />
+          </Flex>
+        )}
+      </Flex>
 
       <AppCard>
         <Flex direction="column" gap="2px" p="16px 20px" borderBottomWidth="1px" borderColor="grey.20">

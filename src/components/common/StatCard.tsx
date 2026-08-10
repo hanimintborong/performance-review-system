@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import NextLink from "next/link";
 import { Flex, Text } from "@chakra-ui/react";
 
 import { AppCard } from "@/components/common/AppCard";
@@ -10,11 +11,18 @@ type StatCardProps = {
   valueColor?: string;
   accentColor?: string;
   icon?: ReactNode;
+  href?: string;
 };
 
-export function StatCard({ label, value, helperText, valueColor = "grey.80", accentColor, icon }: StatCardProps) {
-  return (
-    <AppCard p="16px" position="relative">
+export function StatCard({ label, value, helperText, valueColor = "grey.80", accentColor, icon, href }: StatCardProps) {
+  const content = (
+    <AppCard
+      p="16px"
+      h="100%"
+      position="relative"
+      transition="box-shadow .12s, border-color .12s"
+      {...(href ? { cursor: "pointer", _hover: { borderColor: "brand.30", boxShadow: "sm" } } : {})}
+    >
       {accentColor && <Flex position="absolute" top="0" left="0" right="0" h="3px" bg={accentColor} />}
 
       <Flex justify="space-between" align="flex-start" gap="10px">
@@ -38,5 +46,13 @@ export function StatCard({ label, value, helperText, valueColor = "grey.80", acc
         </Text>
       )}
     </AppCard>
+  );
+
+  if (!href) return content;
+
+  return (
+    <NextLink href={href} style={{ textDecoration: "none", display: "block" }}>
+      {content}
+    </NextLink>
   );
 }

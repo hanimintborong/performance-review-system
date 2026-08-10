@@ -1,12 +1,11 @@
 export type ReviewStatus =
   | "Not Started"
-  | "Self-Assessment In Progress"
+  | "Self-Assessment"
   | "Employee Submitted"
   | "Manager Reviewing"
   | "Manager Submitted"
-  | "Awaiting Discussion"
-  | "Awaiting HR Review"
-  | "Awaiting Management Review"
+  | "P&C Review"
+  | "Management Review"
   | "Finalised"
   | "Overdue";
 

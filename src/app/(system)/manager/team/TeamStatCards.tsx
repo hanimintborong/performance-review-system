@@ -1,5 +1,5 @@
 import { Flex, Grid, Icon, Text } from "@chakra-ui/react";
-import { FiAlertTriangle, FiCheckCircle, FiClock, FiMessageSquare } from "react-icons/fi";
+import { FiAlertTriangle, FiCheckCircle, FiClock, FiFileText } from "react-icons/fi";
 
 import { AppCard } from "@/components/common/AppCard";
 import { RingProgress } from "@/components/common/RingProgress";
@@ -27,7 +27,7 @@ export function TeamStatCards({ counts, total }: TeamStatCardsProps) {
       </AppCard>
 
       <StatCard label="In progress" value={counts.inProgress} valueColor="warning.70" accentColor="warning.50" icon={<Icon as={FiClock} color="warning.70" boxSize="15px" />} />
-      <StatCard label="Awaiting discussion" value={counts.awaitingDiscussion} valueColor="info.70" accentColor="info.50" icon={<Icon as={FiMessageSquare} color="info.70" boxSize="15px" />} />
+      <StatCard label="Pending HR/Mgmt review" value={counts.pendingReview} valueColor="info.70" accentColor="info.50" icon={<Icon as={FiFileText} color="info.70" boxSize="15px" />} />
       <StatCard label="Overdue" value={counts.overdue} valueColor="error.70" accentColor="error.50" icon={<Icon as={FiAlertTriangle} color="error.70" boxSize="15px" />} />
       <StatCard label="Completed" value={counts.completed} valueColor="success.70" accentColor="success.50" icon={<Icon as={FiCheckCircle} color="success.70" boxSize="15px" />} />
     </Grid>

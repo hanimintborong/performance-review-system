@@ -8,7 +8,7 @@ import { StatusBadge } from "@/components/common/StatusBadge";
 import { REVIEW_STATUS_STYLE } from "@/constants/statusColors";
 import type { ReviewRow } from "@/data/queries";
 
-const STILL_OPEN = ["Not Started", "Self-Assessment In Progress", "Overdue"];
+const STILL_OPEN = ["Not Started", "Self-Assessment", "Overdue"];
 
 export const employeeReviewColumns: DataTableColumn<ReviewRow>[] = [
   {

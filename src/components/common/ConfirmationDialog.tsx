@@ -25,14 +25,14 @@ export function ConfirmationDialog({
       <Portal>
         <Dialog.Backdrop />
         <Dialog.Positioner>
-          <Dialog.Content borderRadius="12px" p="4px">
-            <Dialog.Header>
+          <Dialog.Content borderRadius="12px">
+            <Dialog.Header p="22px 26px 6px">
               <Dialog.Title fontSize="15px" color="grey.80">{title}</Dialog.Title>
             </Dialog.Header>
-            <Dialog.Body>
+            <Dialog.Body p="10px 26px">
               <Dialog.Description fontSize="13px" color="grey.60">{description}</Dialog.Description>
             </Dialog.Body>
-            <Dialog.Footer>
+            <Dialog.Footer p="16px 26px 22px">
               <Dialog.ActionTrigger asChild>
                 <SecondaryButton>Cancel</SecondaryButton>
               </Dialog.ActionTrigger>

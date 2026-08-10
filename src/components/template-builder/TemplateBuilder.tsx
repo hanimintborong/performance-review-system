@@ -6,6 +6,7 @@ import { Flex, Tabs, Text } from "@chakra-ui/react";
 import { FiPlus } from "react-icons/fi";
 
 import { saveReviewTemplateAction } from "@/app/(system)/review-templates/reviewTemplateActions";
+import { ActivateTemplateDialog } from "@/components/template-builder/ActivateTemplateDialog";
 import { newSection } from "@/components/template-builder/newSection";
 import { SectionEditor } from "@/components/template-builder/SectionEditor";
 import { TemplateBuilderFooter } from "@/components/template-builder/TemplateBuilderFooter";
@@ -19,10 +20,25 @@ type TemplateBuilderProps = {
   mode?: "create" | "edit";
 };
 
+function sanitizeTemplate(template: ReviewTemplate): ReviewTemplate {
+  return {
+    ...template,
+    sections: template.sections.map((section) => ({
+      ...section,
+      questions: section.questions.map((question) => (
+        question.options
+          ? { ...question, options: question.options.map((o) => o.trim()).filter(Boolean) }
+          : question
+      )),
+    })),
+  };
+}
+
 export function TemplateBuilder({ initialTemplate, mode = "create" }: TemplateBuilderProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [template, setTemplate] = useState(initialTemplate);
+  const [showActivateDialog, setShowActivateDialog] = useState(false);
 
   function updateSection(index: number, section: TemplateSection) {
     setTemplate((prev) => ({ ...prev, sections: prev.sections.map((s, i) => (i === index ? section : s)) }));
@@ -37,11 +53,16 @@ export function TemplateBuilder({ initialTemplate, mode = "create" }: TemplateBu
   }
 
   function persist(status: ReviewTemplate["status"], message: string) {
-    const toSave: ReviewTemplate = { ...template, status };
+    const toSave: ReviewTemplate = sanitizeTemplate({ ...template, status });
     startTransition(async () => {
       await saveReviewTemplateAction(toSave);
       toaster.create({ title: message, description: toSave.title || "Untitled template", type: "success" });
-      router.push(`/review-templates/${toSave.templateId}`);
+
+      if (status === "Active") {
+        setShowActivateDialog(true);
+      } else {
+        router.push(`/review-templates/${toSave.templateId}`);
+      }
     });
   }
 
@@ -102,6 +123,13 @@ export function TemplateBuilder({ initialTemplate, mode = "create" }: TemplateBu
         onSaveDraft={() => persist("Inactive", "Draft saved")}
         onActivate={() => persist("Active", "Template activated")}
         loading={isPending}
+      />
+
+      <ActivateTemplateDialog
+        open={showActivateDialog}
+        templateTitle={template.title || "Untitled template"}
+        onClose={() => router.push(`/review-templates/${template.templateId}`)}
+        onCreateCycle={() => router.push("/review-plans/new")}
       />
     </Flex>
   );

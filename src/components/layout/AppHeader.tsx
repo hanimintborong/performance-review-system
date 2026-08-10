@@ -2,12 +2,10 @@
 
 import NextLink from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
 
 import { Box, Flex, IconButton, Text } from "@chakra-ui/react";
 import { FiBell, FiChevronRight } from "react-icons/fi";
 
-import { SearchInput } from "@/components/common/SearchInput";
 import { navigationByRole, pageTitleOverrides } from "@/constants/navigation";
 import { useRole } from "@/components/layout/RoleContext";
 import type { SystemRole } from "@/types/role";
@@ -25,7 +23,6 @@ function getPageTitle(pathname: string, role: SystemRole) {
 export function AppHeader() {
   const pathname = usePathname();
   const { role, notificationCount } = useRole();
-  const [search, setSearch] = useState("");
 
   const pageTitle = getPageTitle(pathname, role);
   const notificationsHref = navigationByRole[role].find((item) => item.label === "Notifications")?.href ?? "/notifications";
@@ -60,14 +57,6 @@ export function AppHeader() {
       </Box>
 
       <Flex align="center" gap="10px" flexShrink="0">
-        <SearchInput
-          placeholder="Search staff…"
-          value={search}
-          onValueChange={setSearch}
-          w="220px"
-          h="34px"
-        />
-
         <Box position="relative">
           <NextLink href={notificationsHref}>
             <IconButton

@@ -7,16 +7,20 @@ import { FiAlertTriangle, FiCheckCircle, FiClock } from "react-icons/fi";
 import { AppCard } from "@/components/common/AppCard";
 import type { ReviewRow } from "@/data/queries";
 
+function buildHref(params: Record<string, string>): string {
+  return `/reviews?${new URLSearchParams(params).toString()}`;
+}
+
 export function RequiredActions({ rows }: { rows: ReviewRow[] }) {
   const overdue = rows.filter((r) => r.status === "Overdue").length;
-  const notStarted = rows.filter((r) => r.status === "Not Started" || r.status === "Self-Assessment In Progress").length;
+  const notStarted = rows.filter((r) => r.status === "Not Started" || r.status === "Self-Assessment").length;
   const awaitingAck = rows.filter((r) => r.status === "Finalised" && !r.acknowledged).length;
 
   const actions = [
-    overdue > 0 && { text: `${overdue} review(s) overdue — remind managers`, color: "error.50" },
-    notStarted > 0 && { text: `${notStarted} employee(s) haven't started self-assessment`, color: "warning.50" },
-    awaitingAck > 0 && { text: `${awaitingAck} finalised review(s) awaiting employee acknowledgement`, color: "info.50" },
-  ].filter((a): a is { text: string; color: string } => Boolean(a));
+    overdue > 0 && { text: `${overdue} review(s) overdue — remind managers`, color: "error.50", href: buildHref({ statusGroup: "overdue" }) },
+    notStarted > 0 && { text: `${notStarted} employee(s) haven't started self-assessment`, color: "warning.50", href: buildHref({ status: "Not Started,Self-Assessment" }) },
+    awaitingAck > 0 && { text: `${awaitingAck} finalised review(s) awaiting employee acknowledgement`, color: "info.50", href: buildHref({ needsAck: "1" }) },
+  ].filter((a): a is { text: string; color: string; href: string } => Boolean(a));
 
   return (
     <AppCard p="16px 20px">
@@ -32,7 +36,7 @@ export function RequiredActions({ rows }: { rows: ReviewRow[] }) {
         {actions.map((action) => (
           <Flex key={action.text} align="center" gap="8px">
             <Icon as={action.color === "error.50" ? FiAlertTriangle : FiClock} boxSize="15px" color={action.color} flexShrink="0" />
-            <NextLink href="/reviews">
+            <NextLink href={action.href}>
               <Text fontSize="12px" color="grey.80" _hover={{ color: "brand.50" }}>{action.text}</Text>
             </NextLink>
           </Flex>

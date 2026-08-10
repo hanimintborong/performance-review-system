@@ -6,6 +6,7 @@ import { Flex, Text, Textarea } from "@chakra-ui/react";
 
 import { saveManagerDraftAction, submitManagerEvaluationAction } from "@/app/(system)/manager/reviews/[id]/evaluationActions";
 import { AppCard } from "@/components/common/AppCard";
+import { DiscussionGuidanceBanner } from "@/components/common/DiscussionGuidanceBanner";
 import { EmployeeInfoCard } from "@/components/common/EmployeeInfoCard";
 import { PrimaryButton } from "@/components/common/PrimaryButton";
 import { SecondaryButton } from "@/components/common/SecondaryButton";
@@ -17,7 +18,7 @@ import type { ReviewRow } from "@/data/queries";
 import type { ReviewResponse } from "@/types/reviewResponse";
 import type { TemplateSection } from "@/types/template";
 
-const NOT_YET_SUBMITTED = ["Not Started", "Self-Assessment In Progress", "Overdue"];
+const NOT_YET_SUBMITTED = ["Not Started", "Self-Assessment", "Overdue"];
 
 type EvaluationFormProps = {
   row: ReviewRow;
@@ -62,6 +63,8 @@ export function EvaluationForm({ row, sections, response }: EvaluationFormProps)
           <StatusBadge label={row.status} style={REVIEW_STATUS_STYLE[row.status]} />
         </Flex>
       </AppCard>
+
+      {row.status === "Manager Submitted" && <DiscussionGuidanceBanner audience="manager" />}
 
       {waitingOnEmployee ? (
         <AppCard p="24px">

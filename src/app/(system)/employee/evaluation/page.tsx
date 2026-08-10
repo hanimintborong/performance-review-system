@@ -6,7 +6,7 @@ import { AppCard } from "@/components/common/AppCard";
 import { getReviewRows } from "@/data/queries";
 import { getCurrentSystemUser } from "@/lib/currentSystemUser";
 
-const PENDING_STATUSES = ["Not Started", "Self-Assessment In Progress", "Overdue"];
+const PENDING_STATUSES = ["Not Started", "Self-Assessment", "Overdue"];
 
 export default async function EmployeeEvaluationEntryPage() {
   const systemUser = await getCurrentSystemUser();

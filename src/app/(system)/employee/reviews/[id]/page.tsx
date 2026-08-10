@@ -5,6 +5,7 @@ import { FiArrowLeft } from "react-icons/fi";
 
 import { AcknowledgeButton } from "@/app/(system)/employee/reviews/[id]/AcknowledgeButton";
 import { AppCard } from "@/components/common/AppCard";
+import { DiscussionGuidanceBanner } from "@/components/common/DiscussionGuidanceBanner";
 import { ScoreBadge } from "@/components/common/ScoreBadge";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import { ReviewFormSection } from "@/components/review-form/ReviewFormSection";
@@ -55,6 +56,8 @@ export default async function EmployeeReviewResultPage({ params }: PageProps) {
       )}
 
       {row.status === "Finalised" && !row.acknowledged && <AcknowledgeButton assignmentId={row.assignmentId} />}
+
+      {row.status === "Manager Submitted" && <DiscussionGuidanceBanner audience="employee" />}
 
       <Grid templateColumns="repeat(2, 1fr)" gap="12px">
         <AppCard p="16px 20px">

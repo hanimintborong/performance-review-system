@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { getEmployeeById, getReviewAssignmentById, getReviewPlanById, getReviewResponse, getReviewTemplateById, saveReviewAssignment, saveReviewResponse } from "@/data/queries";
-import { notify } from "@/lib/notify";
+import { notify, notifyMany } from "@/lib/notify";
 import { computeScore } from "@/lib/reviewScoring";
 import { mergeAnswers } from "@/types/reviewResponse";
 
@@ -34,23 +34,22 @@ async function persist(assignmentId: string, answers: Record<string, string>, co
         recipientName: employee.name,
         type: "manager_submitted",
         title: "Your manager has completed your evaluation",
-        message: "Awaiting finalisation.",
+        message: "It will now be reviewed by People & Culture.",
         assignmentId,
       });
     }
 
-    if (manager?.managerId) {
-      const topManagement = await getEmployeeById(manager.managerId);
-      if (topManagement) {
-        await notify({
-          recipientId: topManagement.employeeId,
-          recipientName: topManagement.name,
-          type: "ready_for_management",
-          title: `${employee?.name ?? "A review"} is ready for finalisation`,
-          message: `Evaluated by ${manager.name}.`,
-          assignmentId,
-        });
-      }
+    const discussionRecipients = [employee, manager]
+      .filter((p): p is NonNullable<typeof p> => Boolean(p))
+      .map((p) => ({ recipientId: p.employeeId, recipientName: p.name }));
+
+    if (discussionRecipients.length > 0) {
+      await notifyMany(discussionRecipients, {
+        type: "discussion_required",
+        title: "Discuss the evaluation results",
+        message: "Schedule a performance discussion outside the system before People & Culture review. This is informational only, not a blocking step.",
+        assignmentId,
+      });
     }
   } else if (assignment.status === "Employee Submitted") {
     await saveReviewAssignment({ ...assignment, status: "Manager Reviewing" });

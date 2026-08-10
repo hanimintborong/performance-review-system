@@ -47,8 +47,8 @@ export function ImportEmployeesDialog() {
         <Dialog.Backdrop />
         <Dialog.Positioner>
           <Dialog.Content borderRadius="12px" maxW="480px">
-            <Dialog.Header><Dialog.Title fontSize="15px">Import employees from CSV</Dialog.Title></Dialog.Header>
-            <Dialog.Body>
+            <Dialog.Header p="22px 26px 6px"><Dialog.Title fontSize="15px">Import employees from CSV</Dialog.Title></Dialog.Header>
+            <Dialog.Body p="10px 26px">
               <Flex direction="column" gap="10px">
                 <Text fontSize="12px" color="grey.60">
                   Columns required: <b>name, email</b>. Optional: department, jobTitle, managerEmail, systemRole
@@ -67,7 +67,7 @@ export function ImportEmployeesDialog() {
                 )}
               </Flex>
             </Dialog.Body>
-            <Dialog.Footer>
+            <Dialog.Footer p="16px 26px 22px">
               <Dialog.ActionTrigger asChild><SecondaryButton>Cancel</SecondaryButton></Dialog.ActionTrigger>
               <PrimaryButton onClick={submit} disabled={rows.length === 0} loading={isPending}>
                 Import {rows.length || ""} employees

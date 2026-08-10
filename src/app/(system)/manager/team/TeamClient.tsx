@@ -13,7 +13,7 @@ import { SearchInput } from "@/components/common/SearchInput";
 import { toaster } from "@/components/ui/toaster";
 import type { ReviewRow } from "@/data/queries";
 
-const IN_PROGRESS_STATUSES = ["Not Started", "Self-Assessment In Progress"];
+const IN_PROGRESS_STATUSES = ["Not Started", "Self-Assessment"];
 
 export function TeamClient({ rows, planTitle }: { rows: ReviewRow[]; planTitle: string }) {
   const needsAction = rows.filter((r) => r.status === "Employee Submitted").length;

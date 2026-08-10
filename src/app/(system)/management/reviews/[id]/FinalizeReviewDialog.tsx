@@ -34,11 +34,11 @@ export function FinalizeReviewDialog({ assignmentId }: { assignmentId: string })
         <Dialog.Backdrop />
         <Dialog.Positioner>
           <Dialog.Content borderRadius="12px" maxW="440px">
-            <Dialog.Header><Dialog.Title fontSize="15px">Finalise review</Dialog.Title></Dialog.Header>
-            <Dialog.Body>
+            <Dialog.Header p="22px 26px 6px"><Dialog.Title fontSize="15px">Finalise review</Dialog.Title></Dialog.Header>
+            <Dialog.Body p="10px 26px">
               <Flex direction="column" gap="10px">
                 <Text fontSize="12px" color="grey.60">
-                  Confirms the discussion and People &amp; Culture review are done. This locks the review as Finalised.
+                  Confirms the People &amp; Culture review is complete. This locks the review as Finalised.
                 </Text>
 
                 <Flex direction="column" gap="4px">
@@ -57,7 +57,7 @@ export function FinalizeReviewDialog({ assignmentId }: { assignmentId: string })
                 </Flex>
               </Flex>
             </Dialog.Body>
-            <Dialog.Footer>
+            <Dialog.Footer p="16px 26px 22px">
               <Dialog.ActionTrigger asChild><SecondaryButton>Cancel</SecondaryButton></Dialog.ActionTrigger>
               <PrimaryButton onClick={submit} loading={isPending}>Confirm finalise</PrimaryButton>
             </Dialog.Footer>

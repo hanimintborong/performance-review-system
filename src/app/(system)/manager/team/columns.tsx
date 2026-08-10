@@ -9,7 +9,7 @@ import type { ReviewRow } from "@/data/queries";
 import { deadlineLabel } from "@/lib/deadlineLabel";
 import { STATUS_PROGRESS } from "@/lib/teamProgressStats";
 
-const WAITING = ["Not Started", "Self-Assessment In Progress", "Overdue"];
+const WAITING = ["Not Started", "Self-Assessment", "Overdue"];
 
 function actionLabel(status: ReviewRow["status"]) {
   if (WAITING.includes(status)) return "Send reminder";

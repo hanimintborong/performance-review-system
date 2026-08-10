@@ -1,5 +1,6 @@
-import { Flex, Input, Text } from "@chakra-ui/react";
+import { Flex, NumberInput, Text } from "@chakra-ui/react";
 
+import { OptionsListEditor } from "@/components/template-builder/OptionsListEditor";
 import type { QuestionTypeMeta } from "@/constants/questionTypes";
 import type { TemplateQuestion } from "@/types/template";
 
@@ -11,51 +12,54 @@ type QuestionTypeFieldsProps = {
 
 export function QuestionTypeFields({ meta, question, onChange }: QuestionTypeFieldsProps) {
   return (
-    <Flex gap="14px" align="center" pl="2px">
+    <Flex gap="18px" align="start" pl="2px" flexWrap="wrap">
       {meta.hasWeightage && (
-        <Flex align="center" gap="6px">
+        <Flex direction="column" gap="4px">
           <Text fontSize="11px" color="grey.60">
             {question.type === "okr_list" ? "Total weightage budget %" : "Weightage %"}
           </Text>
-          <Input
-            type="number"
+          <NumberInput.Root
+            value={String(question.weightage ?? 0)}
             min={0}
             max={100}
-            value={question.weightage ?? 0}
-            onChange={(e) => onChange({ ...question, weightage: Number(e.target.value) })}
-            bg="white"
+            onValueChange={(e) => onChange({ ...question, weightage: e.valueAsNumber })}
             size="xs"
-            w="70px"
-          />
+            w="90px"
+          >
+            <NumberInput.Input bg="white" ps="10px" />
+            <NumberInput.Control>
+              <NumberInput.IncrementTrigger />
+              <NumberInput.DecrementTrigger />
+            </NumberInput.Control>
+          </NumberInput.Root>
         </Flex>
       )}
 
       {meta.hasRatingScale && (
-        <Flex align="center" gap="6px">
+        <Flex direction="column" gap="4px">
           <Text fontSize="11px" color="grey.60">Scale max</Text>
-          <Input
-            type="number"
+          <NumberInput.Root
+            value={String(question.ratingScaleMax ?? 5)}
             min={2}
             max={10}
-            value={question.ratingScaleMax ?? 5}
-            onChange={(e) => onChange({ ...question, ratingScaleMax: Number(e.target.value) })}
-            bg="white"
+            onValueChange={(e) => onChange({ ...question, ratingScaleMax: e.valueAsNumber })}
             size="xs"
-            w="60px"
-          />
+            w="80px"
+          >
+            <NumberInput.Input bg="white" ps="10px" />
+            <NumberInput.Control>
+              <NumberInput.IncrementTrigger />
+              <NumberInput.DecrementTrigger />
+            </NumberInput.Control>
+          </NumberInput.Root>
         </Flex>
       )}
 
       {meta.hasOptions && (
-        <Flex align="center" gap="6px" flex="1">
-          <Text fontSize="11px" color="grey.60" flexShrink="0">Options (comma-separated)</Text>
-          <Input
-            value={(question.options ?? []).join(", ")}
-            onChange={(e) => onChange({ ...question, options: e.target.value.split(",").map((o) => o.trim()).filter(Boolean) })}
-            bg="white"
-            size="xs"
-          />
-        </Flex>
+        <OptionsListEditor
+          options={question.options ?? []}
+          onChange={(options) => onChange({ ...question, options })}
+        />
       )}
     </Flex>
   );

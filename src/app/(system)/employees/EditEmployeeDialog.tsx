@@ -46,8 +46,8 @@ export function EditEmployeeDialog({ employee, employees, onOpenChange }: EditEm
         <Dialog.Backdrop />
         <Dialog.Positioner>
           <Dialog.Content borderRadius="12px" maxW="440px">
-            <Dialog.Header><Dialog.Title fontSize="15px">Edit employee</Dialog.Title></Dialog.Header>
-            <Dialog.Body>
+            <Dialog.Header p="22px 26px 6px"><Dialog.Title fontSize="15px">Edit employee</Dialog.Title></Dialog.Header>
+            <Dialog.Body p="10px 26px">
               <Flex direction="column" gap="10px">
                 <Field label="Full name">
                   <Input size="sm" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
@@ -88,7 +88,7 @@ export function EditEmployeeDialog({ employee, employees, onOpenChange }: EditEm
                 </Text>
               </Flex>
             </Dialog.Body>
-            <Dialog.Footer>
+            <Dialog.Footer p="16px 26px 22px">
               <Dialog.ActionTrigger asChild><SecondaryButton>Cancel</SecondaryButton></Dialog.ActionTrigger>
               <PrimaryButton onClick={submit} disabled={!form.name.trim() || !form.email.trim()} loading={isPending}>
                 Save changes

@@ -87,20 +87,20 @@ export function PlanForm({ initialPlan, initialStart, initialEnd, mode, employee
 
       <Grid templateColumns="1fr 1fr" gap="14px 16px" p="16px 20px">
         <Field label="Cycle name" span={2}>
-          <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. Year-End Review 2026" size="sm" />
+          <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. Year-End Review 2026" size="sm" px="12px" />
         </Field>
 
         <Field label="Start date">
-          <Input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} size="sm" />
+          <Input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} size="sm" px="12px" />
         </Field>
 
         <Field label="End date">
-          <Input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} size="sm" />
+          <Input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} size="sm" px="12px" />
         </Field>
 
         <Field label="Form template" span={2}>
           <NativeSelect.Root size="sm">
-            <NativeSelect.Field value={templateId} onChange={(e) => setTemplateId(e.target.value)}>
+            <NativeSelect.Field value={templateId} onChange={(e) => setTemplateId(e.target.value)} pl="12px" pr="30px">
               {activeTemplates.map((t) => <option key={t.templateId} value={t.templateId}>{t.title}</option>)}
             </NativeSelect.Field>
             <NativeSelect.Indicator />
