@@ -19,19 +19,20 @@ export function ReviewFormSection({ section, answers, onAnswerChange, editableRe
       <Text fontSize="14px" fontWeight="700" color="brand.70" mb="2px">{section.title}</Text>
       {section.description && <Text fontSize="12px" color="grey.60" mb="10px">{section.description}</Text>}
 
-      <Flex direction="column" gap="14px" mt="10px">
+      <Flex direction="column" gap="10px" mt="10px">
         {section.questions.map((question) => {
           const isMultiRespondent = MULTI_RESPONDENT_QUESTION_TYPES.includes(question.type);
           const editable = isMultiRespondent ? Boolean(editableRespondent) : editableRespondent === question.respondent;
           return (
-            <QuestionAnswerField
-              key={question.questionId}
-              question={question}
-              value={answers[question.questionId] ?? ""}
-              readOnly={!editable}
-              editableRespondent={isMultiRespondent ? editableRespondent : undefined}
-              onChange={editable ? (v) => onAnswerChange?.(question.questionId, v) : undefined}
-            />
+            <Flex key={question.questionId} direction="column" p="14px 16px" bg="white" borderWidth="1px" borderColor="grey.20" borderRadius="10px">
+              <QuestionAnswerField
+                question={question}
+                value={answers[question.questionId] ?? ""}
+                readOnly={!editable}
+                editableRespondent={isMultiRespondent ? editableRespondent : undefined}
+                onChange={editable ? (v) => onAnswerChange?.(question.questionId, v) : undefined}
+              />
+            </Flex>
           );
         })}
       </Flex>
