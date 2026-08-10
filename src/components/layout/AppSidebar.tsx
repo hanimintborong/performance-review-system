@@ -16,7 +16,7 @@ import { ROLE_META } from "@/types/role";
 
 export function AppSidebar() {
   const pathname = usePathname();
-  const { role, name, jobTitle } = useRole();
+  const { role, name, jobTitle, notificationCount } = useRole();
 
   const navigationItems = navigationByRole[role];
   const roleLabel = ROLE_META[role].label;
@@ -54,6 +54,7 @@ export function AppSidebar() {
       <VStack align="stretch" gap="2px" flex="1">
         {navigationItems.map((item) => {
           const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
+          const displayCount = item.label === "Notifications" ? notificationCount : item.count;
 
           return (
             <NextLink key={item.href} href={item.href} prefetch={false} style={{ textDecoration: "none" }}>
@@ -74,7 +75,7 @@ export function AppSidebar() {
                   {item.label}
                 </Text>
 
-                {item.count !== undefined && (
+                {displayCount !== undefined && displayCount > 0 && (
                   <Flex
                     minW="20px"
                     h="17px"
@@ -87,7 +88,7 @@ export function AppSidebar() {
                     fontSize="11px"
                     fontWeight="700"
                   >
-                    {item.count}
+                    {displayCount}
                   </Flex>
                 )}
               </Flex>

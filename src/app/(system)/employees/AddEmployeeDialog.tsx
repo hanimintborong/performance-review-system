@@ -47,7 +47,7 @@ export function AddEmployeeDialog({ employees }: { employees: Employee[] }) {
                   <Input size="sm" type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="name@borong.com" />
                 </Field>
                 <Field label="Job title">
-                  <Input size="sm" value={form.jobTitle} onChange={(e) => setForm({ ...form, jobTitle: e.target.value })} placeholder="e.g. Procurement Executive" />
+                  <Input size="sm" value={form.jobTitle} onChange={(e) => setForm({ ...form, jobTitle: e.target.value })} placeholder="e.g. Revenue Executive" />
                 </Field>
                 <Field label="Department">
                   <NativeSelect.Root size="sm">

@@ -3,7 +3,12 @@ export type NotificationRuleType =
   | "upcoming_deadline"
   | "pending_manager_review"
   | "overdue"
-  | "acknowledgement_reminder";
+  | "acknowledgement_reminder"
+  | "manager_submitted"
+  | "discussion_required"
+  | "review_finalised"
+  | "ready_for_management"
+  | "cycle_completed";
 
 export type NotificationChannel = "in_system" | "email" | "whatsapp";
 export type NotificationSendTo = "employee" | "manager" | "hr" | "employee_and_manager";
@@ -29,4 +34,15 @@ export type NotificationHistoryEntry = {
   channel: NotificationChannel;
   sentAt: string;
   delivered: boolean;
+};
+
+export type Notification = {
+  notificationId: string;
+  recipientId: string;
+  type: NotificationRuleType;
+  title: string;
+  message: string;
+  assignmentId: string | null;
+  read: boolean;
+  createdAt: string;
 };

@@ -2,7 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 
-import { getReviewAssignmentById, getReviewPlanById, getReviewResponse, getReviewTemplateById, saveReviewAssignment, saveReviewResponse } from "@/data/queries";
+import { getEmployeeById, getReviewAssignmentById, getReviewPlanById, getReviewResponse, getReviewTemplateById, saveReviewAssignment, saveReviewResponse } from "@/data/queries";
+import { notify } from "@/lib/notify";
 import { computeScore } from "@/lib/reviewScoring";
 import { findOkrWeightageIssues } from "@/lib/reviewValidation";
 import { mergeAnswers } from "@/types/reviewResponse";
@@ -31,6 +32,18 @@ async function persist(assignmentId: string, answers: Record<string, string>, co
   if (submit) {
     const score = template ? computeScore(template.sections, mergedAnswers, "employee") : null;
     await saveReviewAssignment({ ...assignment, employeeScore: score, status: "Employee Submitted" });
+
+    const [employee, manager] = await Promise.all([getEmployeeById(assignment.employeeId), getEmployeeById(assignment.managerId)]);
+    if (manager) {
+      await notify({
+        recipientId: manager.employeeId,
+        recipientName: manager.name,
+        type: "pending_manager_review",
+        title: `${employee?.name ?? "An employee"} submitted their self-assessment`,
+        message: "Ready for your evaluation.",
+        assignmentId,
+      });
+    }
   } else if (assignment.status === "Not Started") {
     await saveReviewAssignment({ ...assignment, status: "Self-Assessment In Progress" });
   }
@@ -40,6 +53,7 @@ async function persist(assignmentId: string, answers: Record<string, string>, co
   revalidatePath(`/employee/evaluation/${assignmentId}`);
   revalidatePath("/reviews");
   revalidatePath("/dashboard");
+  revalidatePath("/manager/notifications");
 }
 
 export async function saveSelfAssessmentDraftAction(assignmentId: string, answers: Record<string, string>, comment: string) {

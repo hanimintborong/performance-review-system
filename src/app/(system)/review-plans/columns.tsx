@@ -1,14 +1,25 @@
 import NextLink from "next/link";
 
-import { Flex, Text } from "@chakra-ui/react";
+import { Flex, Menu, Portal, Text } from "@chakra-ui/react";
+import { FiArchive, FiCopy, FiEdit3, FiMoreHorizontal, FiPlay, FiTrash2 } from "react-icons/fi";
 
 import type { DataTableColumn } from "@/components/common/DataTableRow";
+import { MenuAction } from "@/components/common/MenuAction";
 import { SecondaryButton } from "@/components/common/SecondaryButton";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import { PLAN_STATUS_STYLE } from "@/constants/statusColors";
 import type { ReviewPlanRow } from "@/data/queries";
 
-export const planColumns: DataTableColumn<ReviewPlanRow>[] = [
+type PlanColumnsOptions = {
+  onEdit: (plan: ReviewPlanRow) => void;
+  onDuplicate: (plan: ReviewPlanRow) => void;
+  onToggleStatus: (plan: ReviewPlanRow) => void;
+  onDelete: (plan: ReviewPlanRow) => void;
+};
+
+export const getPlanColumns = (
+  { onEdit, onDuplicate, onToggleStatus, onDelete }: PlanColumnsOptions,
+): DataTableColumn<ReviewPlanRow>[] => [
   {
     key: "title",
     label: "Cycle",
@@ -38,9 +49,39 @@ export const planColumns: DataTableColumn<ReviewPlanRow>[] = [
         <NextLink href={`/review-plans/${plan.planId}`}>
           <SecondaryButton h="30px" px="12px">View</SecondaryButton>
         </NextLink>
-        <NextLink href={`/review-plans/${plan.planId}/edit`}>
-          <SecondaryButton h="30px" px="12px">Edit</SecondaryButton>
-        </NextLink>
+
+        <Menu.Root>
+          <Menu.Trigger asChild>
+            <SecondaryButton h="30px" px="8px" aria-label="More actions"><FiMoreHorizontal /></SecondaryButton>
+          </Menu.Trigger>
+          <Portal>
+            <Menu.Positioner>
+              <Menu.Content
+                fontSize="13px"
+                minW="170px"
+                borderRadius="10px"
+                borderWidth="1px"
+                borderColor="grey.20"
+                boxShadow="0 10px 28px rgba(20,16,40,0.14)"
+                p="6px"
+              >
+                <MenuAction icon={<FiEdit3 size={14} />} onSelect={() => onEdit(plan)} value="edit">Edit</MenuAction>
+                <MenuAction icon={<FiCopy size={14} />} onSelect={() => onDuplicate(plan)} value="duplicate">Duplicate</MenuAction>
+                <MenuAction
+                  icon={plan.status === "Archived" ? <FiPlay size={14} /> : <FiArchive size={14} />}
+                  onSelect={() => onToggleStatus(plan)}
+                  value="toggle"
+                >
+                  {plan.status === "Archived" ? "Activate" : "Archive"}
+                </MenuAction>
+                <Menu.Separator my="4px" borderColor="grey.20" />
+                <MenuAction icon={<FiTrash2 size={14} />} onSelect={() => onDelete(plan)} value="delete" tone="danger">
+                  Delete
+                </MenuAction>
+              </Menu.Content>
+            </Menu.Positioner>
+          </Portal>
+        </Menu.Root>
       </Flex>
     ),
   },

@@ -101,7 +101,7 @@ export const mockReviewTemplates: ReviewTemplate[] = [
     templateId: "TPL003",
     title: "Probation Review (3-Month)",
     description: "Shortened review for staff still within their probation period.",
-    assignedDepartments: ["Procurement", "Engineering"],
+    assignedDepartments: ["Revenue", "Engineering"],
     status: "Inactive",
     sections: [
       {
@@ -126,7 +126,7 @@ export const mockReviewTemplates: ReviewTemplate[] = [
     templateId: "TPL004",
     title: "Sales Incentive Review",
     description: "Sales-specific KPI template scoring quota attainment and pipeline quality.",
-    assignedDepartments: ["Sales & Partnerships"],
+    assignedDepartments: ["Revenue"],
     status: "Inactive",
     sections: [
       {

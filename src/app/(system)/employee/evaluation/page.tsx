@@ -1,11 +1,8 @@
 import { redirect } from "next/navigation";
-import NextLink from "next/link";
 import { Flex, Text } from "@chakra-ui/react";
 
+import { SelfAssessmentTable } from "@/app/(system)/employee/evaluation/SelfAssessmentTable";
 import { AppCard } from "@/components/common/AppCard";
-import { PrimaryButton } from "@/components/common/PrimaryButton";
-import { StatusBadge } from "@/components/common/StatusBadge";
-import { REVIEW_STATUS_STYLE } from "@/constants/statusColors";
 import { getReviewRows } from "@/data/queries";
 import { getCurrentSystemUser } from "@/lib/currentSystemUser";
 
@@ -34,29 +31,5 @@ export default async function EmployeeEvaluationEntryPage() {
     );
   }
 
-  return (
-    <Flex direction="column" gap="14px">
-      <AppCard p="16px 20px">
-        <Text fontSize="15px" fontWeight="700" color="grey.80">You have {pendingRows.length} self-assessments to complete</Text>
-        <Text fontSize="12px" color="grey.60" mt="2px">Pick one to get started.</Text>
-      </AppCard>
-
-      {pendingRows.map((row) => (
-        <AppCard key={row.assignmentId} p="16px 20px">
-          <Flex align="center" justify="space-between" flexWrap="wrap" gap="10px">
-            <Flex direction="column" gap="4px">
-              <Text fontSize="14px" fontWeight="700" color="grey.80">{row.planTitle}</Text>
-              <Text fontSize="12px" color="grey.60">Deadline: {row.deadline}</Text>
-            </Flex>
-            <Flex align="center" gap="10px">
-              <StatusBadge label={row.status} style={REVIEW_STATUS_STYLE[row.status]} />
-              <NextLink href={`/employee/evaluation/${row.assignmentId}`}>
-                <PrimaryButton>{row.status === "Not Started" ? "Start" : "Continue"}</PrimaryButton>
-              </NextLink>
-            </Flex>
-          </Flex>
-        </AppCard>
-      ))}
-    </Flex>
-  );
+  return <SelfAssessmentTable rows={pendingRows} />;
 }

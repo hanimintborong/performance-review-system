@@ -15,7 +15,9 @@ import { AppCard } from "@/components/common/AppCard";
 import { ConfirmationDialog } from "@/components/common/ConfirmationDialog";
 import { DataTable } from "@/components/common/DataTable";
 import { PrimaryButton } from "@/components/common/PrimaryButton";
+import { NotificationRowList } from "@/components/notifications/NotificationRowList";
 import { toaster } from "@/components/ui/toaster";
+import type { NotificationView } from "@/lib/notificationView";
 import type { NotificationHistoryEntry, NotificationRule } from "@/types/notification";
 import type { ReviewPlan } from "@/types/review";
 
@@ -27,9 +29,10 @@ type NotificationsClientProps = {
   rules: NotificationRuleRow[];
   history: NotificationHistoryEntry[];
   plans: ReviewPlan[];
+  alerts: NotificationView[];
 };
 
-export function NotificationsClient({ rules, history, plans }: NotificationsClientProps) {
+export function NotificationsClient({ rules, history, plans, alerts }: NotificationsClientProps) {
   const [, startTransition] = useTransition();
   const [editingRule, setEditingRule] = useState<NotificationRule | null>(null);
   const [pendingDelete, setPendingDelete] = useState<NotificationRuleRow | null>(null);
@@ -58,9 +61,10 @@ export function NotificationsClient({ rules, history, plans }: NotificationsClie
         <Flex align="center" justify="space-between" p="16px 20px" borderBottomWidth="1px" borderColor="grey.20" flexWrap="wrap" gap="10px">
           <Flex direction="column" gap="6px">
             <Text fontSize="15px" fontWeight="700" color="grey.80">Notification & Reminder</Text>
-            <Tabs.List>
+            <Tabs.List gap="20px">
               <Tabs.Trigger value="rules">Rules</Tabs.Trigger>
               <Tabs.Trigger value="history">Notification history</Tabs.Trigger>
+              <Tabs.Trigger value="alerts">Alerts ({alerts.filter((a) => !a.read).length})</Tabs.Trigger>
             </Tabs.List>
           </Flex>
 
@@ -73,6 +77,10 @@ export function NotificationsClient({ rules, history, plans }: NotificationsClie
 
         <Tabs.Content value="history" p="0">
           <DataTable columns={historyColumns} rows={history} rowKey={(h) => h.historyId} emptyMessage="No notifications sent yet." />
+        </Tabs.Content>
+
+        <Tabs.Content value="alerts" p="0">
+          <NotificationRowList items={alerts} />
         </Tabs.Content>
       </Tabs.Root>
 

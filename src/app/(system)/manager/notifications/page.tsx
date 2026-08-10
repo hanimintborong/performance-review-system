@@ -1,12 +1,29 @@
-import { Heading, Text, VStack } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 
-export default function ManagerNotificationsPage() {
+import { NotificationInbox } from "@/components/notifications/NotificationInbox";
+import { getNotificationsForRecipient, getReviewRows } from "@/data/queries";
+import { getCurrentSystemUser } from "@/lib/currentSystemUser";
+import { groupNotifications } from "@/lib/groupNotifications";
+import { computeDeadlineNotifications, mergeNotifications } from "@/lib/notificationFeed";
+
+export default async function ManagerNotificationsPage() {
+  const systemUser = await getCurrentSystemUser();
+  if (!systemUser) return null;
+
+  const [stored, allRows] = await Promise.all([
+    getNotificationsForRecipient(systemUser.employeeId),
+    getReviewRows(),
+  ]);
+
+  const teamRows = allRows.filter((r) => r.managerId === systemUser.employeeId);
+  const statusByAssignment = new Map(teamRows.map((r) => [r.assignmentId, r.status]));
+
+  const merged = mergeNotifications(stored, computeDeadlineNotifications(teamRows, systemUser.employeeId));
+  const items = groupNotifications(merged, "manager", statusByAssignment);
+
   return (
-    <VStack align="start" gap="2">
-      <Heading size="lg">Notifications</Heading>
-      <Text color="gray.600">
-        Your review and WFH notifications will appear here once this feed is wired up.
-      </Text>
-    </VStack>
+    <Flex direction="column" gap="14px">
+      <NotificationInbox title="Notifications" description="Team review alerts" items={items} />
+    </Flex>
   );
 }

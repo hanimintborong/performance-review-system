@@ -45,6 +45,17 @@ export default async function EmployeeReviewResultPage({ params }: PageProps) {
         </Flex>
       </AppCard>
 
+      {row.status === "Finalised" && row.finalOutcome && (
+        <AppCard p="16px 20px" bg="success.10" borderColor="success.50">
+          <Text fontSize="12px" fontWeight="700" color="success.70" mb="4px">
+            Outcome: {row.finalOutcome}
+          </Text>
+          {row.finalOutcomeNotes && <Text fontSize="13px" color="grey.70">{row.finalOutcomeNotes}</Text>}
+        </AppCard>
+      )}
+
+      {row.status === "Finalised" && !row.acknowledged && <AcknowledgeButton assignmentId={row.assignmentId} />}
+
       <Grid templateColumns="repeat(2, 1fr)" gap="12px">
         <AppCard p="16px 20px">
           <Text fontSize="12px" fontWeight="600" color="grey.60" mb="8px">Your self-score</Text>
@@ -73,17 +84,6 @@ export default async function EmployeeReviewResultPage({ params }: PageProps) {
           <Text fontSize="13px" color="grey.70">{response.managerComment}</Text>
         </AppCard>
       )}
-
-      {row.status === "Finalised" && row.finalOutcome && (
-        <AppCard p="16px 20px" bg="success.10" borderColor="success.50">
-          <Text fontSize="12px" fontWeight="700" color="success.70" mb="4px">
-            Outcome: {row.finalOutcome}
-          </Text>
-          {row.finalOutcomeNotes && <Text fontSize="13px" color="grey.70">{row.finalOutcomeNotes}</Text>}
-        </AppCard>
-      )}
-
-      {row.status === "Finalised" && !row.acknowledged && <AcknowledgeButton assignmentId={row.assignmentId} />}
     </Flex>
   );
 }

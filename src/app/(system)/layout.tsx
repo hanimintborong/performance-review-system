@@ -6,6 +6,7 @@ import { AppHeader } from "@/components/layout/AppHeader";
 import { AppSidebar } from "@/components/layout/AppSidebar";
 import { RoleProvider } from "@/components/layout/RoleContext";
 import { canvas } from "@/constants/colors";
+import { getNotificationsForRecipient } from "@/data/queries";
 import { getCurrentSystemUser } from "@/lib/currentSystemUser";
 
 export default async function SystemLayout({
@@ -25,6 +26,9 @@ export default async function SystemLayout({
     redirect("/pending-access");
   }
 
+  const notifications = await getNotificationsForRecipient(systemUser.employeeId);
+  const notificationCount = notifications.filter((n) => !n.read).length;
+
   return (
     <RoleProvider
       value={{
@@ -32,6 +36,7 @@ export default async function SystemLayout({
         employeeId: systemUser.employeeId,
         name: systemUser.name,
         jobTitle: "",
+        notificationCount,
       }}
     >
       <Box minH="100vh" bg={canvas}>

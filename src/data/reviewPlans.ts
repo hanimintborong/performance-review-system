@@ -43,6 +43,15 @@ export async function saveReviewPlan(
     .set(plan);
 }
 
+export async function deleteReviewPlan(
+  planId: string,
+): Promise<void> {
+  await getDb()
+    .collection(COLLECTION)
+    .doc(planId)
+    .delete();
+}
+
 export type ReviewPlanRow = ReviewPlan & {
   templateTitle: string;
 };

@@ -22,13 +22,13 @@ export default async function RolesAccessPage() {
 
   return (
     <Flex direction="column" gap="14px">
+      <UsersSection users={userRows} employees={employees} />
+
       <AppCard p="16px 20px">
         <Text fontSize="15px" fontWeight="700" color="grey.80" mb="4px">Permission matrix</Text>
         <Text fontSize="12px" color="grey.60" mb="12px">What each role can see and do across the system.</Text>
         <PermissionMatrix />
       </AppCard>
-
-      <UsersSection users={userRows} employees={employees} />
     </Flex>
   );
 }

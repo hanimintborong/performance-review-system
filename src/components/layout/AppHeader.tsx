@@ -1,5 +1,6 @@
 "use client";
 
+import NextLink from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
@@ -23,10 +24,11 @@ function getPageTitle(pathname: string, role: SystemRole) {
 
 export function AppHeader() {
   const pathname = usePathname();
-  const { role } = useRole();
+  const { role, notificationCount } = useRole();
   const [search, setSearch] = useState("");
 
   const pageTitle = getPageTitle(pathname, role);
+  const notificationsHref = navigationByRole[role].find((item) => item.label === "Notifications")?.href ?? "/notifications";
 
   return (
     <Flex
@@ -67,19 +69,23 @@ export function AppHeader() {
         />
 
         <Box position="relative">
-          <IconButton
-            aria-label="View notifications"
-            variant="outline"
-            borderColor="grey.20"
-            borderRadius="8px"
-            w="36px"
-            h="36px"
-            color="grey.70"
-          >
-            <FiBell size={17} />
-          </IconButton>
+          <NextLink href={notificationsHref}>
+            <IconButton
+              aria-label="View notifications"
+              variant="outline"
+              borderColor="grey.20"
+              borderRadius="8px"
+              w="36px"
+              h="36px"
+              color="grey.70"
+            >
+              <FiBell size={17} />
+            </IconButton>
+          </NextLink>
 
-          <Box position="absolute" top="6px" right="7px" w="8px" h="8px" borderRadius="full" bg="error.50" borderWidth="1.5px" borderColor="white" />
+          {notificationCount > 0 && (
+            <Box position="absolute" top="6px" right="7px" w="8px" h="8px" borderRadius="full" bg="error.50" borderWidth="1.5px" borderColor="white" />
+          )}
         </Box>
       </Flex>
     </Flex>

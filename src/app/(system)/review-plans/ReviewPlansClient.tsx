@@ -1,18 +1,25 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import NextLink from "next/link";
 import { Flex, Text } from "@chakra-ui/react";
 
-import { planColumns } from "@/app/(system)/review-plans/columns";
+import { getPlanColumns } from "@/app/(system)/review-plans/columns";
+import { deletePlanAction, duplicatePlanAction, toggleReviewPlanStatusAction } from "@/app/(system)/review-plans/reviewPlanActions";
 import { AppCard } from "@/components/common/AppCard";
+import { ConfirmationDialog } from "@/components/common/ConfirmationDialog";
 import { DataTable } from "@/components/common/DataTable";
 import { FilterBar, type FilterOption } from "@/components/common/FilterBar";
 import { PrimaryButton } from "@/components/common/PrimaryButton";
+import { toaster } from "@/components/ui/toaster";
 import type { ReviewPlanRow } from "@/data/queries";
 
 export function ReviewPlansClient({ plans }: { plans: ReviewPlanRow[] }) {
+  const router = useRouter();
+  const [, startTransition] = useTransition();
   const [statusFilter, setStatusFilter] = useState("all");
+  const [pendingDelete, setPendingDelete] = useState<ReviewPlanRow | null>(null);
 
   const statusOptions: FilterOption[] = useMemo(() => {
     const counts = new Map<string, number>();
@@ -25,6 +32,23 @@ export function ReviewPlansClient({ plans }: { plans: ReviewPlanRow[] }) {
   }, [plans]);
 
   const rows = plans.filter((plan) => statusFilter === "all" || plan.status === statusFilter);
+
+  const columns = getPlanColumns({
+    onEdit: (plan) => router.push(`/review-plans/${plan.planId}/edit`),
+    onDuplicate: (plan) => {
+      startTransition(async () => {
+        const copy = await duplicatePlanAction(plan.planId);
+        if (copy) toaster.create({ title: "Cycle duplicated", description: copy.title, type: "success" });
+      });
+    },
+    onToggleStatus: (plan) => {
+      startTransition(async () => {
+        const nextStatus = await toggleReviewPlanStatusAction(plan.planId);
+        if (nextStatus) toaster.create({ title: `Cycle ${nextStatus.toLowerCase()}`, description: plan.title, type: "success" });
+      });
+    },
+    onDelete: setPendingDelete,
+  });
 
   return (
     <AppCard>
@@ -39,7 +63,23 @@ export function ReviewPlansClient({ plans }: { plans: ReviewPlanRow[] }) {
         </NextLink>
       </Flex>
 
-      <DataTable columns={planColumns} rows={rows} rowKey={(plan) => plan.planId} emptyMessage="No review cycles match this filter." />
+      <DataTable columns={columns} rows={rows} rowKey={(plan) => plan.planId} emptyMessage="No review cycles match this filter." />
+
+      <ConfirmationDialog
+        open={pendingDelete !== null}
+        onOpenChange={(open) => !open && setPendingDelete(null)}
+        title="Delete review cycle?"
+        description={`"${pendingDelete?.title}" will be permanently removed. This cannot be undone.`}
+        confirmLabel="Delete"
+        onConfirm={() => {
+          if (!pendingDelete) return;
+          const plan = pendingDelete;
+          startTransition(async () => {
+            await deletePlanAction(plan.planId);
+            toaster.create({ title: "Cycle deleted", description: plan.title, type: "success" });
+          });
+        }}
+      />
     </AppCard>
   );
 }

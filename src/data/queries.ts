@@ -10,6 +10,7 @@ export {
   type ReviewRow,
 } from "@/data/reviewAssignments";
 export {
+  deleteReviewPlan,
   getReviewPlanById,
   getReviewPlanRows,
   getReviewPlans,
@@ -27,6 +28,9 @@ export {
   deleteNotificationRule,
   getNotificationHistory,
   getNotificationRules,
+  getNotificationsForRecipient,
+  saveNotification,
+  saveNotificationHistoryEntry,
   saveNotificationRule,
 } from "@/data/notifications";
 export { getReviewResponse, saveReviewResponse } from "@/data/reviewResponses";

@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "seed": "tsx --env-file=.env.local scripts/seed.ts",
-    "seed:management": "tsx --env-file=.env.local scripts/addManagementHierarchy.ts"
+    "seed:management": "tsx --env-file=.env.local scripts/addManagementHierarchy.ts",
+    "migrate:departments": "tsx --env-file=.env.local scripts/updateDepartments.ts"
   },
   "dependencies": {
     "@chakra-ui/react": "^3.36.1",

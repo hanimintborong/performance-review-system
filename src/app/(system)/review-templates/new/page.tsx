@@ -15,5 +15,5 @@ export default async function NewReviewTemplatePage() {
     sections: [],
   };
 
-  return <TemplateBuilder initialTemplate={blankTemplate} />;
+  return <TemplateBuilder initialTemplate={blankTemplate} mode="create" />;
 }

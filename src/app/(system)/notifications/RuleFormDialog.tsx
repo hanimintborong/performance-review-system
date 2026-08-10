@@ -1,11 +1,14 @@
 import { useState, type ReactNode } from "react";
-import { Dialog, Flex, Input, NativeSelect, Portal, Text } from "@chakra-ui/react";
+import { Dialog, Flex, NativeSelect, Portal, Text } from "@chakra-ui/react";
 
+import { WhenToSendField } from "@/app/(system)/notifications/WhenToSendField";
 import { PrimaryButton } from "@/components/common/PrimaryButton";
 import { SecondaryButton } from "@/components/common/SecondaryButton";
 import { CHANNEL_META, NOTIFICATION_TYPE_LABELS, SEND_TO_LABELS } from "@/constants/notificationTypes";
 import type { NotificationRule } from "@/types/notification";
 import type { ReviewPlan } from "@/types/review";
+
+const SELECT_STYLE = { borderRadius: "10px", pl: "14px", pr: "30px" };
 
 type RuleFormDialogProps = {
   open: boolean;
@@ -23,13 +26,13 @@ export function RuleFormDialog({ open, onOpenChange, rule, plans, onSave }: Rule
       <Portal>
         <Dialog.Backdrop />
         <Dialog.Positioner>
-          <Dialog.Content borderRadius="12px" maxW="480px">
-            <Dialog.Header><Dialog.Title fontSize="15px">Notification rule</Dialog.Title></Dialog.Header>
-            <Dialog.Body>
-              <Flex direction="column" gap="10px">
+          <Dialog.Content borderRadius="12px" maxW="500px">
+            <Dialog.Header p="22px 26px 6px"><Dialog.Title fontSize="15px">Notification rule</Dialog.Title></Dialog.Header>
+            <Dialog.Body p="10px 26px">
+              <Flex direction="column" gap="18px">
                 <Field label="Review plan">
                   <NativeSelect.Root size="sm">
-                    <NativeSelect.Field value={draft.planId} onChange={(e) => setDraft({ ...draft, planId: e.target.value })}>
+                    <NativeSelect.Field {...SELECT_STYLE} value={draft.planId} onChange={(e) => setDraft({ ...draft, planId: e.target.value })}>
                       {plans.map((p) => <option key={p.planId} value={p.planId}>{p.title}</option>)}
                     </NativeSelect.Field>
                     <NativeSelect.Indicator />
@@ -38,7 +41,7 @@ export function RuleFormDialog({ open, onOpenChange, rule, plans, onSave }: Rule
 
                 <Field label="Notification type">
                   <NativeSelect.Root size="sm">
-                    <NativeSelect.Field value={draft.type} onChange={(e) => setDraft({ ...draft, type: e.target.value as NotificationRule["type"] })}>
+                    <NativeSelect.Field {...SELECT_STYLE} value={draft.type} onChange={(e) => setDraft({ ...draft, type: e.target.value as NotificationRule["type"] })}>
                       {Object.entries(NOTIFICATION_TYPE_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
                     </NativeSelect.Field>
                     <NativeSelect.Indicator />
@@ -46,22 +49,22 @@ export function RuleFormDialog({ open, onOpenChange, rule, plans, onSave }: Rule
                 </Field>
 
                 <Field label="When to send">
-                  <Input size="sm" value={draft.whenToSend} onChange={(e) => setDraft({ ...draft, whenToSend: e.target.value })} placeholder="e.g. 3 days before deadline" />
+                  <WhenToSendField value={draft.whenToSend} onChange={(whenToSend) => setDraft({ ...draft, whenToSend })} />
                 </Field>
 
                 <Field label="Send to">
                   <NativeSelect.Root size="sm">
-                    <NativeSelect.Field value={draft.sendTo} onChange={(e) => setDraft({ ...draft, sendTo: e.target.value as NotificationRule["sendTo"] })}>
+                    <NativeSelect.Field {...SELECT_STYLE} value={draft.sendTo} onChange={(e) => setDraft({ ...draft, sendTo: e.target.value as NotificationRule["sendTo"] })}>
                       {Object.entries(SEND_TO_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
                     </NativeSelect.Field>
                     <NativeSelect.Indicator />
                   </NativeSelect.Root>
                 </Field>
 
-                <Flex gap="10px">
+                <Flex gap="14px">
                   <Field label="Repeat">
                     <NativeSelect.Root size="sm">
-                      <NativeSelect.Field value={draft.repeat} onChange={(e) => setDraft({ ...draft, repeat: e.target.value as NotificationRule["repeat"] })}>
+                      <NativeSelect.Field {...SELECT_STYLE} value={draft.repeat} onChange={(e) => setDraft({ ...draft, repeat: e.target.value as NotificationRule["repeat"] })}>
                         <option value="once">Once</option>
                         <option value="daily">Daily</option>
                         <option value="weekly">Weekly</option>
@@ -72,7 +75,7 @@ export function RuleFormDialog({ open, onOpenChange, rule, plans, onSave }: Rule
 
                   <Field label="Channel">
                     <NativeSelect.Root size="sm">
-                      <NativeSelect.Field value={draft.channel} onChange={(e) => setDraft({ ...draft, channel: e.target.value as NotificationRule["channel"] })}>
+                      <NativeSelect.Field {...SELECT_STYLE} value={draft.channel} onChange={(e) => setDraft({ ...draft, channel: e.target.value as NotificationRule["channel"] })}>
                         {Object.entries(CHANNEL_META).map(([value, meta]) => (
                           <option key={value} value={value} disabled={meta.disabled}>{meta.label}</option>
                         ))}
@@ -83,7 +86,7 @@ export function RuleFormDialog({ open, onOpenChange, rule, plans, onSave }: Rule
                 </Flex>
               </Flex>
             </Dialog.Body>
-            <Dialog.Footer>
+            <Dialog.Footer p="16px 26px 22px">
               <Dialog.ActionTrigger asChild><SecondaryButton>Cancel</SecondaryButton></Dialog.ActionTrigger>
               <PrimaryButton onClick={() => { onSave(draft); onOpenChange(false); }}>Save rule</PrimaryButton>
             </Dialog.Footer>
@@ -96,7 +99,7 @@ export function RuleFormDialog({ open, onOpenChange, rule, plans, onSave }: Rule
 
 function Field({ label, children }: { label: string; children: ReactNode }) {
   return (
-    <Flex direction="column" gap="4px" flex="1">
+    <Flex direction="column" gap="6px" flex="1">
       <Text as="label" fontSize="11px" fontWeight="700" color="grey.60">{label}</Text>
       {children}
     </Flex>

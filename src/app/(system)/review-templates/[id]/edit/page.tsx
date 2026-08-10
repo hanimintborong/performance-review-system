@@ -13,5 +13,5 @@ export default async function EditReviewTemplatePage({ params }: EditTemplatePag
 
   if (!template) notFound();
 
-  return <TemplateBuilder initialTemplate={template} />;
+  return <TemplateBuilder initialTemplate={template} mode="edit" />;
 }

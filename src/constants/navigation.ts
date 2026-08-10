@@ -1,5 +1,4 @@
 import {
-  FiBarChart2,
   FiBell,
   FiCalendar,
   FiClipboard,
@@ -21,10 +20,9 @@ export type NavigationItem = {
 export const navigationByRole: Record<SystemRole, NavigationItem[]> = {
   hr: [
     { label: "Dashboard", href: "/dashboard", icon: FiHome },
-    { label: "Reviews", href: "/reviews", icon: FiClipboard, count: 8 },
-    { label: "Cycles", href: "/review-plans", icon: FiCalendar },
     { label: "Templates", href: "/review-templates", icon: FiEdit3 },
-    { label: "Analytics", href: "/reports", icon: FiBarChart2 },
+    { label: "Cycles", href: "/review-plans", icon: FiCalendar },
+    { label: "Reviews", href: "/reviews", icon: FiClipboard, count: 8 },
     { label: "Employees", href: "/employees", icon: FiUsers },
     { label: "Roles & permissions", href: "/roles-access", icon: FiUsers },
     { label: "WFH requests", href: "/wfh", icon: FiHome, count: 3 },
@@ -33,7 +31,6 @@ export const navigationByRole: Record<SystemRole, NavigationItem[]> = {
 
   manager: [
     { label: "My team", href: "/manager/team", icon: FiUsers, count: 4 },
-    { label: "Team review progress", href: "/manager/review-progress", icon: FiBarChart2 },
     { label: "My self-assessment", href: "/employee/evaluation", icon: FiEdit3 },
     { label: "My review results", href: "/employee/reviews", icon: FiClipboard },
     { label: "WFH requests", href: "/wfh", icon: FiHome, count: 2 },
@@ -50,7 +47,7 @@ export const navigationByRole: Record<SystemRole, NavigationItem[]> = {
   topManagement: [
     { label: "Review summary", href: "/management/reviews", icon: FiClipboard },
     { label: "Managers to evaluate", href: "/manager/team", icon: FiUsers },
-    { label: "Evaluation progress", href: "/manager/review-progress", icon: FiBarChart2 },
+    { label: "Notifications", href: "/management/notifications", icon: FiBell },
   ],
 };
 
@@ -62,4 +59,5 @@ export const pageTitleOverrides: Record<string, string> = {
   "/manager/notifications": "Notifications",
   "/employee/notifications": "Notifications",
   "/management/reviews": "Review summary",
+  "/management/notifications": "Notifications",
 };

@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { generateAssignmentsForPlan } from "@/data/assignmentGeneration";
-import { getReviewPlanById, saveReviewPlan } from "@/data/queries";
+import { deleteReviewPlan, getReviewPlanById, saveReviewPlan } from "@/data/queries";
 import type { ReviewPlan } from "@/types/review";
 
 function revalidateAssignmentPaths(planId: string) {
@@ -15,6 +15,7 @@ function revalidateAssignmentPaths(planId: string) {
   revalidatePath("/employee/reviews");
   revalidatePath("/manager/team");
   revalidatePath("/manager/review-progress");
+  revalidatePath("/employee/notifications");
 }
 
 export async function saveReviewPlanAction(plan: ReviewPlan): Promise<number> {
@@ -36,4 +37,25 @@ export async function toggleReviewPlanStatusAction(planId: string): Promise<Revi
   revalidateAssignmentPaths(planId);
 
   return nextStatus;
+}
+
+export async function duplicatePlanAction(planId: string): Promise<ReviewPlan | null> {
+  const plan = await getReviewPlanById(planId);
+  if (!plan) return null;
+
+  const copy: ReviewPlan = {
+    ...plan,
+    planId: `${plan.planId}-COPY-${Math.random().toString(36).slice(2, 7)}`,
+    title: `${plan.title} (Copy)`,
+    status: "Draft",
+  };
+  await saveReviewPlan(copy);
+  revalidateAssignmentPaths(copy.planId);
+
+  return copy;
+}
+
+export async function deletePlanAction(planId: string): Promise<void> {
+  await deleteReviewPlan(planId);
+  revalidatePath("/review-plans");
 }

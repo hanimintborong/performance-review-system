@@ -14,7 +14,7 @@ export function SearchInput({
   ...rest
 }: SearchInputProps) {
   return (
-    <Flex align="center" gap="8px" px="12px" bg="grey.10" borderRadius="8px" {...rest}>
+    <Flex align="center" gap="10px" px="16px" bg="grey.10" borderRadius="10px" borderWidth="1px" borderColor="grey.20" {...rest}>
       <Box color="grey.40" flexShrink="0">
         <FiSearch size={15} />
       </Box>

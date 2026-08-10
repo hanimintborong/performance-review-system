@@ -1,9 +1,10 @@
 import NextLink from "next/link";
 
 import { Flex, Menu, Portal, Text } from "@chakra-ui/react";
-import { FiMoreHorizontal } from "react-icons/fi";
+import { FiCopy, FiEdit3, FiMoreHorizontal, FiPause, FiPlay, FiTrash2 } from "react-icons/fi";
 
 import type { DataTableColumn } from "@/components/common/DataTableRow";
+import { MenuAction } from "@/components/common/MenuAction";
 import { SecondaryButton } from "@/components/common/SecondaryButton";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import { TEMPLATE_STATUS_STYLE } from "@/constants/statusColors";
@@ -56,13 +57,28 @@ export const getTemplateColumns = (
           </Menu.Trigger>
           <Portal>
             <Menu.Positioner>
-              <Menu.Content fontSize="13px" minW="160px">
-                <Menu.Item value="edit" onSelect={() => onEdit(template)}>Edit</Menu.Item>
-                <Menu.Item value="duplicate" onSelect={() => onDuplicate(template)}>Duplicate</Menu.Item>
-                <Menu.Item value="toggle" onSelect={() => onToggleStatus(template)}>
+              <Menu.Content
+                fontSize="13px"
+                minW="170px"
+                borderRadius="10px"
+                borderWidth="1px"
+                borderColor="grey.20"
+                boxShadow="0 10px 28px rgba(20,16,40,0.14)"
+                p="6px"
+              >
+                <MenuAction icon={<FiEdit3 size={14} />} onSelect={() => onEdit(template)} value="edit">Edit</MenuAction>
+                <MenuAction icon={<FiCopy size={14} />} onSelect={() => onDuplicate(template)} value="duplicate">Duplicate</MenuAction>
+                <MenuAction
+                  icon={template.status === "Active" ? <FiPause size={14} /> : <FiPlay size={14} />}
+                  onSelect={() => onToggleStatus(template)}
+                  value="toggle"
+                >
                   {template.status === "Active" ? "Deactivate" : "Activate"}
-                </Menu.Item>
-                <Menu.Item value="delete" color="error.70" onSelect={() => onDelete(template)}>Delete</Menu.Item>
+                </MenuAction>
+                <Menu.Separator my="4px" borderColor="grey.20" />
+                <MenuAction icon={<FiTrash2 size={14} />} onSelect={() => onDelete(template)} value="delete" tone="danger">
+                  Delete
+                </MenuAction>
               </Menu.Content>
             </Menu.Positioner>
           </Portal>

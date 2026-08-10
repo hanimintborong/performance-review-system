@@ -3,12 +3,14 @@ import "server-only";
 import { cache } from "react";
 import { getDb } from "@/lib/firebaseAdmin";
 import type {
+  Notification,
   NotificationHistoryEntry,
   NotificationRule,
 } from "@/types/notification";
 
 const RULES_COLLECTION = "notificationRules";
 const HISTORY_COLLECTION = "notificationHistory";
+const INBOX_COLLECTION = "notifications";
 
 export const getNotificationRules = cache(
   async (): Promise<NotificationRule[]> => {
@@ -53,3 +55,35 @@ export const getNotificationHistory = cache(
     );
   },
 );
+
+export async function saveNotificationHistoryEntry(
+  entry: NotificationHistoryEntry,
+): Promise<void> {
+  await getDb()
+    .collection(HISTORY_COLLECTION)
+    .doc(entry.historyId)
+    .set(entry);
+}
+
+export const getNotificationsForRecipient = cache(
+  async (recipientId: string): Promise<Notification[]> => {
+    const snapshot = await getDb()
+      .collection(INBOX_COLLECTION)
+      .where("recipientId", "==", recipientId)
+      .limit(50)
+      .get();
+
+    return snapshot.docs
+      .map((doc) => doc.data() as Notification)
+      .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
+  },
+);
+
+export async function saveNotification(
+  notification: Notification,
+): Promise<void> {
+  await getDb()
+    .collection(INBOX_COLLECTION)
+    .doc(notification.notificationId)
+    .set(notification);
+}

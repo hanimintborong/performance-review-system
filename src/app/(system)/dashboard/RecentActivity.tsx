@@ -1,7 +1,7 @@
 "use client";
 
 import { Flex, Icon, Text } from "@chakra-ui/react";
-import { FiAlertTriangle, FiBell, FiCheckCircle, FiSend } from "react-icons/fi";
+import { FiAlertTriangle, FiAward, FiBell, FiCheckCircle, FiFlag, FiMessageSquare, FiSend } from "react-icons/fi";
 import type { IconType } from "react-icons";
 
 import { AppCard } from "@/components/common/AppCard";
@@ -14,6 +14,11 @@ const TYPE_ICON: Record<NotificationHistoryEntry["type"], { icon: IconType; colo
   pending_manager_review: { icon: FiSend, color: "info.50" },
   overdue: { icon: FiAlertTriangle, color: "error.50" },
   acknowledgement_reminder: { icon: FiCheckCircle, color: "success.50" },
+  manager_submitted: { icon: FiCheckCircle, color: "info.50" },
+  discussion_required: { icon: FiMessageSquare, color: "warning.50" },
+  review_finalised: { icon: FiAward, color: "success.50" },
+  ready_for_management: { icon: FiFlag, color: "brand.50" },
+  cycle_completed: { icon: FiAward, color: "success.50" },
 };
 
 export function RecentActivity({ history }: { history: NotificationHistoryEntry[] }) {

@@ -1,6 +1,7 @@
 import "server-only";
 
 import { getEmployees, getReviewAssignments, saveReviewAssignment } from "@/data/queries";
+import { notify } from "@/lib/notify";
 import type { ReviewPlan } from "@/types/review";
 
 const ASSIGNABLE_ROLES = ["employee", "manager"];
@@ -22,9 +23,11 @@ export async function generateAssignmentsForPlan(plan: ReviewPlan): Promise<numb
   );
 
   await Promise.all(
-    eligible.map((employee) =>
-      saveReviewAssignment({
-        assignmentId: `${plan.planId}-${employee.employeeId}`,
+    eligible.map(async (employee) => {
+      const assignmentId = `${plan.planId}-${employee.employeeId}`;
+
+      await saveReviewAssignment({
+        assignmentId,
         planId: plan.planId,
         employeeId: employee.employeeId,
         managerId: employee.managerId as string,
@@ -36,8 +39,17 @@ export async function generateAssignmentsForPlan(plan: ReviewPlan): Promise<numb
         finalOutcome: null,
         finalOutcomeNotes: null,
         finalizedAt: null,
-      }),
-    ),
+      });
+
+      await notify({
+        recipientId: employee.employeeId,
+        recipientName: employee.name,
+        type: "new_review",
+        title: `New review assigned: ${plan.title}`,
+        message: `Deadline: ${plan.employeeDeadline}`,
+        assignmentId,
+      });
+    }),
   );
 
   return eligible.length;
