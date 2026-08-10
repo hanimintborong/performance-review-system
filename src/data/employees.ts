@@ -1,59 +1,28 @@
 import "server-only";
 
 import { cache } from "react";
-import { getDb } from "@/lib/firebaseAdmin";
+import { eq } from "drizzle-orm";
+
+import { employees as employeesTable } from "@/db/schema";
+import { db } from "@/lib/db";
 import type { Employee } from "@/types/employee";
 
-const COLLECTION = "employees";
+export const getEmployees = cache(async (): Promise<Employee[]> => {
+  return db.select().from(employeesTable);
+});
 
-export const getEmployees = cache(
-  async (): Promise<Employee[]> => {
-    const snapshot = await getDb()
-      .collection(COLLECTION)
-      .get();
+export const getEmployeeById = cache(async (employeeId: string): Promise<Employee | undefined> => {
+  const [record] = await db.select().from(employeesTable).where(eq(employeesTable.employeeId, employeeId)).limit(1);
+  return record ?? undefined;
+});
 
-    return snapshot.docs.map(
-      (doc) => doc.data() as Employee,
-    );
-  },
-);
-
-export const getEmployeeById = cache(
-  async (
-    employeeId: string,
-  ): Promise<Employee | undefined> => {
-    const document = await getDb()
-      .collection(COLLECTION)
-      .doc(employeeId)
-      .get();
-
-    return document.exists
-      ? (document.data() as Employee)
-      : undefined;
-  },
-);
-
-export async function saveEmployee(
-  employee: Employee,
-): Promise<void> {
-  await getDb()
-    .collection(COLLECTION)
-    .doc(employee.employeeId)
-    .set(employee);
+export async function saveEmployee(employee: Employee): Promise<void> {
+  await db.insert(employeesTable).values(employee).onConflictDoUpdate({
+    target: employeesTable.employeeId,
+    set: employee,
+  });
 }
 
-export async function saveEmployees(
-  employees: Employee[],
-): Promise<void> {
-  const db = getDb();
-  const batch = db.batch();
-
-  employees.forEach((employee) => {
-    batch.set(
-      db.collection(COLLECTION).doc(employee.employeeId),
-      employee,
-    );
-  });
-
-  await batch.commit();
+export async function saveEmployees(employeesList: Employee[]): Promise<void> {
+  await Promise.all(employeesList.map(saveEmployee));
 }

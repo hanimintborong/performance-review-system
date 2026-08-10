@@ -1,79 +1,41 @@
 import "server-only";
 
 import { cache } from "react";
-import { getDb } from "@/lib/firebaseAdmin";
+import { eq } from "drizzle-orm";
+
+import { reviewPlans as reviewPlansTable } from "@/db/schema";
 import { getReviewTemplates } from "@/data/reviewTemplates";
+import { db } from "@/lib/db";
 import type { ReviewPlan } from "@/types/review";
 
-const COLLECTION = "reviewPlans";
+export const getReviewPlans = cache(async (): Promise<ReviewPlan[]> => {
+  return db.select().from(reviewPlansTable);
+});
 
-export const getReviewPlans = cache(
-  async (): Promise<ReviewPlan[]> => {
-    const snapshot = await getDb()
-      .collection(COLLECTION)
-      .get();
+export const getReviewPlanById = cache(async (planId: string): Promise<ReviewPlan | undefined> => {
+  const [record] = await db.select().from(reviewPlansTable).where(eq(reviewPlansTable.planId, planId)).limit(1);
+  return record ?? undefined;
+});
 
-    return snapshot.docs.map(
-      (doc) => doc.data() as ReviewPlan,
-    );
-  },
-);
-
-export const getReviewPlanById = cache(
-  async (
-    planId: string,
-  ): Promise<ReviewPlan | undefined> => {
-    const document = await getDb()
-      .collection(COLLECTION)
-      .doc(planId)
-      .get();
-
-    return document.exists
-      ? (document.data() as ReviewPlan)
-      : undefined;
-  },
-);
-
-export async function saveReviewPlan(
-  plan: ReviewPlan,
-): Promise<void> {
-  await getDb()
-    .collection(COLLECTION)
-    .doc(plan.planId)
-    .set(plan);
+export async function saveReviewPlan(plan: ReviewPlan): Promise<void> {
+  await db.insert(reviewPlansTable).values(plan).onConflictDoUpdate({
+    target: reviewPlansTable.planId,
+    set: plan,
+  });
 }
 
-export async function deleteReviewPlan(
-  planId: string,
-): Promise<void> {
-  await getDb()
-    .collection(COLLECTION)
-    .doc(planId)
-    .delete();
+export async function deleteReviewPlan(planId: string): Promise<void> {
+  await db.delete(reviewPlansTable).where(eq(reviewPlansTable.planId, planId));
 }
 
-export type ReviewPlanRow = ReviewPlan & {
-  templateTitle: string;
-};
+export type ReviewPlanRow = ReviewPlan & { templateTitle: string };
 
-export const getReviewPlanRows = cache(
-  async (): Promise<ReviewPlanRow[]> => {
-    const [plans, templates] = await Promise.all([
-      getReviewPlans(),
-      getReviewTemplates(),
-    ]);
+export const getReviewPlanRows = cache(async (): Promise<ReviewPlanRow[]> => {
+  const [plans, templates] = await Promise.all([getReviewPlans(), getReviewTemplates()]);
+  const titleById = new Map(templates.map((template) => [template.templateId, template.title]));
 
-    const titleById = new Map(
-      templates.map((template) => [
-        template.templateId,
-        template.title,
-      ]),
-    );
-
-    return plans.map((plan) => ({
-      ...plan,
-      templateTitle:
-        titleById.get(plan.templateId) ?? "Unassigned",
-    }));
-  },
-);
+  return plans.map((plan) => ({
+    ...plan,
+    templateTitle: titleById.get(plan.templateId) ?? "Unassigned",
+  }));
+});

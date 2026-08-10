@@ -1,49 +1,34 @@
 import "server-only";
 
 import { cache } from "react";
-import { getDb } from "@/lib/firebaseAdmin";
+import { eq } from "drizzle-orm";
+
 import { getEmployeeById, getEmployees } from "@/data/employees";
 import { getReviewPlanById, getReviewPlans } from "@/data/reviewPlans";
+import { reviewAssignments as reviewAssignmentsTable } from "@/db/schema";
+import { db } from "@/lib/db";
 import type { Employee } from "@/types/employee";
 import type { FinalOutcome, ReviewAssignment, ReviewStatus } from "@/types/review";
 
-const COLLECTION = "reviewAssignments";
+export const getReviewAssignments = cache(async (): Promise<ReviewAssignment[]> => {
+  return db.select().from(reviewAssignmentsTable);
+});
 
-export const getReviewAssignments = cache(
-  async (): Promise<ReviewAssignment[]> => {
-    const snapshot = await getDb()
-      .collection(COLLECTION)
-      .get();
-
-    return snapshot.docs.map(
-      (doc) => doc.data() as ReviewAssignment,
-    );
-  },
-);
-
-export async function saveReviewAssignment(
-  assignment: ReviewAssignment,
-): Promise<void> {
-  await getDb()
-    .collection(COLLECTION)
-    .doc(assignment.assignmentId)
-    .set(assignment);
+export async function saveReviewAssignment(assignment: ReviewAssignment): Promise<void> {
+  await db.insert(reviewAssignmentsTable).values(assignment).onConflictDoUpdate({
+    target: reviewAssignmentsTable.assignmentId,
+    set: assignment,
+  });
 }
 
-export const getReviewAssignmentById = cache(
-  async (
-    assignmentId: string,
-  ): Promise<ReviewAssignment | undefined> => {
-    const document = await getDb()
-      .collection(COLLECTION)
-      .doc(assignmentId)
-      .get();
-
-    return document.exists
-      ? (document.data() as ReviewAssignment)
-      : undefined;
-  },
-);
+export const getReviewAssignmentById = cache(async (assignmentId: string): Promise<ReviewAssignment | undefined> => {
+  const [record] = await db
+    .select()
+    .from(reviewAssignmentsTable)
+    .where(eq(reviewAssignmentsTable.assignmentId, assignmentId))
+    .limit(1);
+  return record ?? undefined;
+});
 
 export type ReviewRow = {
   assignmentId: string;
@@ -62,105 +47,62 @@ export type ReviewRow = {
   finalizedAt: string | null;
 };
 
-export const getReviewRows = cache(
-  async (): Promise<ReviewRow[]> => {
-    const [assignments, employees, plans] = await Promise.all([
-      getReviewAssignments(),
-      getEmployees(),
-      getReviewPlans(),
-    ]);
+function toReviewRow(
+  assignment: ReviewAssignment,
+  employee: Employee,
+  manager: Employee,
+  planTitle: string,
+): ReviewRow {
+  return {
+    assignmentId: assignment.assignmentId,
+    planId: assignment.planId,
+    employee,
+    managerId: assignment.managerId,
+    managerName: manager.name,
+    planTitle,
+    deadline: assignment.deadline,
+    status: assignment.status,
+    employeeScore: assignment.employeeScore,
+    managerScore: assignment.managerScore,
+    acknowledged: assignment.acknowledged,
+    finalOutcome: assignment.finalOutcome ?? null,
+    finalOutcomeNotes: assignment.finalOutcomeNotes ?? null,
+    finalizedAt: assignment.finalizedAt ?? null,
+  };
+}
 
-    const employeeById = new Map(
-      employees.map((employee) => [
-        employee.employeeId,
-        employee,
-      ]),
-    );
+export const getReviewRows = cache(async (): Promise<ReviewRow[]> => {
+  const [assignments, employees, plans] = await Promise.all([
+    getReviewAssignments(),
+    getEmployees(),
+    getReviewPlans(),
+  ]);
 
-    const planById = new Map(
-      plans.map((plan) => [
-        plan.planId,
-        plan,
-      ]),
-    );
+  const employeeById = new Map(employees.map((employee) => [employee.employeeId, employee]));
+  const planById = new Map(plans.map((plan) => [plan.planId, plan]));
 
-    return assignments
-      .map((assignment) => {
-        const employee = employeeById.get(
-          assignment.employeeId,
-        );
+  return assignments
+    .map((assignment) => {
+      const employee = employeeById.get(assignment.employeeId);
+      const manager = employeeById.get(assignment.managerId);
+      const plan = planById.get(assignment.planId);
+      if (!employee || !manager || !plan) return null;
 
-        const manager = employeeById.get(
-          assignment.managerId,
-        );
+      return toReviewRow(assignment, employee, manager, plan.title);
+    })
+    .filter((row): row is ReviewRow => row !== null);
+});
 
-        const plan = planById.get(
-          assignment.planId,
-        );
+export const getReviewRowById = cache(async (assignmentId: string): Promise<ReviewRow | undefined> => {
+  const assignment = await getReviewAssignmentById(assignmentId);
+  if (!assignment) return undefined;
 
-        if (!employee || !manager || !plan) {
-          return null;
-        }
+  const [employee, manager, plan] = await Promise.all([
+    getEmployeeById(assignment.employeeId),
+    getEmployeeById(assignment.managerId),
+    getReviewPlanById(assignment.planId),
+  ]);
+  if (!employee || !manager || !plan) return undefined;
 
-        return {
-          assignmentId: assignment.assignmentId,
-          planId: assignment.planId,
-          employee,
-          managerId: assignment.managerId,
-          managerName: manager.name,
-          planTitle: plan.title,
-          deadline: assignment.deadline,
-          status: assignment.status,
-          employeeScore: assignment.employeeScore,
-          managerScore: assignment.managerScore,
-          acknowledged: assignment.acknowledged,
-          finalOutcome: assignment.finalOutcome ?? null,
-          finalOutcomeNotes: assignment.finalOutcomeNotes ?? null,
-          finalizedAt: assignment.finalizedAt ?? null,
-        };
-      })
-      .filter(
-        (row): row is ReviewRow => row !== null,
-      );
-  },
-);
-
-export const getReviewRowById = cache(
-  async (
-    assignmentId: string,
-  ): Promise<ReviewRow | undefined> => {
-    const assignment =
-      await getReviewAssignmentById(assignmentId);
-
-    if (!assignment) {
-      return undefined;
-    }
-
-    const [employee, manager, plan] = await Promise.all([
-      getEmployeeById(assignment.employeeId),
-      getEmployeeById(assignment.managerId),
-      getReviewPlanById(assignment.planId),
-    ]);
-
-    if (!employee || !manager || !plan) {
-      return undefined;
-    }
-
-    return {
-      assignmentId: assignment.assignmentId,
-      planId: assignment.planId,
-      employee,
-      managerId: assignment.managerId,
-      managerName: manager.name,
-      planTitle: plan.title,
-      deadline: assignment.deadline,
-      status: assignment.status,
-      employeeScore: assignment.employeeScore,
-      managerScore: assignment.managerScore,
-      acknowledged: assignment.acknowledged,
-      finalOutcome: assignment.finalOutcome ?? null,
-      finalOutcomeNotes: assignment.finalOutcomeNotes ?? null,
-      finalizedAt: assignment.finalizedAt ?? null,
-    };
-  },
-);
+  return toReviewRow(assignment, employee, manager, plan.title);
+});

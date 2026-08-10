@@ -22,26 +22,26 @@ export const navigationByRole: Record<SystemRole, NavigationItem[]> = {
     { label: "Dashboard", href: "/dashboard", icon: FiHome },
     { label: "Templates", href: "/review-templates", icon: FiEdit3 },
     { label: "Cycles", href: "/review-plans", icon: FiCalendar },
-    { label: "Reviews", href: "/reviews", icon: FiClipboard, count: 8 },
+    { label: "Reviews", href: "/reviews", icon: FiClipboard },
     { label: "Employees", href: "/employees", icon: FiUsers },
     { label: "Roles & permissions", href: "/roles-access", icon: FiUsers },
     { label: "WFH requests", href: "/wfh", icon: FiHome, count: 3 },
-    { label: "Notifications", href: "/notifications", icon: FiBell, count: 3 },
+    { label: "Notifications", href: "/notifications", icon: FiBell },
   ],
 
   manager: [
-    { label: "My team", href: "/manager/team", icon: FiUsers, count: 4 },
+    { label: "My team", href: "/manager/team", icon: FiUsers },
     { label: "My self-assessment", href: "/employee/evaluation", icon: FiEdit3 },
     { label: "My review results", href: "/employee/reviews", icon: FiClipboard },
     { label: "WFH requests", href: "/wfh", icon: FiHome, count: 2 },
-    { label: "Notifications", href: "/manager/notifications", icon: FiBell, count: 3 },
+    { label: "Notifications", href: "/manager/notifications", icon: FiBell },
   ],
 
   employee: [
     { label: "My reviews", href: "/employee/reviews", icon: FiClipboard },
-    { label: "My evaluation", href: "/employee/evaluation", icon: FiEdit3, count: 1 },
+    { label: "My evaluation", href: "/employee/evaluation", icon: FiEdit3 },
     { label: "WFH requests", href: "/wfh", icon: FiHome },
-    { label: "Notifications", href: "/employee/notifications", icon: FiBell, count: 3 },
+    { label: "Notifications", href: "/employee/notifications", icon: FiBell },
   ],
 
   topManagement: [
@@ -49,6 +49,12 @@ export const navigationByRole: Record<SystemRole, NavigationItem[]> = {
     { label: "Managers to evaluate", href: "/manager/team", icon: FiUsers },
     { label: "Notifications", href: "/management/notifications", icon: FiBell },
   ],
+};
+
+export const PRIMARY_ACTION_LABEL: Partial<Record<SystemRole, string>> = {
+  hr: "Reviews",
+  manager: "My team",
+  employee: "My evaluation",
 };
 
 export const pageTitleOverrides: Record<string, string> = {

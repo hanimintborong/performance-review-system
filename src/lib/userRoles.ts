@@ -1,61 +1,33 @@
 import "server-only";
 
 import { cache } from "react";
-import { getDb } from "@/lib/firebaseAdmin";
+import { desc, eq } from "drizzle-orm";
+
+import { systemUsers } from "@/db/schema";
+import { db } from "@/lib/db";
 import type { SystemRole } from "@/types/role";
 import type { SystemUserRecord } from "@/types/systemUser";
-
-const COLLECTION = "users";
 
 export function normalizeEmail(email: string): string {
   return email.trim().toLowerCase();
 }
 
-export const getUserRoleByEmail = cache(
-  async (email: string): Promise<SystemUserRecord | null> => {
-    const document = await getDb()
-      .collection(COLLECTION)
-      .doc(normalizeEmail(email))
-      .get();
+export const getUserRoleByEmail = cache(async (email: string): Promise<SystemUserRecord | null> => {
+  const [record] = await db.select().from(systemUsers).where(eq(systemUsers.email, normalizeEmail(email))).limit(1);
+  return record ?? null;
+});
 
-    return document.exists
-      ? (document.data() as SystemUserRecord)
-      : null;
-  },
-);
+export const listSystemUsers = cache(async (): Promise<SystemUserRecord[]> => {
+  return db.select().from(systemUsers).orderBy(desc(systemUsers.invitedAt)).limit(100);
+});
 
-export const listSystemUsers = cache(
-  async (): Promise<SystemUserRecord[]> => {
-    const snapshot = await getDb()
-      .collection(COLLECTION)
-      .orderBy("invitedAt", "desc")
-      .limit(100)
-      .get();
-
-    return snapshot.docs.map(
-      (document) => document.data() as SystemUserRecord,
-    );
-  },
-);
-
-export async function saveSystemUser(
-  record: SystemUserRecord,
-): Promise<void> {
-  await getDb()
-    .collection(COLLECTION)
-    .doc(normalizeEmail(record.email))
-    .set(record);
+export async function saveSystemUser(record: SystemUserRecord): Promise<void> {
+  const row = { ...record, email: normalizeEmail(record.email) };
+  await db.insert(systemUsers).values(row).onConflictDoUpdate({ target: systemUsers.email, set: row });
 }
 
-export async function markUserActive(
-  email: string,
-): Promise<void> {
-  await getDb()
-    .collection(COLLECTION)
-    .doc(normalizeEmail(email))
-    .update({
-      status: "active",
-    });
+export async function markUserActive(email: string): Promise<void> {
+  await db.update(systemUsers).set({ status: "active" }).where(eq(systemUsers.email, normalizeEmail(email)));
 }
 
 export async function syncUserRole(email: string, role: SystemRole): Promise<void> {

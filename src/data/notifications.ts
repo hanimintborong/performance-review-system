@@ -1,89 +1,50 @@
 import "server-only";
 
 import { cache } from "react";
-import { getDb } from "@/lib/firebaseAdmin";
-import type {
-  Notification,
-  NotificationHistoryEntry,
-  NotificationRule,
-} from "@/types/notification";
+import { desc, eq } from "drizzle-orm";
 
-const RULES_COLLECTION = "notificationRules";
-const HISTORY_COLLECTION = "notificationHistory";
-const INBOX_COLLECTION = "notifications";
+import { notificationHistory, notificationRules, notifications } from "@/db/schema";
+import { db } from "@/lib/db";
+import type { Notification, NotificationHistoryEntry, NotificationRule } from "@/types/notification";
 
-export const getNotificationRules = cache(
-  async (): Promise<NotificationRule[]> => {
-    const snapshot = await getDb()
-      .collection(RULES_COLLECTION)
-      .get();
+export const getNotificationRules = cache(async (): Promise<NotificationRule[]> => {
+  return db.select().from(notificationRules);
+});
 
-    return snapshot.docs.map(
-      (doc) => doc.data() as NotificationRule,
-    );
-  },
-);
-
-export async function saveNotificationRule(
-  rule: NotificationRule,
-): Promise<void> {
-  await getDb()
-    .collection(RULES_COLLECTION)
-    .doc(rule.ruleId)
-    .set(rule);
+export async function saveNotificationRule(rule: NotificationRule): Promise<void> {
+  await db.insert(notificationRules).values(rule).onConflictDoUpdate({
+    target: notificationRules.ruleId,
+    set: rule,
+  });
 }
 
-export async function deleteNotificationRule(
-  ruleId: string,
-): Promise<void> {
-  await getDb()
-    .collection(RULES_COLLECTION)
-    .doc(ruleId)
-    .delete();
+export async function deleteNotificationRule(ruleId: string): Promise<void> {
+  await db.delete(notificationRules).where(eq(notificationRules.ruleId, ruleId));
 }
 
-export const getNotificationHistory = cache(
-  async (): Promise<NotificationHistoryEntry[]> => {
-    const snapshot = await getDb()
-      .collection(HISTORY_COLLECTION)
-      .orderBy("sentAt", "desc")
-      .limit(20)
-      .get();
+export const getNotificationHistory = cache(async (): Promise<NotificationHistoryEntry[]> => {
+  return db.select().from(notificationHistory).orderBy(desc(notificationHistory.sentAt)).limit(20);
+});
 
-    return snapshot.docs.map(
-      (doc) => doc.data() as NotificationHistoryEntry,
-    );
-  },
-);
-
-export async function saveNotificationHistoryEntry(
-  entry: NotificationHistoryEntry,
-): Promise<void> {
-  await getDb()
-    .collection(HISTORY_COLLECTION)
-    .doc(entry.historyId)
-    .set(entry);
+export async function saveNotificationHistoryEntry(entry: NotificationHistoryEntry): Promise<void> {
+  await db.insert(notificationHistory).values(entry).onConflictDoUpdate({
+    target: notificationHistory.historyId,
+    set: entry,
+  });
 }
 
-export const getNotificationsForRecipient = cache(
-  async (recipientId: string): Promise<Notification[]> => {
-    const snapshot = await getDb()
-      .collection(INBOX_COLLECTION)
-      .where("recipientId", "==", recipientId)
-      .limit(50)
-      .get();
+export const getNotificationsForRecipient = cache(async (recipientId: string): Promise<Notification[]> => {
+  return db
+    .select()
+    .from(notifications)
+    .where(eq(notifications.recipientId, recipientId))
+    .orderBy(desc(notifications.createdAt))
+    .limit(50);
+});
 
-    return snapshot.docs
-      .map((doc) => doc.data() as Notification)
-      .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
-  },
-);
-
-export async function saveNotification(
-  notification: Notification,
-): Promise<void> {
-  await getDb()
-    .collection(INBOX_COLLECTION)
-    .doc(notification.notificationId)
-    .set(notification);
+export async function saveNotification(notification: Notification): Promise<void> {
+  await db.insert(notifications).values(notification).onConflictDoUpdate({
+    target: notifications.notificationId,
+    set: notification,
+  });
 }

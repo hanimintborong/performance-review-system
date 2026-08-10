@@ -9,14 +9,14 @@ import { FiLogOut } from "react-icons/fi";
 
 import { RoleBadge } from "@/components/common/RoleBadge";
 import { UserAvatar } from "@/components/common/UserAvatar";
-import { navigationByRole } from "@/constants/navigation";
+import { navigationByRole, PRIMARY_ACTION_LABEL } from "@/constants/navigation";
 import { useRole } from "@/components/layout/RoleContext";
 import { getInitials } from "@/lib/initials";
 import { ROLE_META } from "@/types/role";
 
 export function AppSidebar() {
   const pathname = usePathname();
-  const { role, name, jobTitle, notificationCount } = useRole();
+  const { role, name, jobTitle, notificationCount, primaryActionCount } = useRole();
 
   const navigationItems = navigationByRole[role];
   const roleLabel = ROLE_META[role].label;
@@ -54,7 +54,9 @@ export function AppSidebar() {
       <VStack align="stretch" gap="2px" flex="1">
         {navigationItems.map((item) => {
           const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
-          const displayCount = item.label === "Notifications" ? notificationCount : item.count;
+          const displayCount = item.label === "Notifications" ? notificationCount
+            : item.label === PRIMARY_ACTION_LABEL[role] ? primaryActionCount
+            : item.count;
 
           return (
             <NextLink key={item.href} href={item.href} prefetch={false} style={{ textDecoration: "none" }}>

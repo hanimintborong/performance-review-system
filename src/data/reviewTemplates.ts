@@ -1,60 +1,37 @@
 import "server-only";
 
 import { cache } from "react";
-import { getDb } from "@/lib/firebaseAdmin";
+import { eq } from "drizzle-orm";
+
+import { reviewTemplates as reviewTemplatesTable } from "@/db/schema";
+import { db } from "@/lib/db";
 import type { ReviewTemplate } from "@/types/template";
 
-const COLLECTION = "reviewTemplates";
+export const getReviewTemplates = cache(async (): Promise<ReviewTemplate[]> => {
+  return db.select().from(reviewTemplatesTable);
+});
 
-export const getReviewTemplates = cache(
-  async (): Promise<ReviewTemplate[]> => {
-    const snapshot = await getDb()
-      .collection(COLLECTION)
-      .get();
+export const getReviewTemplateById = cache(async (templateId: string): Promise<ReviewTemplate | undefined> => {
+  const [record] = await db
+    .select()
+    .from(reviewTemplatesTable)
+    .where(eq(reviewTemplatesTable.templateId, templateId))
+    .limit(1);
+  return record ?? undefined;
+});
 
-    return snapshot.docs.map(
-      (doc) => doc.data() as ReviewTemplate,
-    );
-  },
-);
+export const getTemplateTitle = cache(async (templateId: string): Promise<string> => {
+  const template = await getReviewTemplateById(templateId);
+  return template?.title ?? "Unassigned";
+});
 
-export const getReviewTemplateById = cache(
-  async (
-    templateId: string,
-  ): Promise<ReviewTemplate | undefined> => {
-    const document = await getDb()
-      .collection(COLLECTION)
-      .doc(templateId)
-      .get();
-
-    return document.exists
-      ? (document.data() as ReviewTemplate)
-      : undefined;
-  },
-);
-
-export const getTemplateTitle = cache(
-  async (templateId: string): Promise<string> => {
-    const template = await getReviewTemplateById(templateId);
-
-    return template?.title ?? "Unassigned";
-  },
-);
-
-export async function saveReviewTemplate(
-  template: ReviewTemplate,
-): Promise<void> {
-  await getDb()
-    .collection(COLLECTION)
-    .doc(template.templateId)
-    .set(template);
+export async function saveReviewTemplate(template: ReviewTemplate): Promise<void> {
+  await db.insert(reviewTemplatesTable).values(template).onConflictDoUpdate({
+    target: reviewTemplatesTable.templateId,
+    set: template,
+  });
 }
 
-export async function deleteReviewTemplate(
-  templateId: string,
-): Promise<void> {
-  await getDb()
-    .collection(COLLECTION)
-    .doc(templateId)
-    .delete();
+export async function deleteReviewTemplate(templateId: string): Promise<void> {
+  await db.delete(reviewTemplatesTable).where(eq(reviewTemplatesTable.templateId, templateId));
 }

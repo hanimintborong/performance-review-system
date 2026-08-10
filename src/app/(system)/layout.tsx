@@ -6,8 +6,9 @@ import { AppHeader } from "@/components/layout/AppHeader";
 import { AppSidebar } from "@/components/layout/AppSidebar";
 import { RoleProvider } from "@/components/layout/RoleContext";
 import { canvas } from "@/constants/colors";
-import { getNotificationsForRecipient } from "@/data/queries";
+import { getNotificationsForRecipient, getReviewRows } from "@/data/queries";
 import { getCurrentSystemUser } from "@/lib/currentSystemUser";
+import { computePrimaryActionCount } from "@/lib/primaryActionCount";
 
 export default async function SystemLayout({
   children,
@@ -26,8 +27,12 @@ export default async function SystemLayout({
     redirect("/pending-access");
   }
 
-  const notifications = await getNotificationsForRecipient(systemUser.employeeId);
+  const [notifications, reviewRows] = await Promise.all([
+    getNotificationsForRecipient(systemUser.employeeId),
+    getReviewRows(),
+  ]);
   const notificationCount = notifications.filter((n) => !n.read).length;
+  const primaryActionCount = computePrimaryActionCount(systemUser.role, systemUser.employeeId, reviewRows);
 
   return (
     <RoleProvider
@@ -37,6 +42,7 @@ export default async function SystemLayout({
         name: systemUser.name,
         jobTitle: "",
         notificationCount,
+        primaryActionCount,
       }}
     >
       <Box minH="100vh" bg={canvas}>

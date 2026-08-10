@@ -10,6 +10,7 @@ type RoleContextValue = {
   name: string;
   jobTitle: string;
   notificationCount: number;
+  primaryActionCount: number;
 };
 
 const RoleContext = createContext<RoleContextValue | undefined>(undefined);
