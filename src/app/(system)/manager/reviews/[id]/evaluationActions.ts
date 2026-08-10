@@ -34,9 +34,23 @@ async function persist(assignmentId: string, answers: Record<string, string>, co
         recipientName: employee.name,
         type: "manager_submitted",
         title: "Your manager has completed your evaluation",
-        message: "It will now be reviewed by People & Culture.",
+        message: "Awaiting finalisation by top management.",
         assignmentId,
       });
+    }
+
+    if (manager?.managerId) {
+      const topManagement = await getEmployeeById(manager.managerId);
+      if (topManagement) {
+        await notify({
+          recipientId: topManagement.employeeId,
+          recipientName: topManagement.name,
+          type: "ready_for_management",
+          title: `${employee?.name ?? "A review"} is ready for finalisation`,
+          message: `Evaluated by ${manager.name}.`,
+          assignmentId,
+        });
+      }
     }
 
     const discussionRecipients = [employee, manager]
@@ -47,7 +61,7 @@ async function persist(assignmentId: string, answers: Record<string, string>, co
       await notifyMany(discussionRecipients, {
         type: "discussion_required",
         title: "Discuss the evaluation results",
-        message: "Schedule a performance discussion outside the system before People & Culture review. This is informational only, not a blocking step.",
+        message: "Schedule a performance discussion outside the system before finalisation. This is informational only, not a blocking step.",
         assignmentId,
       });
     }

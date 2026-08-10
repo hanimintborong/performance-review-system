@@ -4,7 +4,6 @@ import NextLink from "next/link";
 import { Flex, Grid, Text } from "@chakra-ui/react";
 import { FiArrowLeft } from "react-icons/fi";
 
-import { PcReviewButtons } from "@/app/(system)/reviews/[id]/PcReviewButtons";
 import { AppCard } from "@/components/common/AppCard";
 import { DiscussionGuidanceBanner } from "@/components/common/DiscussionGuidanceBanner";
 import { EmployeeInfoCard } from "@/components/common/EmployeeInfoCard";
@@ -93,8 +92,6 @@ export default async function ReviewDetailPage({ params }: ReviewDetailPageProps
       )}
 
       {row.status === "Manager Submitted" && <DiscussionGuidanceBanner audience="hr" />}
-
-      <PcReviewButtons assignmentId={row.assignmentId} status={row.status} />
     </Flex>
   );
 }

@@ -6,8 +6,8 @@ import { AppCard } from "@/components/common/AppCard";
 type Audience = "employee" | "manager" | "hr";
 
 const COPY: Record<Audience, string> = {
-  employee: "Your manager has completed the evaluation. Schedule a discussion with them outside the system before People & Culture review.",
-  manager: "Evaluation submitted. Schedule a discussion with the employee outside the system before People & Culture review.",
+  employee: "Your manager has completed the evaluation. Schedule a discussion with them outside the system before it's finalised.",
+  manager: "Evaluation submitted. Schedule a discussion with the employee outside the system before it's finalised.",
   hr: "The manager has submitted this evaluation. The employee–manager discussion happens outside the system — informational only, not a blocking step.",
 };
 

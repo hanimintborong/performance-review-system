@@ -20,9 +20,7 @@ export const REVIEW_STATUS_STYLE: Record<ReviewStatus, StatusStyle> = {
   "Self-Assessment": styleOf(info),
   "Employee Submitted": styleOf(info),
   "Manager Reviewing": styleOf(warning),
-  "Manager Submitted": styleOf(info),
-  "P&C Review": styleOf(warning),
-  "Management Review": styleOf(warning),
+  "Manager Submitted": styleOf(warning),
   Finalised: styleOf(success),
   Overdue: styleOf(error),
 };

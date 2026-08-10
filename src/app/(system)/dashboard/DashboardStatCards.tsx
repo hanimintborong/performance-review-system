@@ -1,7 +1,7 @@
 "use client";
 
 import { Flex, Grid, Icon, Text } from "@chakra-ui/react";
-import { FiAlertTriangle, FiCheckCircle, FiClock, FiFileText } from "react-icons/fi";
+import { FiAlertTriangle, FiCheckCircle, FiClock, FiFlag } from "react-icons/fi";
 
 import { AppCard } from "@/components/common/AppCard";
 import { RingProgress } from "@/components/common/RingProgress";
@@ -31,7 +31,7 @@ export function DashboardStatCards({ counts, total, departmentCount }: Dashboard
       </AppCard>
 
       <StatCard label="In progress" value={counts.inProgress} valueColor="warning.70" accentColor="warning.50" icon={<Icon as={FiClock} color="warning.70" boxSize="15px" />} href="/reviews?statusGroup=inProgress" />
-      <StatCard label="Pending HR/Mgmt review" value={counts.pendingReview} valueColor="info.70" accentColor="info.50" icon={<Icon as={FiFileText} color="info.70" boxSize="15px" />} href="/reviews?statusGroup=pendingReview" />
+      <StatCard label="Ready to finalise" value={counts.readyToFinalise} valueColor="info.70" accentColor="info.50" icon={<Icon as={FiFlag} color="info.70" boxSize="15px" />} href="/reviews?statusGroup=readyToFinalise" />
       <StatCard label="Overdue" value={counts.overdue} valueColor="error.70" accentColor="error.50" icon={<Icon as={FiAlertTriangle} color="error.70" boxSize="15px" />} href="/reviews?statusGroup=overdue" />
       <StatCard label="Completed" value={counts.completed} valueColor="success.70" accentColor="success.50" icon={<Icon as={FiCheckCircle} color="success.70" boxSize="15px" />} href="/reviews?statusGroup=completed" />
     </Grid>

@@ -4,8 +4,6 @@ export type ReviewStatus =
   | "Employee Submitted"
   | "Manager Reviewing"
   | "Manager Submitted"
-  | "P&C Review"
-  | "Management Review"
   | "Finalised"
   | "Overdue";
 

@@ -38,7 +38,7 @@ export function FinalizeReviewDialog({ assignmentId }: { assignmentId: string })
             <Dialog.Body p="10px 26px">
               <Flex direction="column" gap="10px">
                 <Text fontSize="12px" color="grey.60">
-                  Confirms the People &amp; Culture review is complete. This locks the review as Finalised.
+                  Confirms the manager&apos;s evaluation is complete. This locks the review as Finalised.
                 </Text>
 
                 <Flex direction="column" gap="4px">
