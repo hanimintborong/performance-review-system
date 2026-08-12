@@ -81,6 +81,8 @@ export function SelfAssessmentForm({ row, sections, response }: SelfAssessmentFo
           value={comment}
           onChange={(e) => setComment(e.target.value)}
           rows={3}
+          px="12px"
+          py="8px"
           disabled={alreadySubmitted}
           placeholder="Strengths, areas to develop, and goals for the next cycle…"
         />

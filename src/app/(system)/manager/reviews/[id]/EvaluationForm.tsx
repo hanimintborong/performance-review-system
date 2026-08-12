@@ -90,6 +90,8 @@ export function EvaluationForm({ row, sections, response }: EvaluationFormProps)
               value={comment}
               onChange={(e) => setComment(e.target.value)}
               rows={3}
+              px="12px"
+              py="8px"
               disabled={alreadySubmitted}
               placeholder="Key discussion points from the review conversation…"
             />
