@@ -10,7 +10,7 @@ export function AuthShell({ children }: { children: ReactNode }) {
         <Text fontSize="26px" fontWeight="800" color="white" letterSpacing="0.5px">
           b<Text as="span" color="orange.50">o</Text>rong
         </Text>
-        <Text fontSize="13px" fontWeight="600" color="brand.10" mt="-14px">Performance Review</Text>
+        <Text fontSize="13px" fontWeight="600" color="brand.10" mt="-14px">Borong Review</Text>
 
         {children}
       </Flex>

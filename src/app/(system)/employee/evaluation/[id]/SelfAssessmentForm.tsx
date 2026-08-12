@@ -70,6 +70,7 @@ export function SelfAssessmentForm({ row, sections, response }: SelfAssessmentFo
           section={section}
           answers={answers}
           editableRespondent={alreadySubmitted ? undefined : "employee"}
+          hideRespondent="manager"
           onAnswerChange={(questionId, value) => setAnswers((prev) => ({ ...prev, [questionId]: value }))}
         />
       ))}

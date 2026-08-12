@@ -11,6 +11,13 @@ type KpiOkrFieldsProps = {
   readOnly?: boolean;
 };
 
+const PLACEHOLDERS: Record<string, string> = {
+  Achievement: "Describe your achievements…",
+  Challenge: "What challenges did you face?",
+  "Supporting evidence": "Provide any evidence or examples…",
+  Comment: "Additional comments…",
+};
+
 export function KpiOkrFields({ value, onChange, readOnly }: KpiOkrFieldsProps) {
   const kpi = parseKpiAnswer(value);
 
@@ -19,8 +26,8 @@ export function KpiOkrFields({ value, onChange, readOnly }: KpiOkrFieldsProps) {
   }
 
   return (
-    <Flex direction="column" gap="8px" p="10px" bg="grey.10" borderRadius="8px">
-      <Flex align="center" gap="10px">
+    <Flex direction="column" gap="10px">
+      <Flex direction="column" gap="6px" pb="10px" borderBottomWidth="1px" borderColor="grey.10">
         <Text fontSize="11px" fontWeight="700" color="grey.60">Self-score</Text>
         <RatingButtons max={5} value={kpi.selfScore} readOnly={readOnly} onChange={(v) => update({ selfScore: v })} />
       </Flex>
@@ -36,13 +43,13 @@ export function KpiOkrFields({ value, onChange, readOnly }: KpiOkrFieldsProps) {
 function Field({ label, value, readOnly, onChange }: { label: string; value: string; readOnly?: boolean; onChange: (v: string) => void }) {
   return (
     <Flex direction="column" gap="4px">
-      <Text fontSize="11px" color="grey.60">{label}</Text>
+      <Text fontSize="11px" fontWeight="600" color="grey.70">{label}</Text>
       {readOnly ? (
         <Text fontSize="12px" color="grey.80">{value || "—"}</Text>
       ) : label === "Achievement" || label === "Challenge" ? (
-        <Input size="sm" bg="white" value={value} onChange={(e) => onChange(e.target.value)} />
+        <Input size="sm" bg="white" px="12px" placeholder={PLACEHOLDERS[label]} value={value} onChange={(e) => onChange(e.target.value)} />
       ) : (
-        <Textarea size="sm" bg="white" rows={2} value={value} onChange={(e) => onChange(e.target.value)} />
+        <Textarea size="sm" bg="white" px="12px" py="8px" rows={2} placeholder={PLACEHOLDERS[label]} value={value} onChange={(e) => onChange(e.target.value)} />
       )}
     </Flex>
   );

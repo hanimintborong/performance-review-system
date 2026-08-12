@@ -10,7 +10,7 @@ type StatusBreakdownCardProps = {
   title?: string;
 };
 
-export function StatusBreakdownCard({ segments, total, title = "Progress by status" }: StatusBreakdownCardProps) {
+export function StatusBreakdownCard({ segments, total, title = "" }: StatusBreakdownCardProps) {
   const legendItems = segments.map((s) => ({ ...s, percent: total > 0 ? Math.round((s.value / total) * 100) : 0 }));
 
   return (

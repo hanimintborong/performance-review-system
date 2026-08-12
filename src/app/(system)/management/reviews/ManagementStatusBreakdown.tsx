@@ -28,7 +28,7 @@ export function ManagementStatusBreakdown({ counts, total }: ManagementStatusBre
 
   return (
     <AppCard p="16px 20px">
-      <Text fontSize="13px" fontWeight="700" color="grey.80" mb="12px">Progress by status</Text>
+      <Text fontSize="13px" fontWeight="700" color="grey.80" mb="12px">Evaluation progress by status</Text>
       <Flex align="center" gap="20px" wrap="wrap">
         <Flex position="relative" align="center" justify="center">
           <StatusDonut segments={segments} />

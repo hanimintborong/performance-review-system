@@ -8,16 +8,17 @@ import { AppCard } from "@/components/common/AppCard";
 import { FIELD_STYLE } from "@/components/template-builder/fieldStyle";
 import { QuestionEditor } from "@/components/template-builder/QuestionEditor";
 import { newQuestion } from "@/components/template-builder/newQuestion";
-import type { TemplateQuestion, TemplateSection } from "@/types/template";
+import type { TemplateQuestion, TemplateSection, WorkflowType } from "@/types/template";
 
 type SectionEditorProps = {
   section: TemplateSection;
   index: number;
+  workflowType: WorkflowType;
   onChange: (section: TemplateSection) => void;
   onDelete: () => void;
 };
 
-export function SectionEditor({ section, index, onChange, onDelete }: SectionEditorProps) {
+export function SectionEditor({ section, index, workflowType, onChange, onDelete }: SectionEditorProps) {
   const [collapsed, setCollapsed] = useState(false);
 
   function updateQuestion(updated: TemplateQuestion, questionIndex: number) {
@@ -79,6 +80,7 @@ export function SectionEditor({ section, index, onChange, onDelete }: SectionEdi
                 key={question.questionId}
                 question={question}
                 number={`${index + 1}.${i + 1}`}
+                workflowType={workflowType}
                 onChange={(updated) => updateQuestion(updated, i)}
                 onDelete={() => deleteQuestion(i)}
                 onMoveUp={() => moveQuestion(i, i - 1)}

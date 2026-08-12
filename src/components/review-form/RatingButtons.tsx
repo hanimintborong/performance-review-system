@@ -1,6 +1,6 @@
 "use client";
 
-import { Flex } from "@chakra-ui/react";
+import { Flex, Text } from "@chakra-ui/react";
 
 type RatingButtonsProps = {
   max: number;
@@ -9,28 +9,40 @@ type RatingButtonsProps = {
   readOnly?: boolean;
 };
 
+const SCALE_LABELS: Record<number, string[]> = {
+  3: ["Low", "Medium", "High"],
+  4: ["Poor", "Fair", "Good", "Excellent"],
+  5: ["Very Low", "Low", "Neutral", "High", "Excellent"],
+};
+
 export function RatingButtons({ max, value, onChange, readOnly }: RatingButtonsProps) {
+  const labels = SCALE_LABELS[max];
+
   return (
-    <Flex gap="6px">
+    <Flex gap="10px">
       {Array.from({ length: max }, (_, i) => i + 1).map((n) => (
-        <Flex
-          key={n}
-          as={readOnly ? "div" : "button"}
-          onClick={readOnly ? undefined : () => onChange?.(n)}
-          w="30px"
-          h="30px"
-          borderRadius="full"
-          borderWidth="2px"
-          borderColor={n <= value ? "brand.50" : "grey.30"}
-          bg={n <= value ? "brand.50" : "white"}
-          color={n <= value ? "white" : "grey.60"}
-          align="center"
-          justify="center"
-          fontSize="12px"
-          fontWeight="700"
-          cursor={readOnly ? "default" : "pointer"}
-        >
-          {n}
+        <Flex key={n} direction="column" align="center" gap="4px" w="50px">
+          <Flex
+            as={readOnly ? "div" : "button"}
+            onClick={readOnly ? undefined : () => onChange?.(n)}
+            w="34px"
+            h="34px"
+            borderRadius="full"
+            borderWidth="1.5px"
+            borderColor={n <= value ? "brand.50" : "brand.20"}
+            bg={n <= value ? "brand.50" : "brand.10"}
+            color={n <= value ? "white" : "brand.70"}
+            align="center"
+            justify="center"
+            fontSize="13px"
+            fontWeight="700"
+            cursor={readOnly ? "default" : "pointer"}
+          >
+            {n}
+          </Flex>
+          {labels?.[n - 1] && (
+            <Text fontSize="9px" color="grey.50" textAlign="center" lineHeight="1.2">{labels[n - 1]}</Text>
+          )}
         </Flex>
       ))}
     </Flex>

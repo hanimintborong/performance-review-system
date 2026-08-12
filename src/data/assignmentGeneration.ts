@@ -4,7 +4,7 @@ import { getEmployees, getReviewAssignments, saveReviewAssignment } from "@/data
 import { notify } from "@/lib/notify";
 import type { ReviewPlan } from "@/types/review";
 
-const ASSIGNABLE_ROLES = ["employee", "manager"];
+const ASSIGNABLE_ROLES = ["employee", "manager", "hr"];
 
 export async function generateAssignmentsForPlan(plan: ReviewPlan): Promise<number> {
   const [employees, assignments] = await Promise.all([getEmployees(), getReviewAssignments()]);

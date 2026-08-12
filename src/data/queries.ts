@@ -34,3 +34,10 @@ export {
   saveNotificationRule,
 } from "@/data/notifications";
 export { getReviewResponse, saveReviewResponse } from "@/data/reviewResponses";
+export {
+  getWfhRequestById,
+  getWfhRequestRows,
+  getWfhRequests,
+  saveWfhRequest,
+  type WfhRequestRow,
+} from "@/data/wfhRequests";

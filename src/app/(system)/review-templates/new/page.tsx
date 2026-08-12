@@ -12,6 +12,7 @@ export default async function NewReviewTemplatePage() {
     description: "",
     assignedDepartments: [],
     status: "Inactive",
+    workflowType: "full",
     sections: [],
   };
 

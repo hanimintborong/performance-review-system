@@ -51,7 +51,7 @@ export function PlanForm({ initialPlan, initialStart, initialEnd, mode, employee
     return {
       ...initialPlan,
       title,
-      description: initialPlan.description || `${title} performance review.`,
+      description: initialPlan.description || `${title} Borong Review.`,
       templateId,
       reviewPeriod: formatDateRange(startDate, endDate),
       employeeDeadline: startDate,

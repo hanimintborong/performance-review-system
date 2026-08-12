@@ -7,14 +7,15 @@ type LabeledTextProps = {
   value: string;
   editable: boolean;
   onChange: (value: string) => void;
+  placeholder?: string;
 };
 
-export function LabeledText({ label, value, editable, onChange }: LabeledTextProps) {
+export function LabeledText({ label, value, editable, onChange, placeholder }: LabeledTextProps) {
   return (
     <Flex direction="column" gap="4px">
-      <Text fontSize="11px" color="grey.60">{label}</Text>
+      <Text fontSize="11px" fontWeight="600" color="grey.70">{label}</Text>
       {editable ? (
-        <Textarea size="sm" bg="white" rows={2} value={value} onChange={(e) => onChange(e.target.value)} />
+        <Textarea size="sm" bg="white" px="12px" py="8px" rows={2} placeholder={placeholder} value={value} onChange={(e) => onChange(e.target.value)} />
       ) : (
         <Text fontSize="12px" color="grey.80">{value || "—"}</Text>
       )}

@@ -50,17 +50,17 @@ export function EditEmployeeDialog({ employee, employees, onOpenChange }: EditEm
             <Dialog.Body p="10px 26px">
               <Flex direction="column" gap="10px">
                 <Field label="Full name">
-                  <Input size="sm" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+                  <Input size="sm" px="12px" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
                 </Field>
                 <Field label="Work email">
-                  <Input size="sm" type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
+                  <Input size="sm" px="12px" type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
                 </Field>
                 <Field label="Job title">
-                  <Input size="sm" value={form.jobTitle} onChange={(e) => setForm({ ...form, jobTitle: e.target.value })} />
+                  <Input size="sm" px="12px" value={form.jobTitle} onChange={(e) => setForm({ ...form, jobTitle: e.target.value })} />
                 </Field>
                 <Field label="Department">
                   <NativeSelect.Root size="sm">
-                    <NativeSelect.Field value={form.department} onChange={(e) => setForm({ ...form, department: e.target.value })}>
+                    <NativeSelect.Field value={form.department} onChange={(e) => setForm({ ...form, department: e.target.value })} pl="12px" pr="30px">
                       {DEPARTMENTS.map((d) => <option key={d} value={d}>{d}</option>)}
                     </NativeSelect.Field>
                     <NativeSelect.Indicator />
@@ -68,7 +68,7 @@ export function EditEmployeeDialog({ employee, employees, onOpenChange }: EditEm
                 </Field>
                 <Field label="Reporting manager (optional)">
                   <NativeSelect.Root size="sm">
-                    <NativeSelect.Field value={form.managerEmail} onChange={(e) => setForm({ ...form, managerEmail: e.target.value })}>
+                    <NativeSelect.Field value={form.managerEmail} onChange={(e) => setForm({ ...form, managerEmail: e.target.value })} pl="12px" pr="30px">
                       <option value="">No manager</option>
                       {otherEmployees.map((m) => <option key={m.employeeId} value={m.email}>{m.name} — {m.jobTitle}</option>)}
                     </NativeSelect.Field>
@@ -77,7 +77,7 @@ export function EditEmployeeDialog({ employee, employees, onOpenChange }: EditEm
                 </Field>
                 <Field label="System role">
                   <NativeSelect.Root size="sm">
-                    <NativeSelect.Field value={form.systemRole} onChange={(e) => setForm({ ...form, systemRole: e.target.value as SystemRole })}>
+                    <NativeSelect.Field value={form.systemRole} onChange={(e) => setForm({ ...form, systemRole: e.target.value as SystemRole })} pl="12px" pr="30px">
                       {ROLE_OPTIONS.map((r) => <option key={r} value={r}>{ROLE_META[r].label}</option>)}
                     </NativeSelect.Field>
                     <NativeSelect.Indicator />

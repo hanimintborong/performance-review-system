@@ -28,7 +28,13 @@ export function OkrManagerFields({ objective, editable, onChange }: OkrManagerFi
         Weightage score: {weightageScore(objective)}%
       </Text>
 
-      <LabeledText label="Feedback / remarks" value={objective.managerComment} editable={editable} onChange={(v) => onChange({ managerComment: v })} />
+      <LabeledText
+        label="Feedback / remarks"
+        placeholder="Share your feedback on this objective…"
+        value={objective.managerComment}
+        editable={editable}
+        onChange={(v) => onChange({ managerComment: v })}
+      />
     </Flex>
   );
 }

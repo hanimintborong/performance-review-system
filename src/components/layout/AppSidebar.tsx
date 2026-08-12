@@ -16,7 +16,7 @@ import { ROLE_META } from "@/types/role";
 
 export function AppSidebar() {
   const pathname = usePathname();
-  const { role, name, jobTitle, notificationCount, primaryActionCount } = useRole();
+  const { role, name, jobTitle, notificationCount, primaryActionCount, wfhPendingCount } = useRole();
 
   const navigationItems = navigationByRole[role];
   const roleLabel = ROLE_META[role].label;
@@ -45,20 +45,22 @@ export function AppSidebar() {
         </Text>
 
         <Text fontSize="10px" fontWeight="700" color="grey.40" borderLeftWidth="1px" borderColor="grey.20" pl="10px" lineHeight="1.3">
-          Performance<br />Review
+          Borong<br />Review
         </Text>
       </Flex>
 
       <RoleBadge label={roleLabel} />
 
       <VStack align="stretch" gap="2px" flex="1">
-        {navigationItems.map((item) => {
+        {navigationItems.flatMap((item, index) => {
           const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
           const displayCount = item.label === "Notifications" ? notificationCount
+            : item.label === "WFH requests" ? wfhPendingCount
             : item.label === PRIMARY_ACTION_LABEL[role] ? primaryActionCount
             : item.count;
+          const isNewSection = item.section && item.section !== navigationItems[index - 1]?.section;
 
-          return (
+          const link = (
             <NextLink key={item.href} href={item.href} prefetch={false} style={{ textDecoration: "none" }}>
               <Flex
                 align="center"
@@ -96,6 +98,15 @@ export function AppSidebar() {
               </Flex>
             </NextLink>
           );
+
+          return isNewSection
+            ? [
+                <Text key={`section-${item.section}`} px="10px" pt="10px" pb="2px" fontSize="10px" fontWeight="700" color="grey.40" letterSpacing="0.4px" textTransform="uppercase">
+                  {item.section}
+                </Text>,
+                link,
+              ]
+            : [link];
         })}
       </VStack>
 

@@ -12,12 +12,15 @@ import { SectionEditor } from "@/components/template-builder/SectionEditor";
 import { TemplateBuilderFooter } from "@/components/template-builder/TemplateBuilderFooter";
 import { TemplateBuilderHeader } from "@/components/template-builder/TemplateBuilderHeader";
 import { TemplatePreview } from "@/components/template-builder/TemplatePreview";
+import { ConfirmationDialog } from "@/components/common/ConfirmationDialog";
 import { toaster } from "@/components/ui/toaster";
-import type { ReviewTemplate, TemplateSection } from "@/types/template";
+import { applyWorkflowChange, countIncompatibleQuestions } from "@/lib/templateWorkflow";
+import type { ReviewTemplate, TemplateSection, WorkflowType } from "@/types/template";
 
 type TemplateBuilderProps = {
   initialTemplate: ReviewTemplate;
   mode?: "create" | "edit";
+  workflowLocked?: boolean;
 };
 
 function sanitizeTemplate(template: ReviewTemplate): ReviewTemplate {
@@ -34,11 +37,27 @@ function sanitizeTemplate(template: ReviewTemplate): ReviewTemplate {
   };
 }
 
-export function TemplateBuilder({ initialTemplate, mode = "create" }: TemplateBuilderProps) {
+export function TemplateBuilder({ initialTemplate, mode = "create", workflowLocked }: TemplateBuilderProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const [savingStatus, setSavingStatus] = useState<ReviewTemplate["status"] | null>(null);
   const [template, setTemplate] = useState(initialTemplate);
   const [showActivateDialog, setShowActivateDialog] = useState(false);
+  const [pendingWorkflow, setPendingWorkflow] = useState<WorkflowType | null>(null);
+
+  function handleWorkflowChange(next: WorkflowType) {
+    if (countIncompatibleQuestions(template, next) > 0) {
+      setPendingWorkflow(next);
+    } else {
+      setTemplate((prev) => applyWorkflowChange(prev, next));
+    }
+  }
+
+  function confirmWorkflowChange() {
+    if (!pendingWorkflow) return;
+    setTemplate((prev) => applyWorkflowChange(prev, pendingWorkflow));
+    setPendingWorkflow(null);
+  }
 
   function updateSection(index: number, section: TemplateSection) {
     setTemplate((prev) => ({ ...prev, sections: prev.sections.map((s, i) => (i === index ? section : s)) }));
@@ -54,14 +73,21 @@ export function TemplateBuilder({ initialTemplate, mode = "create" }: TemplateBu
 
   function persist(status: ReviewTemplate["status"], message: string) {
     const toSave: ReviewTemplate = sanitizeTemplate({ ...template, status });
+    setSavingStatus(status);
     startTransition(async () => {
-      await saveReviewTemplateAction(toSave);
-      toaster.create({ title: message, description: toSave.title || "Untitled template", type: "success" });
+      try {
+        await saveReviewTemplateAction(toSave);
+        toaster.create({ title: message, description: toSave.title || "Untitled template", type: "success" });
 
-      if (status === "Active") {
-        setShowActivateDialog(true);
-      } else {
-        router.push(`/review-templates/${toSave.templateId}`);
+        if (status === "Active") {
+          setShowActivateDialog(true);
+        } else {
+          router.push(`/review-templates/${toSave.templateId}`);
+        }
+      } catch (err) {
+        toaster.create({ title: "Could not save template", description: err instanceof Error ? err.message : undefined, type: "error" });
+      } finally {
+        setSavingStatus(null);
       }
     });
   }
@@ -73,7 +99,12 @@ export function TemplateBuilder({ initialTemplate, mode = "create" }: TemplateBu
         <Text fontSize="13px" color="grey.60">Design a review template tailored to your organisation.</Text>
       </Flex>
 
-      <TemplateBuilderHeader template={template} onChange={setTemplate} />
+      <TemplateBuilderHeader
+        template={template}
+        onChange={setTemplate}
+        onWorkflowChange={handleWorkflowChange}
+        workflowLocked={workflowLocked}
+      />
 
       <Tabs.Root defaultValue="edit">
         <Tabs.List gap="20px">
@@ -88,6 +119,7 @@ export function TemplateBuilder({ initialTemplate, mode = "create" }: TemplateBu
                 key={section.sectionId}
                 section={section}
                 index={index}
+                workflowType={template.workflowType}
                 onChange={(updated) => updateSection(index, updated)}
                 onDelete={() => deleteSection(index)}
               />
@@ -115,14 +147,15 @@ export function TemplateBuilder({ initialTemplate, mode = "create" }: TemplateBu
         </Tabs.Content>
 
         <Tabs.Content value="preview" p="0" pt="14px">
-          <TemplatePreview sections={template.sections} />
+          <TemplatePreview sections={template.sections} workflowType={template.workflowType} />
         </Tabs.Content>
       </Tabs.Root>
 
       <TemplateBuilderFooter
         onSaveDraft={() => persist("Inactive", "Draft saved")}
         onActivate={() => persist("Active", "Template activated")}
-        loading={isPending}
+        savingDraft={isPending && savingStatus === "Inactive"}
+        activating={isPending && savingStatus === "Active"}
       />
 
       <ActivateTemplateDialog
@@ -130,6 +163,15 @@ export function TemplateBuilder({ initialTemplate, mode = "create" }: TemplateBu
         templateTitle={template.title || "Untitled template"}
         onClose={() => router.push(`/review-templates/${template.templateId}`)}
         onCreateCycle={() => router.push("/review-plans/new")}
+      />
+
+      <ConfirmationDialog
+        open={pendingWorkflow !== null}
+        onOpenChange={(open) => !open && setPendingWorkflow(null)}
+        title="Change workflow?"
+        description={pendingWorkflow ? `Switching removes or adjusts ${countIncompatibleQuestions(template, pendingWorkflow)} question(s) that don't fit this workflow.` : ""}
+        confirmLabel="Change anyway"
+        onConfirm={confirmWorkflowChange}
       />
     </Flex>
   );

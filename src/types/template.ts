@@ -17,6 +17,8 @@ export const MULTI_RESPONDENT_QUESTION_TYPES: QuestionType[] = ["okr_list", "cor
 
 export type Respondent = "employee" | "manager";
 
+export type WorkflowType = "full" | "employee_manager" | "employee_only";
+
 export type TemplateQuestion = {
   questionId: string;
   type: QuestionType;
@@ -41,6 +43,7 @@ export type ReviewTemplate = {
   description: string;
   assignedDepartments: string[];
   status: ReviewTemplateStatus;
+  workflowType: WorkflowType;
   sections: TemplateSection[];
 };
 

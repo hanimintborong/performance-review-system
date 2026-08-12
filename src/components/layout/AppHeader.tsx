@@ -17,7 +17,7 @@ function getPageTitle(pathname: string, role: SystemRole) {
     (item) => pathname === item.href || pathname.startsWith(`${item.href}/`),
   );
 
-  return match?.label ?? "Performance Review";
+  return match?.label ?? "Borong Review";
 }
 
 export function AppHeader() {
@@ -46,9 +46,7 @@ export function AppHeader() {
     >
       <Box minW="0">
         <Flex align="center" gap="6px" color="grey.40" fontSize="11px">
-          <Text>Performance Review</Text>
-          <FiChevronRight size={10} />
-          <Text>Mid-Year Review 2026</Text>
+          <Text>Borong Review</Text>
         </Flex>
 
         <Text mt="2px" fontSize="18px" fontWeight="600" color="grey.80" lineHeight="1.2" whiteSpace="nowrap" overflow="hidden" textOverflow="ellipsis">

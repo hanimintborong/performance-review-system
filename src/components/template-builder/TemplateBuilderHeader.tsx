@@ -3,16 +3,31 @@ import { Flex, Grid, Input, Text, Textarea } from "@chakra-ui/react";
 import { AppCard } from "@/components/common/AppCard";
 import { DepartmentCheckboxes } from "@/components/template-builder/DepartmentCheckboxes";
 import { FIELD_STYLE } from "@/components/template-builder/fieldStyle";
-import type { ReviewTemplate } from "@/types/template";
+import { WorkflowPresetPicker } from "@/components/template-builder/WorkflowPresetPicker";
+import type { ReviewTemplate, WorkflowType } from "@/types/template";
 
 type TemplateBuilderHeaderProps = {
   template: ReviewTemplate;
   onChange: (template: ReviewTemplate) => void;
+  onWorkflowChange: (workflowType: WorkflowType) => void;
+  workflowLocked?: boolean;
 };
 
-export function TemplateBuilderHeader({ template, onChange }: TemplateBuilderHeaderProps) {
+export function TemplateBuilderHeader({ template, onChange, onWorkflowChange, workflowLocked }: TemplateBuilderHeaderProps) {
   return (
     <AppCard p="18px 20px">
+      <Flex direction="column" gap="6px" mb="16px">
+        <Flex direction="column" gap="1px">
+          <Text fontSize="12px" fontWeight="700" color="grey.70">Evaluation workflow</Text>
+          <Text fontSize="11px" color="grey.50">
+            {workflowLocked
+              ? "This template is already in use by a review cycle — workflow can't be changed."
+              : "Decide what happens after each stage submits. This affects which question types and respondents are available below."}
+          </Text>
+        </Flex>
+        <WorkflowPresetPicker value={template.workflowType} onChange={onWorkflowChange} locked={workflowLocked} />
+      </Flex>
+
       <Grid templateColumns="1.1fr 1.4fr" gap="24px">
         <Flex direction="column" gap="12px">
           <Flex direction="column" gap="4px">

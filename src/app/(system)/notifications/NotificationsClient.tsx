@@ -22,7 +22,7 @@ import type { NotificationHistoryEntry, NotificationRule } from "@/types/notific
 import type { ReviewPlan } from "@/types/review";
 
 function blankRule(planId: string): NotificationRule {
-  return { ruleId: `RULE-NEW-${planId}`, planId, type: "new_review", whenToSend: "", sendTo: "employee", repeat: "once", channel: "in_system", status: "Active" };
+  return { ruleId: `RULE-NEW-${planId}`, planId, type: "new_review", whenToSend: "3 days before Employee deadline", sendTo: "employee", repeat: "once", channel: "in_system", status: "Active" };
 }
 
 type NotificationsClientProps = {

@@ -15,39 +15,43 @@ export type NavigationItem = {
   href: string;
   icon: IconType;
   count?: number;
+  section?: string;
 };
 
 export const navigationByRole: Record<SystemRole, NavigationItem[]> = {
   hr: [
     { label: "Dashboard", href: "/dashboard", icon: FiHome },
-    { label: "Templates", href: "/review-templates", icon: FiEdit3 },
-    { label: "Cycles", href: "/review-plans", icon: FiCalendar },
-    { label: "Reviews", href: "/reviews", icon: FiClipboard },
-    { label: "Employees", href: "/employees", icon: FiUsers },
-    { label: "Roles & permissions", href: "/roles-access", icon: FiUsers },
-    { label: "WFH requests", href: "/wfh", icon: FiHome, count: 3 },
-    { label: "Notifications", href: "/notifications", icon: FiBell },
+    { label: "Templates", href: "/review-templates", icon: FiEdit3, section: "Review management" },
+    { label: "Cycles", href: "/review-plans", icon: FiCalendar, section: "Review management" },
+    { label: "Reviews", href: "/reviews", icon: FiClipboard, section: "Review management" },
+    { label: "Employees", href: "/employees", icon: FiUsers, section: "People" },
+    { label: "Roles & permissions", href: "/roles-access", icon: FiUsers, section: "People" },
+    { label: "Self-assessment", href: "/employee/evaluation", icon: FiEdit3, section: "My own review" },
+    { label: "Review results", href: "/employee/reviews", icon: FiClipboard, section: "My own review" },
+    { label: "WFH requests", href: "/wfh", icon: FiHome, section: "Workplace" },
+    { label: "Notifications", href: "/notifications", icon: FiBell, section: "Updates" },
   ],
 
   manager: [
-    { label: "My team", href: "/manager/team", icon: FiUsers },
-    { label: "My self-assessment", href: "/employee/evaluation", icon: FiEdit3 },
-    { label: "My review results", href: "/employee/reviews", icon: FiClipboard },
-    { label: "WFH requests", href: "/wfh", icon: FiHome, count: 2 },
-    { label: "Notifications", href: "/manager/notifications", icon: FiBell },
+    { label: "My team", href: "/manager/team", icon: FiUsers, section: "Team Reviews"},
+    { label: "My self-assessment", href: "/employee/evaluation", icon: FiEdit3, section: "My own review" },
+    { label: "My review results", href: "/employee/reviews", icon: FiClipboard, section: "My own review" },
+    { label: "WFH requests", href: "/wfh", icon: FiHome, section: "Workplace" },
+    { label: "Notifications", href: "/manager/notifications", icon: FiBell, section: "Updates" },
   ],
 
   employee: [
-    { label: "My reviews", href: "/employee/reviews", icon: FiClipboard },
-    { label: "My evaluation", href: "/employee/evaluation", icon: FiEdit3 },
-    { label: "WFH requests", href: "/wfh", icon: FiHome },
-    { label: "Notifications", href: "/employee/notifications", icon: FiBell },
+    { label: "My reviews", href: "/employee/reviews", icon: FiClipboard, section: "My reviews" },
+    { label: "My evaluation", href: "/employee/evaluation", icon: FiEdit3, section: "My reviews" },
+    { label: "WFH requests", href: "/wfh", icon: FiHome, section: "Workplace" },
+    { label: "Notifications", href: "/employee/notifications", icon: FiBell, section: "Updates" },
   ],
 
   topManagement: [
-    { label: "Review summary", href: "/management/reviews", icon: FiClipboard },
-    { label: "Managers to evaluate", href: "/manager/team", icon: FiUsers },
-    { label: "Notifications", href: "/management/notifications", icon: FiBell },
+    { label: "Finalise reviews", href: "/management/reviews", icon: FiClipboard, section: "Management review" },
+    { label: "Managers evaluations", href: "/manager/team", icon: FiUsers, section: "Management review" },
+    { label: "WFH requests", href: "/wfh", icon: FiHome, section: "Workplace" },
+    { label: "Notifications", href: "/management/notifications", icon: FiBell, section: "Updates" },
   ],
 };
 
@@ -64,6 +68,6 @@ export const pageTitleOverrides: Record<string, string> = {
   "/reports": "Analytics & reporting",
   "/manager/notifications": "Notifications",
   "/employee/notifications": "Notifications",
-  "/management/reviews": "Review summary",
+  "/management/reviews": "Finalise reviews",
   "/management/notifications": "Notifications",
 };

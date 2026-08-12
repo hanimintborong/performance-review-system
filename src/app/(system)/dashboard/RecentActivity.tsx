@@ -1,7 +1,7 @@
 "use client";
 
 import { Flex, Icon, Text } from "@chakra-ui/react";
-import { FiAlertTriangle, FiAward, FiBell, FiCheckCircle, FiFlag, FiMessageSquare, FiSend } from "react-icons/fi";
+import { FiAlertTriangle, FiAward, FiBell, FiCheckCircle, FiFlag, FiHome, FiMessageSquare, FiSend, FiXCircle } from "react-icons/fi";
 import type { IconType } from "react-icons";
 
 import { AppCard } from "@/components/common/AppCard";
@@ -19,6 +19,9 @@ const TYPE_ICON: Record<NotificationHistoryEntry["type"], { icon: IconType; colo
   review_finalised: { icon: FiAward, color: "success.50" },
   ready_for_management: { icon: FiFlag, color: "brand.50" },
   cycle_completed: { icon: FiAward, color: "success.50" },
+  wfh_requested: { icon: FiHome, color: "brand.50" },
+  wfh_approved: { icon: FiCheckCircle, color: "success.50" },
+  wfh_rejected: { icon: FiXCircle, color: "error.50" },
 };
 
 export function RecentActivity({ history }: { history: NotificationHistoryEntry[] }) {

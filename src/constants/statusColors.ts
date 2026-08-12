@@ -4,6 +4,7 @@ import type {
   ReviewStatus,
   ReviewTemplateStatus,
 } from "@/types/review";
+import type { WfhStatus } from "@/types/wfh";
 
 export type StatusStyle = { bg: string; fg: string; dot: string };
 
@@ -35,4 +36,11 @@ export const PLAN_STATUS_STYLE: Record<ReviewPlanStatus, StatusStyle> = {
 export const TEMPLATE_STATUS_STYLE: Record<ReviewTemplateStatus, StatusStyle> = {
   Active: styleOf(success),
   Inactive: neutral,
+};
+
+export const WFH_STATUS_STYLE: Record<WfhStatus, StatusStyle> = {
+  "Pending Approval": styleOf(warning),
+  Approved: styleOf(success),
+  Rejected: styleOf(error),
+  Cancelled: neutral,
 };

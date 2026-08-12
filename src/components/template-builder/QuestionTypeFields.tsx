@@ -22,7 +22,7 @@ export function QuestionTypeFields({ meta, question, onChange }: QuestionTypeFie
             value={String(question.weightage ?? 0)}
             min={0}
             max={100}
-            onValueChange={(e) => onChange({ ...question, weightage: e.valueAsNumber })}
+            onValueChange={(e) => onChange({ ...question, weightage: Number.isNaN(e.valueAsNumber) ? 0 : e.valueAsNumber })}
             size="xs"
             w="90px"
           >
@@ -42,7 +42,7 @@ export function QuestionTypeFields({ meta, question, onChange }: QuestionTypeFie
             value={String(question.ratingScaleMax ?? 5)}
             min={2}
             max={10}
-            onValueChange={(e) => onChange({ ...question, ratingScaleMax: e.valueAsNumber })}
+            onValueChange={(e) => onChange({ ...question, ratingScaleMax: Number.isNaN(e.valueAsNumber) ? 5 : e.valueAsNumber })}
             size="xs"
             w="80px"
           >

@@ -20,16 +20,17 @@ export function OkrObjectiveRow({ objective, isEmployeeEditing, isManagerEditing
   const showManager = isManagerEditing || objective.managerScore > 0 || Boolean(objective.managerComment);
 
   return (
-    <Flex direction="column" gap="8px" p="12px" bg="grey.10" borderRadius="8px">
+    <Flex direction="column" gap="10px" p="14px" bg="white" borderWidth="1px" borderColor="grey.20" borderRadius="10px">
       <OkrObjectiveHeader title={objective.title} weightage={objective.weightage} editable={isEmployeeEditing} onChange={onChange} onRemove={onRemove} />
 
-      <Flex align="center" gap="10px">
+      <Flex direction="column" gap="6px" pb="10px" borderBottomWidth="1px" borderColor="grey.10">
         <Text fontSize="11px" fontWeight="700" color="grey.60">Self-assessment rating</Text>
         <RatingButtons max={5} value={objective.selfScore} readOnly={!isEmployeeEditing} onChange={(v) => onChange({ selfScore: v })} />
       </Flex>
 
       <LabeledText
         label="Actual performance achieved (details, examples, supporting docs)"
+        placeholder="Describe what you delivered, with examples or supporting docs…"
         value={objective.achievement}
         editable={isEmployeeEditing}
         onChange={(v) => onChange({ achievement: v })}

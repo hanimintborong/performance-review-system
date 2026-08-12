@@ -23,7 +23,13 @@ export function CoreValueManagerFields({ row, ratingScaleMax, editable, onChange
         <RatingButtons max={ratingScaleMax} value={row.managerScore} readOnly={!editable} onChange={(v) => onChange({ managerScore: v })} />
       </Flex>
       {editable && <Text fontSize="10px" color="grey.50">{RATING_LEGEND}</Text>}
-      <LabeledText label="Feedback / remarks" value={row.managerComment} editable={editable} onChange={(v) => onChange({ managerComment: v })} />
+      <LabeledText
+        label="Feedback / remarks"
+        placeholder="Share your feedback on this value…"
+        value={row.managerComment}
+        editable={editable}
+        onChange={(v) => onChange({ managerComment: v })}
+      />
     </Flex>
   );
 }

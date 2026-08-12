@@ -54,7 +54,7 @@ export default async function ReviewTemplateDetailPage({ params }: TemplateDetai
         </Grid>
       </AppCard>
 
-      <TemplatePreview sections={template.sections} />
+      <TemplatePreview sections={template.sections} workflowType={template.workflowType} />
     </Flex>
   );
 }

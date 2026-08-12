@@ -26,6 +26,8 @@ export function resolveNotificationHref(role: NotificationRecipientRole, assignm
 }
 
 export function toNotificationView(n: Notification, role: NotificationRecipientRole, status?: ReviewStatus): NotificationView {
+  const isWfh = n.type.startsWith("wfh_");
+
   return {
     key: n.notificationId,
     type: n.type,
@@ -33,7 +35,7 @@ export function toNotificationView(n: Notification, role: NotificationRecipientR
     message: n.message,
     createdAt: n.createdAt,
     read: n.read,
-    href: resolveNotificationHref(role, n.assignmentId, status),
+    href: isWfh ? "/wfh" : resolveNotificationHref(role, n.assignmentId, status),
     sourceItems: [n],
   };
 }

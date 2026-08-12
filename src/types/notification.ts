@@ -8,7 +8,10 @@ export type NotificationRuleType =
   | "discussion_required"
   | "review_finalised"
   | "ready_for_management"
-  | "cycle_completed";
+  | "cycle_completed"
+  | "wfh_requested"
+  | "wfh_approved"
+  | "wfh_rejected";
 
 export type NotificationChannel = "in_system" | "email" | "whatsapp";
 export type NotificationSendTo = "employee" | "manager" | "hr" | "employee_and_manager";

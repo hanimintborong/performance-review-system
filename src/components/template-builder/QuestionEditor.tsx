@@ -5,11 +5,13 @@ import { FiArrowDown, FiArrowUp, FiTrash2 } from "react-icons/fi";
 import { FIELD_STYLE } from "@/components/template-builder/fieldStyle";
 import { QuestionTypeFields } from "@/components/template-builder/QuestionTypeFields";
 import { QUESTION_TYPES, getQuestionTypeMeta } from "@/constants/questionTypes";
-import type { QuestionType, Respondent, TemplateQuestion } from "@/types/template";
+import { getWorkflowPreset } from "@/constants/workflowPresets";
+import { MULTI_RESPONDENT_QUESTION_TYPES, type QuestionType, type Respondent, type TemplateQuestion, type WorkflowType } from "@/types/template";
 
 type QuestionEditorProps = {
   question: TemplateQuestion;
   number: string;
+  workflowType: WorkflowType;
   onChange: (question: TemplateQuestion) => void;
   onDelete: () => void;
   onMoveUp: () => void;
@@ -18,8 +20,13 @@ type QuestionEditorProps = {
   isLast: boolean;
 };
 
-export function QuestionEditor({ question, number, onChange, onDelete, onMoveUp, onMoveDown, isFirst, isLast }: QuestionEditorProps) {
+const RESPONDENT_LABEL: Record<Respondent, string> = { employee: "Employee", manager: "Manager" };
+
+export function QuestionEditor({ question, number, workflowType, onChange, onDelete, onMoveUp, onMoveDown, isFirst, isLast }: QuestionEditorProps) {
   const meta = getQuestionTypeMeta(question.type);
+  const preset = getWorkflowPreset(workflowType);
+  const availableTypes = QUESTION_TYPES.filter((t) => !preset.excludedQuestionTypes.includes(t.value));
+  const isMultiRespondent = MULTI_RESPONDENT_QUESTION_TYPES.includes(question.type);
 
   return (
     <Flex gap="10px" align="start" p="12px" bg="grey.10" borderRadius="8px">
@@ -49,26 +56,31 @@ export function QuestionEditor({ question, number, onChange, onDelete, onMoveUp,
                 fontSize="12px"
                 {...FIELD_STYLE}
               >
-                {QUESTION_TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
+                {availableTypes.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
               </NativeSelect.Field>
               <NativeSelect.Indicator />
             </NativeSelect.Root>
           </Field>
 
-          <Field label="Visible to" minW="100px">
-            <NativeSelect.Root size="sm">
-              <NativeSelect.Field
-                value={question.respondent}
-                onChange={(e) => onChange({ ...question, respondent: e.target.value as Respondent })}
-                bg="white"
-                fontSize="12px"
-                {...FIELD_STYLE}
-              >
-                <option value="employee">Employee</option>
-                <option value="manager">Manager</option>
-              </NativeSelect.Field>
-              <NativeSelect.Indicator />
-            </NativeSelect.Root>
+          <Field label="Answered by" minW="100px">
+            {isMultiRespondent ? (
+              <StaticRespondentLabel text="Employee + Manager" />
+            ) : preset.allowedRespondents.length > 1 ? (
+              <NativeSelect.Root size="sm">
+                <NativeSelect.Field
+                  value={question.respondent}
+                  onChange={(e) => onChange({ ...question, respondent: e.target.value as Respondent })}
+                  bg="white"
+                  fontSize="12px"
+                  {...FIELD_STYLE}
+                >
+                  {preset.allowedRespondents.map((r) => <option key={r} value={r}>{RESPONDENT_LABEL[r]}</option>)}
+                </NativeSelect.Field>
+                <NativeSelect.Indicator />
+              </NativeSelect.Root>
+            ) : (
+              <StaticRespondentLabel text={RESPONDENT_LABEL[preset.allowedRespondents[0]]} />
+            )}
           </Field>
 
           <Switch.Root checked={question.required} onCheckedChange={(e) => onChange({ ...question, required: e.checked })} size="sm">
@@ -90,6 +102,10 @@ export function QuestionEditor({ question, number, onChange, onDelete, onMoveUp,
       </Flex>
     </Flex>
   );
+}
+
+function StaticRespondentLabel({ text }: { text: string }) {
+  return <Text fontSize="12px" fontWeight="600" color="grey.60" h="32px" display="flex" alignItems="center">{text}</Text>;
 }
 
 function Field({ label, children, flex, minW }: { label: string; children: ReactNode; flex?: string; minW?: string }) {

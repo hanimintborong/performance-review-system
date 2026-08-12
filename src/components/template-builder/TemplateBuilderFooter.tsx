@@ -6,14 +6,15 @@ import { SecondaryButton } from "@/components/common/SecondaryButton";
 type TemplateBuilderFooterProps = {
   onSaveDraft: () => void;
   onActivate: () => void;
-  loading?: boolean;
+  savingDraft?: boolean;
+  activating?: boolean;
 };
 
-export function TemplateBuilderFooter({ onSaveDraft, onActivate, loading }: TemplateBuilderFooterProps) {
+export function TemplateBuilderFooter({ onSaveDraft, onActivate, savingDraft, activating }: TemplateBuilderFooterProps) {
   return (
     <Flex justify="flex-end" gap="10px">
-      <SecondaryButton onClick={onSaveDraft} loading={loading}>Save draft</SecondaryButton>
-      <PrimaryButton onClick={onActivate} loading={loading}>Activate template</PrimaryButton>
+      <SecondaryButton onClick={onSaveDraft} loading={savingDraft} disabled={activating}>Save draft</SecondaryButton>
+      <PrimaryButton onClick={onActivate} loading={activating} disabled={savingDraft}>Activate template</PrimaryButton>
     </Flex>
   );
 }

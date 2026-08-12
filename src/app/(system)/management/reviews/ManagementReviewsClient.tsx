@@ -45,15 +45,11 @@ export function ManagementReviewsClient({ allRows, plans }: { allRows: ReviewRow
     return matchesStatus && matchesSearch;
   });
 
-  const finalised = planRows.filter((r) => r.status === "Finalised");
-  const scored = finalised.filter((r) => r.managerScore !== null);
-  const avgScore = scored.length > 0 ? scored.reduce((sum, r) => sum + (r.managerScore ?? 0), 0) / scored.length : null;
-
   return (
     <Flex direction="column" gap="14px">
       <Flex justify="flex-end">
         <NativeSelect.Root w="220px" size="sm">
-          <NativeSelect.Field value={planId} onChange={(e) => setPlanId(e.target.value)} fontSize="12px">
+          <NativeSelect.Field value={planId} onChange={(e) => setPlanId(e.target.value)} fontSize="12px" pl="12px" pr="30px">
             <option value={ALL}>{ALL}</option>
             {plans.map((p) => <option key={p.planId} value={p.planId}>{p.title}</option>)}
           </NativeSelect.Field>
@@ -61,7 +57,7 @@ export function ManagementReviewsClient({ allRows, plans }: { allRows: ReviewRow
         </NativeSelect.Root>
       </Flex>
 
-      <ManagementOverview rows={planRows} avgScore={avgScore} />
+      <ManagementOverview rows={planRows} />
 
       <DepartmentSummary rows={planRows} />
 

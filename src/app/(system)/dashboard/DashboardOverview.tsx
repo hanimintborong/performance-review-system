@@ -14,7 +14,7 @@ export function DashboardOverview({ rows }: { rows: ReviewRow[] }) {
     <>
       <DashboardStatCards counts={counts} total={rows.length} departmentCount={departmentCount} />
       <Grid templateColumns="1fr 1.3fr" gap="12px">
-        <StatusBucketBreakdown counts={counts} total={rows.length} />
+        <StatusBucketBreakdown counts={counts} total={rows.length} title="Evaluation progress by status" />
         <DepartmentProgress rows={rows} />
       </Grid>
     </>

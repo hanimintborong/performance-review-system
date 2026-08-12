@@ -1,4 +1,4 @@
-import { FiAlertTriangle, FiAward, FiBell, FiCheckCircle, FiClock, FiFlag, FiMessageSquare } from "react-icons/fi";
+import { FiAlertTriangle, FiAward, FiBell, FiCheckCircle, FiClock, FiFlag, FiHome, FiMessageSquare, FiXCircle } from "react-icons/fi";
 import type { IconType } from "react-icons";
 
 import type { NotificationChannel, NotificationRuleType, NotificationSendTo } from "@/types/notification";
@@ -14,6 +14,9 @@ export const NOTIFICATION_TYPE_LABELS: Record<NotificationRuleType, string> = {
   review_finalised: "Review finalised",
   ready_for_management: "Ready for management review",
   cycle_completed: "Review cycle completed",
+  wfh_requested: "WFH request submitted",
+  wfh_approved: "WFH request approved",
+  wfh_rejected: "WFH request rejected",
 };
 
 export const NOTIFICATION_TYPE_ICON: Record<NotificationRuleType, IconType> = {
@@ -27,6 +30,9 @@ export const NOTIFICATION_TYPE_ICON: Record<NotificationRuleType, IconType> = {
   review_finalised: FiAward,
   ready_for_management: FiFlag,
   cycle_completed: FiAward,
+  wfh_requested: FiHome,
+  wfh_approved: FiCheckCircle,
+  wfh_rejected: FiXCircle,
 };
 
 export const SEND_TO_LABELS: Record<NotificationSendTo, string> = {
@@ -36,8 +42,15 @@ export const SEND_TO_LABELS: Record<NotificationSendTo, string> = {
   employee_and_manager: "Employee & Manager",
 };
 
+export const SEND_TO_PLURAL: Record<NotificationSendTo, string> = {
+  employee: "Employees",
+  manager: "Managers",
+  hr: "HR",
+  employee_and_manager: "Employees & managers",
+};
+
 export const CHANNEL_META: Record<NotificationChannel, { label: string; disabled?: boolean }> = {
   in_system: { label: "In-system" },
-  email: { label: "Email" },
+  email: { label: "Email (coming later)", disabled: true },
   whatsapp: { label: "WhatsApp (coming later)", disabled: true },
 };

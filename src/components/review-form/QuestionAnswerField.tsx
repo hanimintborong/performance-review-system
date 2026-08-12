@@ -80,7 +80,7 @@ export function QuestionAnswerField({ question, value, onChange, readOnly, edita
       <Flex direction="column" gap="6px">
         {label}
         <NativeSelect.Root size="sm">
-          <NativeSelect.Field value={value} onChange={(e) => onChange?.(e.target.value)}>
+          <NativeSelect.Field value={value} onChange={(e) => onChange?.(e.target.value)} pl="12px" pr="30px">
             <option value="">Select…</option>
             {(question.options ?? []).map((o) => <option key={o} value={o}>{o}</option>)}
           </NativeSelect.Field>
@@ -94,7 +94,7 @@ export function QuestionAnswerField({ question, value, onChange, readOnly, edita
     return (
       <Flex direction="column" gap="6px">
         {label}
-        <Textarea size="sm" rows={3} value={value} onChange={(e) => onChange?.(e.target.value)} />
+        <Textarea size="sm" rows={3} px="12px" py="8px" value={value} onChange={(e) => onChange?.(e.target.value)} />
       </Flex>
     );
   }
@@ -103,7 +103,7 @@ export function QuestionAnswerField({ question, value, onChange, readOnly, edita
     return (
       <Flex direction="column" gap="6px">
         {label}
-        <Input size="sm" value={value} onChange={(e) => onChange?.(e.target.value)} placeholder="File name or link (upload coming later)" />
+        <Input size="sm" px="12px" value={value} onChange={(e) => onChange?.(e.target.value)} placeholder="File name or link (upload coming later)" />
       </Flex>
     );
   }
@@ -113,6 +113,7 @@ export function QuestionAnswerField({ question, value, onChange, readOnly, edita
       {label}
       <Input
         size="sm"
+        px="12px"
         type={question.type === "number" || question.type === "percentage" ? "number" : "text"}
         value={value}
         onChange={(e) => onChange?.(e.target.value)}

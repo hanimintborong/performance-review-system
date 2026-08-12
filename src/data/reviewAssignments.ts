@@ -47,11 +47,19 @@ export type ReviewRow = {
   finalizedAt: string | null;
 };
 
+const OPEN_STATUSES: ReviewStatus[] = ["Not Started", "Self-Assessment", "Employee Submitted", "Manager Reviewing", "Manager Submitted"];
+
+function effectiveStatus(status: ReviewStatus, deadline: string, today: string): ReviewStatus {
+  if (OPEN_STATUSES.includes(status) && deadline < today) return "Overdue";
+  return status;
+}
+
 function toReviewRow(
   assignment: ReviewAssignment,
   employee: Employee,
   manager: Employee,
   planTitle: string,
+  today: string,
 ): ReviewRow {
   return {
     assignmentId: assignment.assignmentId,
@@ -61,7 +69,7 @@ function toReviewRow(
     managerName: manager.name,
     planTitle,
     deadline: assignment.deadline,
-    status: assignment.status,
+    status: effectiveStatus(assignment.status, assignment.deadline, today),
     employeeScore: assignment.employeeScore,
     managerScore: assignment.managerScore,
     acknowledged: assignment.acknowledged,
@@ -80,6 +88,7 @@ export const getReviewRows = cache(async (): Promise<ReviewRow[]> => {
 
   const employeeById = new Map(employees.map((employee) => [employee.employeeId, employee]));
   const planById = new Map(plans.map((plan) => [plan.planId, plan]));
+  const today = new Date().toISOString().slice(0, 10);
 
   return assignments
     .map((assignment) => {
@@ -88,7 +97,7 @@ export const getReviewRows = cache(async (): Promise<ReviewRow[]> => {
       const plan = planById.get(assignment.planId);
       if (!employee || !manager || !plan) return null;
 
-      return toReviewRow(assignment, employee, manager, plan.title);
+      return toReviewRow(assignment, employee, manager, plan.title, today);
     })
     .filter((row): row is ReviewRow => row !== null);
 });
@@ -104,5 +113,5 @@ export const getReviewRowById = cache(async (assignmentId: string): Promise<Revi
   ]);
   if (!employee || !manager || !plan) return undefined;
 
-  return toReviewRow(assignment, employee, manager, plan.title);
+  return toReviewRow(assignment, employee, manager, plan.title, new Date().toISOString().slice(0, 10));
 });

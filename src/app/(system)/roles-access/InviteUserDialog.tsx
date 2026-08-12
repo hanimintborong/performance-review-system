@@ -55,7 +55,7 @@ export function InviteUserDialog({ employees, invitedEmployeeIds }: InviteUserDi
               <Flex direction="column" gap="10px">
                 <Field label="Employee">
                   <NativeSelect.Root size="sm">
-                    <NativeSelect.Field value={employeeId} onChange={(e) => pickEmployee(e.target.value)}>
+                    <NativeSelect.Field value={employeeId} onChange={(e) => pickEmployee(e.target.value)} pl="12px" pr="30px">
                       {available.map((e) => <option key={e.employeeId} value={e.employeeId}>{e.name} — {e.jobTitle}</option>)}
                     </NativeSelect.Field>
                     <NativeSelect.Indicator />
@@ -63,12 +63,12 @@ export function InviteUserDialog({ employees, invitedEmployeeIds }: InviteUserDi
                 </Field>
 
                 <Field label="Work email">
-                  <Input size="sm" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="name@borong.com" />
+                  <Input size="sm" px="12px" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="name@borong.com" />
                 </Field>
 
                 <Field label="System role">
                   <NativeSelect.Root size="sm">
-                    <NativeSelect.Field value={role} onChange={(e) => setRole(e.target.value as SystemRole)}>
+                    <NativeSelect.Field value={role} onChange={(e) => setRole(e.target.value as SystemRole)} pl="12px" pr="30px">
                       {ROLE_OPTIONS.map((r) => <option key={r} value={r}>{ROLE_META[r].label}</option>)}
                     </NativeSelect.Field>
                     <NativeSelect.Indicator />
