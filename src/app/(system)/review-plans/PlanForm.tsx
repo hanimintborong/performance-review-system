@@ -13,7 +13,7 @@ import { SecondaryButton } from "@/components/common/SecondaryButton";
 import { ToggleSwitch } from "@/components/common/ToggleSwitch";
 import { toaster } from "@/components/ui/toaster";
 import { DEPARTMENTS } from "@/constants/departments";
-import { addDays, formatDateRange } from "@/lib/date";
+import { addDays, formatDate, formatDateRange, midpointDate } from "@/lib/date";
 import type { Employee } from "@/types/employee";
 import type { ReviewPlan } from "@/types/review";
 import type { ReviewTemplate } from "@/types/template";
@@ -54,7 +54,8 @@ export function PlanForm({ initialPlan, initialStart, initialEnd, mode, employee
       description: initialPlan.description || `${title} Borong Review.`,
       templateId,
       reviewPeriod: formatDateRange(startDate, endDate),
-      employeeDeadline: startDate,
+      startDate,
+      employeeDeadline: midpointDate(startDate, endDate),
       managerDeadline: endDate,
       hrReviewDeadline: addDays(endDate, 7),
       managementReviewPeriod: formatDateRange(addDays(endDate, 8), addDays(endDate, 14)),
@@ -97,6 +98,12 @@ export function PlanForm({ initialPlan, initialStart, initialEnd, mode, employee
         <Field label="End date">
           <Input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} size="sm" px="12px" />
         </Field>
+
+        {startDate && endDate && (
+          <Text fontSize="11px" color="grey.50" gridColumn="1/-1" mt="-6px">
+            Employee deadline: {formatDate(midpointDate(startDate, endDate))} (midpoint) · Manager deadline: {formatDate(endDate)} (end date)
+          </Text>
+        )}
 
         <Field label="Form template" span={2}>
           <NativeSelect.Root size="sm">

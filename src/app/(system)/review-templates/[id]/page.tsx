@@ -1,14 +1,12 @@
 import { notFound } from "next/navigation";
 import NextLink from "next/link";
 
-import { Flex, Grid, Text } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 import { FiArrowLeft } from "react-icons/fi";
 
-import { AppCard } from "@/components/common/AppCard";
-import { SecondaryButton } from "@/components/common/SecondaryButton";
-import { StatusBadge } from "@/components/common/StatusBadge";
+import { TemplateDetailHeader } from "@/app/(system)/review-templates/[id]/TemplateDetailHeader";
+import { TemplateInfoGrid } from "@/app/(system)/review-templates/[id]/TemplateInfoGrid";
 import { TemplatePreview } from "@/components/template-builder/TemplatePreview";
-import { TEMPLATE_STATUS_STYLE } from "@/constants/statusColors";
 import { getReviewTemplateById } from "@/data/queries";
 import { countQuestions, countSections } from "@/types/template";
 
@@ -30,40 +28,20 @@ export default async function ReviewTemplateDetailPage({ params }: TemplateDetai
         </Flex>
       </NextLink>
 
-      <AppCard p="16px 20px">
-        <Flex align="center" justify="space-between" gap="12px" flexWrap="wrap">
-          <Flex direction="column" gap="4px">
-            <Text fontSize="17px" fontWeight="700" color="grey.80">{template.title}</Text>
-            <Text fontSize="12px" color="grey.60">{template.description}</Text>
-          </Flex>
+      <TemplateDetailHeader
+        templateId={template.templateId}
+        title={template.title}
+        description={template.description}
+        status={template.status}
+      />
 
-          <Flex align="center" gap="10px">
-            <StatusBadge label={template.status} style={TEMPLATE_STATUS_STYLE[template.status]} />
-            <NextLink href={`/review-templates/${template.templateId}/edit`}>
-              <SecondaryButton>Edit template</SecondaryButton>
-            </NextLink>
-          </Flex>
-        </Flex>
-      </AppCard>
-
-      <AppCard p="16px 20px">
-        <Grid templateColumns="repeat(3, 1fr)" gap="16px">
-          <Field label="Sections" value={String(countSections(template))} />
-          <Field label="Questions" value={String(countQuestions(template))} />
-          <Field label="Assigned departments" value={template.assignedDepartments.join(", ")} />
-        </Grid>
-      </AppCard>
+      <TemplateInfoGrid
+        sectionCount={String(countSections(template))}
+        questionCount={String(countQuestions(template))}
+        departments={template.assignedDepartments.join(", ")}
+      />
 
       <TemplatePreview sections={template.sections} workflowType={template.workflowType} />
-    </Flex>
-  );
-}
-
-function Field({ label, value }: { label: string; value: string }) {
-  return (
-    <Flex direction="column" gap="4px">
-      <Text fontSize="11px" fontWeight="600" color="grey.60">{label}</Text>
-      <Text fontSize="13px" fontWeight="600" color="grey.80">{value}</Text>
     </Flex>
   );
 }

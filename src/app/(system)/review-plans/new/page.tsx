@@ -24,6 +24,7 @@ export default async function NewReviewPlanPage() {
     description: "",
     templateId: "",
     reviewPeriod: "",
+    startDate: "",
     employeeDeadline: "",
     managerDeadline: "",
     hrReviewDeadline: "",

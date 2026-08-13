@@ -1,3 +1,5 @@
+"use client";
+
 import { Flex, Icon, Text } from "@chakra-ui/react";
 import { FiMessageSquare } from "react-icons/fi";
 

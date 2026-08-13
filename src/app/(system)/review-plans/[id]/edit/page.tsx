@@ -30,7 +30,7 @@ export default async function EditReviewPlanPage({ params }: EditPlanPageProps) 
 
       <PlanForm
         initialPlan={plan}
-        initialStart={plan.employeeDeadline}
+        initialStart={plan.startDate}
         initialEnd={plan.managerDeadline}
         mode="edit"
         employees={employees}

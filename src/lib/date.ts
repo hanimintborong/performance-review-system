@@ -15,3 +15,9 @@ export function addDays(iso: string, days: number): string {
 export function formatDateRange(startIso: string, endIso: string): string {
   return `${formatDate(startIso)} – ${formatDate(endIso)}`;
 }
+
+export function midpointDate(startIso: string, endIso: string): string {
+  const start = new Date(`${startIso}T00:00:00`).getTime();
+  const end = new Date(`${endIso}T00:00:00`).getTime();
+  return new Date(start + Math.round((end - start) / 2)).toISOString().slice(0, 10);
+}

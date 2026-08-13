@@ -8,6 +8,7 @@ export const reviewPlans = pgTable("review_plans", {
   description: text("description").notNull(),
   templateId: text("template_id").notNull(),
   reviewPeriod: text("review_period").notNull(),
+  startDate: text("start_date").notNull(),
   employeeDeadline: text("employee_deadline").notNull(),
   managerDeadline: text("manager_deadline").notNull(),
   hrReviewDeadline: text("hr_review_deadline").notNull(),

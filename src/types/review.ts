@@ -17,6 +17,7 @@ export type ReviewPlan = {
   description: string;
   templateId: string;
   reviewPeriod: string;
+  startDate: string;
   employeeDeadline: string;
   managerDeadline: string;
   hrReviewDeadline: string;
