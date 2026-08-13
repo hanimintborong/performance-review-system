@@ -1,8 +1,13 @@
 import { ReviewTemplatesClient } from "@/app/(system)/review-templates/ReviewTemplatesClient";
-import { getReviewTemplates } from "@/data/queries";
+import { getReviewPlans, getReviewTemplates } from "@/data/queries";
 
 export default async function ReviewTemplatesPage() {
-  const templates = await getReviewTemplates();
+  const [templates, plans] = await Promise.all([getReviewTemplates(), getReviewPlans()]);
 
-  return <ReviewTemplatesClient templates={templates} />;
+  const templateUsage: Record<string, string[]> = {};
+  plans.filter((p) => p.status !== "Archived").forEach((p) => {
+    (templateUsage[p.templateId] ??= []).push(p.title);
+  });
+
+  return <ReviewTemplatesClient templates={templates} templateUsage={templateUsage} />;
 }

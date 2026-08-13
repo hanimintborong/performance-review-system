@@ -19,11 +19,17 @@ import { PrimaryButton } from "@/components/common/PrimaryButton";
 import { toaster } from "@/components/ui/toaster";
 import type { ReviewTemplate } from "@/types/template";
 
-export function ReviewTemplatesClient({ templates }: { templates: ReviewTemplate[] }) {
+type ReviewTemplatesClientProps = {
+  templates: ReviewTemplate[];
+  templateUsage: Record<string, string[]>;
+};
+
+export function ReviewTemplatesClient({ templates, templateUsage }: ReviewTemplatesClientProps) {
   const router = useRouter();
   const [, startTransition] = useTransition();
   const [statusFilter, setStatusFilter] = useState("all");
   const [pendingDelete, setPendingDelete] = useState<ReviewTemplate | null>(null);
+  const [blockedDelete, setBlockedDelete] = useState<{ template: ReviewTemplate; plans: string[] } | null>(null);
 
   const statusOptions: FilterOption[] = useMemo(() => {
     const counts = new Map<string, number>();
@@ -51,7 +57,14 @@ export function ReviewTemplatesClient({ templates }: { templates: ReviewTemplate
       });
     },
     onEdit: (template) => router.push(`/review-templates/${template.templateId}/edit`),
-    onDelete: setPendingDelete,
+    onDelete: (template) => {
+      const usedByPlans = templateUsage[template.templateId];
+      if (usedByPlans?.length) {
+        setBlockedDelete({ template, plans: usedByPlans });
+      } else {
+        setPendingDelete(template);
+      }
+    },
   });
 
   return (
@@ -79,10 +92,25 @@ export function ReviewTemplatesClient({ templates }: { templates: ReviewTemplate
           if (!pendingDelete) return;
           const template = pendingDelete;
           startTransition(async () => {
-            await deleteReviewTemplateAction(template.templateId);
-            toaster.create({ title: "Template deleted", description: template.title, type: "success" });
+            try {
+              await deleteReviewTemplateAction(template.templateId);
+              toaster.create({ title: "Template deleted", description: template.title, type: "success" });
+            } catch (err) {
+              toaster.create({ title: "Could not delete template", description: err instanceof Error ? err.message : undefined, type: "error" });
+            }
           });
         }}
+      />
+
+      <ConfirmationDialog
+        open={blockedDelete !== null}
+        onOpenChange={(open) => !open && setBlockedDelete(null)}
+        title="Can't delete this template"
+        description={blockedDelete
+          ? `"${blockedDelete.template.title}" is still used by ${blockedDelete.plans.length} cycle${blockedDelete.plans.length === 1 ? "" : "s"} that isn't archived: ${blockedDelete.plans.join(", ")}. Archive those cycles first, then delete the template.`
+          : ""}
+        confirmLabel="Got it"
+        onConfirm={() => setBlockedDelete(null)}
       />
     </AppCard>
   );
