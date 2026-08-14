@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { nextEmployeeIds } from "@/app/(system)/employees/nextEmployeeId";
 import { getEmployees, saveEmployee, saveEmployees } from "@/data/queries";
 import { getInitials } from "@/lib/initials";
-import { syncUserRole } from "@/lib/userRoles";
+import { renameSystemUserEmail, syncUserRole } from "@/lib/userRoles";
 import type { Employee } from "@/types/employee";
 import type { SystemRole } from "@/types/role";
 
@@ -89,6 +89,9 @@ export async function updateEmployeeAction(employeeId: string, input: NewEmploye
   };
 
   await saveEmployee(updated);
+  if (email !== current.email.toLowerCase()) {
+    await renameSystemUserEmail(current.email, email);
+  }
   await syncUserRole(email, input.systemRole);
 
   revalidatePath("/employees");

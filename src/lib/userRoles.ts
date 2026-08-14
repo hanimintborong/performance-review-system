@@ -36,3 +36,13 @@ export async function syncUserRole(email: string, role: SystemRole): Promise<voi
 
   await saveSystemUser({ ...record, role });
 }
+
+export async function renameSystemUserEmail(oldEmail: string, newEmail: string): Promise<void> {
+  const from = normalizeEmail(oldEmail);
+  const to = normalizeEmail(newEmail);
+  if (from === to) return;
+
+  // A changed email is an unproven identity Clerk has never seen — always require a fresh invite/sign-in,
+  // regardless of whether the old email was already active.
+  await db.update(systemUsers).set({ email: to, status: "invited" }).where(eq(systemUsers.email, from));
+}
