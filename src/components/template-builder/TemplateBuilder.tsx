@@ -68,7 +68,7 @@ export function TemplateBuilder({ initialTemplate, mode = "create", workflowLock
   }
 
   function addSection() {
-    setTemplate((prev) => ({ ...prev, sections: [...prev.sections, newSection(prev.templateId, prev.sections.length)] }));
+    setTemplate((prev) => ({ ...prev, sections: [...prev.sections, newSection(prev.templateId)] }));
   }
 
   function persist(status: ReviewTemplate["status"], message: string) {

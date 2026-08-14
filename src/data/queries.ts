@@ -2,6 +2,7 @@ import "server-only";
 
 export { getEmployeeById, getEmployees, saveEmployee, saveEmployees } from "@/data/employees";
 export {
+  deleteReviewAssignmentsByPlan,
   getReviewAssignmentById,
   getReviewAssignments,
   getReviewRowById,

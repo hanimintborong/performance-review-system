@@ -69,7 +69,7 @@ export function ReviewPlansClient({ plans }: { plans: ReviewPlanRow[] }) {
         open={pendingDelete !== null}
         onOpenChange={(open) => !open && setPendingDelete(null)}
         title="Delete review cycle?"
-        description={`"${pendingDelete?.title}" will be permanently removed. This cannot be undone.`}
+        description={`"${pendingDelete?.title}" and all ${pendingDelete?.participantCount ?? 0} of its review assignments — including any submitted scores, progress, and results — will be permanently deleted. This cannot be undone.`}
         confirmLabel="Delete"
         onConfirm={() => {
           if (!pendingDelete) return;

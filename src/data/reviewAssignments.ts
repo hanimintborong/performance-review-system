@@ -1,11 +1,11 @@
 import "server-only";
 
 import { cache } from "react";
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 
 import { getEmployeeById, getEmployees } from "@/data/employees";
 import { getReviewPlanById, getReviewPlans } from "@/data/reviewPlans";
-import { reviewAssignments as reviewAssignmentsTable } from "@/db/schema";
+import { reviewAssignments as reviewAssignmentsTable, reviewResponses as reviewResponsesTable } from "@/db/schema";
 import { db } from "@/lib/db";
 import type { Employee } from "@/types/employee";
 import type { FinalOutcome, ReviewAssignment, ReviewStatus } from "@/types/review";
@@ -19,6 +19,19 @@ export async function saveReviewAssignment(assignment: ReviewAssignment): Promis
     target: reviewAssignmentsTable.assignmentId,
     set: assignment,
   });
+}
+
+export async function deleteReviewAssignmentsByPlan(planId: string): Promise<void> {
+  const toDelete = await db
+    .select({ assignmentId: reviewAssignmentsTable.assignmentId })
+    .from(reviewAssignmentsTable)
+    .where(eq(reviewAssignmentsTable.planId, planId));
+
+  if (toDelete.length > 0) {
+    await db.delete(reviewResponsesTable).where(inArray(reviewResponsesTable.assignmentId, toDelete.map((r) => r.assignmentId)));
+  }
+
+  await db.delete(reviewAssignmentsTable).where(eq(reviewAssignmentsTable.planId, planId));
 }
 
 export const getReviewAssignmentById = cache(async (assignmentId: string): Promise<ReviewAssignment | undefined> => {

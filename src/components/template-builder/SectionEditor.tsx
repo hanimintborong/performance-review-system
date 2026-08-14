@@ -107,7 +107,7 @@ export function SectionEditor({ section, index, workflowType, onChange, onDelete
             fontSize="12px"
             fontWeight="700"
             cursor="pointer"
-            onClick={() => onChange({ ...section, questions: [...section.questions, newQuestion(section.sectionId, section.questions.length)] })}
+            onClick={() => onChange({ ...section, questions: [...section.questions, newQuestion(section.sectionId)] })}
           >
             <FiPlus /> Add question
           </Flex>

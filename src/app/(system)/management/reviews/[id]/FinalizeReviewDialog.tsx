@@ -44,7 +44,7 @@ export function FinalizeReviewDialog({ assignmentId }: { assignmentId: string })
                 <Flex direction="column" gap="4px">
                   <Text fontSize="11px" fontWeight="700" color="grey.60">Final outcome</Text>
                   <NativeSelect.Root size="sm">
-                    <NativeSelect.Field value={outcome} onChange={(e) => setOutcome(e.target.value as FinalOutcome)}>
+                    <NativeSelect.Field value={outcome} onChange={(e) => setOutcome(e.target.value as FinalOutcome)} pl="12px" pr="30px">
                       {OUTCOMES.map((o) => <option key={o} value={o}>{o}</option>)}
                     </NativeSelect.Field>
                     <NativeSelect.Indicator />
@@ -53,7 +53,7 @@ export function FinalizeReviewDialog({ assignmentId }: { assignmentId: string })
 
                 <Flex direction="column" gap="4px">
                   <Text fontSize="11px" fontWeight="700" color="grey.60">Increment details / notes</Text>
-                  <Textarea size="sm" rows={3} value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="e.g. 5% increment effective next payroll cycle" />
+                  <Textarea size="sm" px="12px" py="8px" rows={3} value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="e.g. 5% increment effective next payroll cycle" />
                 </Flex>
               </Flex>
             </Dialog.Body>

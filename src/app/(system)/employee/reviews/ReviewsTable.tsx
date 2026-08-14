@@ -20,7 +20,7 @@ export function ReviewsTable({ rows, latestScore, title = "My reviews", descript
     : `${rows.length} review${rows.length === 1 ? "" : "s"} on record${latestScore !== null ? ` · latest score ${latestScore.toFixed(1)} / 5` : ""}`);
 
   return (
-    <AppCard borderTopWidth="3px" borderTopColor="info.50">
+    <AppCard>
       <Flex direction="column" gap="2px" p="16px 20px" borderBottomWidth="1px" borderColor="grey.20">
         <Text fontSize="15px" fontWeight="700" color="grey.80">{title}</Text>
         <Text fontSize="12px" color="grey.60">{subtitle}</Text>

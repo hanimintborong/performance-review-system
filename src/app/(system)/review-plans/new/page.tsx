@@ -3,19 +3,21 @@ import { Flex } from "@chakra-ui/react";
 import { FiArrowLeft } from "react-icons/fi";
 
 import { PlanForm } from "@/app/(system)/review-plans/PlanForm";
+import { nextPlanId } from "@/app/(system)/review-plans/nextPlanId";
 import { DEPARTMENTS } from "@/constants/departments";
-import { getEmployees, getReviewPlans, getReviewTemplates } from "@/data/queries";
+import { getEmployees, getReviewAssignments, getReviewPlans, getReviewTemplates } from "@/data/queries";
 import { addDays } from "@/lib/date";
 import type { ReviewPlan } from "@/types/review";
 
 export default async function NewReviewPlanPage() {
-  const [plans, employees, templates] = await Promise.all([
+  const [plans, assignments, employees, templates] = await Promise.all([
     getReviewPlans(),
+    getReviewAssignments(),
     getEmployees(),
     getReviewTemplates(),
   ]);
 
-  const planId = `PLAN${String(plans.length + 1).padStart(3, "0")}`;
+  const planId = nextPlanId(plans.map((p) => p.planId), assignments.map((a) => a.planId));
   const today = new Date().toISOString().slice(0, 10);
 
   const blankPlan: ReviewPlan = {

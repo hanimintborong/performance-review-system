@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { generateAssignmentsForPlan, syncAssignmentDeadlines } from "@/data/assignmentGeneration";
-import { deleteReviewPlan, getReviewPlanById, saveReviewPlan } from "@/data/queries";
+import { deleteReviewAssignmentsByPlan, deleteReviewPlan, getReviewPlanById, saveReviewPlan } from "@/data/queries";
 import type { ReviewPlan } from "@/types/review";
 
 function revalidateAssignmentPaths(planId: string) {
@@ -58,6 +58,7 @@ export async function duplicatePlanAction(planId: string): Promise<ReviewPlan | 
 }
 
 export async function deletePlanAction(planId: string): Promise<void> {
+  await deleteReviewAssignmentsByPlan(planId);
   await deleteReviewPlan(planId);
-  revalidatePath("/review-plans");
+  revalidateAssignmentPaths(planId);
 }
