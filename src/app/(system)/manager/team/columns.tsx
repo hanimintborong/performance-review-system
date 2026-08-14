@@ -27,7 +27,7 @@ export const getTeamColumns = ({ onSendReminder, isSending }: TeamColumnsOptions
   {
     key: "employee",
     label: "Employee",
-    width: "1.6fr",
+    width: "1.3fr",
     render: (row) => (
       <Flex align="center" gap="10px">
         <UserAvatar initials={row.employee.initials} />
@@ -38,6 +38,7 @@ export const getTeamColumns = ({ onSendReminder, isSending }: TeamColumnsOptions
       </Flex>
     ),
   },
+  { key: "plan", label: "Review plan", width: "1fr", render: (row) => row.planTitle },
   { key: "department", label: "Department", width: "0.9fr", render: (row) => row.employee.department },
   {
     key: "deadline",

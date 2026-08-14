@@ -54,3 +54,14 @@ export async function generateAssignmentsForPlan(plan: ReviewPlan): Promise<numb
 
   return eligible.length;
 }
+
+export async function syncAssignmentDeadlines(plan: ReviewPlan): Promise<number> {
+  const assignments = await getReviewAssignments();
+  const stale = assignments.filter(
+    (a) => a.planId === plan.planId && a.status !== "Finalised" && a.deadline !== plan.employeeDeadline,
+  );
+
+  await Promise.all(stale.map((a) => saveReviewAssignment({ ...a, deadline: plan.employeeDeadline })));
+
+  return stale.length;
+}

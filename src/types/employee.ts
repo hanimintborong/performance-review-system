@@ -13,4 +13,5 @@ export type Employee = {
   systemRole: SystemRole;
   employmentStatus: EmploymentStatus;
   initials: string;
+  createdAt: string;
 };

@@ -45,6 +45,7 @@ export type ReviewTemplate = {
   status: ReviewTemplateStatus;
   workflowType: WorkflowType;
   sections: TemplateSection[];
+  createdAt: string;
 };
 
 export function countSections(template: ReviewTemplate): number {

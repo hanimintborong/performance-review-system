@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
-import { generateAssignmentsForPlan } from "@/data/assignmentGeneration";
+import { generateAssignmentsForPlan, syncAssignmentDeadlines } from "@/data/assignmentGeneration";
 import { deleteReviewPlan, getReviewPlanById, saveReviewPlan } from "@/data/queries";
 import type { ReviewPlan } from "@/types/review";
 
@@ -21,6 +21,7 @@ function revalidateAssignmentPaths(planId: string) {
 export async function saveReviewPlanAction(plan: ReviewPlan): Promise<number> {
   await saveReviewPlan(plan);
   const createdCount = plan.status === "Active" ? await generateAssignmentsForPlan(plan) : 0;
+  await syncAssignmentDeadlines(plan);
   revalidateAssignmentPaths(plan.planId);
   return createdCount;
 }
@@ -48,6 +49,7 @@ export async function duplicatePlanAction(planId: string): Promise<ReviewPlan | 
     planId: `${plan.planId}-COPY-${Math.random().toString(36).slice(2, 7)}`,
     title: `${plan.title} (Copy)`,
     status: "Draft",
+    createdAt: new Date().toISOString(),
   };
   await saveReviewPlan(copy);
   revalidateAssignmentPaths(copy.planId);

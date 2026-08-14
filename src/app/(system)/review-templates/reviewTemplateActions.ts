@@ -42,6 +42,7 @@ export async function duplicateTemplateAction(templateId: string): Promise<Revie
     templateId: `${template.templateId}-COPY-${Math.random().toString(36).slice(2, 7)}`,
     title: `${template.title} (Copy)`,
     status: "Inactive",
+    createdAt: new Date().toISOString(),
   };
   await saveReviewTemplate(copy);
   revalidatePath("/review-templates");

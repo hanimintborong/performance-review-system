@@ -22,6 +22,11 @@ export const QUESTION_TYPES: QuestionTypeMeta[] = [
   { value: "core_value_list", label: "Core value list (HR defines values)", hasOptions: true, hasRatingScale: true, hasWeightage: false },
 ];
 
+// "core_value_rating" behaves identically to "rating_scale" everywhere (rendering + scoring) — retired from
+// new-question selection to avoid the duplicate choice, but kept in QUESTION_TYPES so existing questions
+// of this type still resolve correctly in the builder.
+export const SELECTABLE_QUESTION_TYPES: QuestionTypeMeta[] = QUESTION_TYPES.filter((t) => t.value !== "core_value_rating");
+
 export function getQuestionTypeMeta(type: QuestionType): QuestionTypeMeta {
   return QUESTION_TYPES.find((meta) => meta.value === type) ?? QUESTION_TYPES[0];
 }

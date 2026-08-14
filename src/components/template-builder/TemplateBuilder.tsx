@@ -72,7 +72,11 @@ export function TemplateBuilder({ initialTemplate, mode = "create", workflowLock
   }
 
   function persist(status: ReviewTemplate["status"], message: string) {
-    const toSave: ReviewTemplate = sanitizeTemplate({ ...template, status });
+    const toSave: ReviewTemplate = sanitizeTemplate({
+      ...template,
+      status,
+      createdAt: mode === "create" ? new Date().toISOString() : template.createdAt,
+    });
     setSavingStatus(status);
     startTransition(async () => {
       try {

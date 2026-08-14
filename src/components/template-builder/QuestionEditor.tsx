@@ -4,7 +4,7 @@ import { FiArrowDown, FiArrowUp, FiTrash2 } from "react-icons/fi";
 
 import { FIELD_STYLE } from "@/components/template-builder/fieldStyle";
 import { QuestionTypeFields } from "@/components/template-builder/QuestionTypeFields";
-import { QUESTION_TYPES, getQuestionTypeMeta } from "@/constants/questionTypes";
+import { SELECTABLE_QUESTION_TYPES, getQuestionTypeMeta } from "@/constants/questionTypes";
 import { getWorkflowPreset } from "@/constants/workflowPresets";
 import { MULTI_RESPONDENT_QUESTION_TYPES, type QuestionType, type Respondent, type TemplateQuestion, type WorkflowType } from "@/types/template";
 
@@ -25,7 +25,10 @@ const RESPONDENT_LABEL: Record<Respondent, string> = { employee: "Employee", man
 export function QuestionEditor({ question, number, workflowType, onChange, onDelete, onMoveUp, onMoveDown, isFirst, isLast }: QuestionEditorProps) {
   const meta = getQuestionTypeMeta(question.type);
   const preset = getWorkflowPreset(workflowType);
-  const availableTypes = QUESTION_TYPES.filter((t) => !preset.excludedQuestionTypes.includes(t.value));
+  const selectableTypes = SELECTABLE_QUESTION_TYPES.filter((t) => !preset.excludedQuestionTypes.includes(t.value));
+  // Grandfather in the question's current type even if it's since been retired from new selection (e.g. legacy "core_value_rating"),
+  // so its own dropdown still displays correctly instead of silently mismatching.
+  const availableTypes = selectableTypes.some((t) => t.value === question.type) ? selectableTypes : [...selectableTypes, meta];
   const isMultiRespondent = MULTI_RESPONDENT_QUESTION_TYPES.includes(question.type);
 
   return (

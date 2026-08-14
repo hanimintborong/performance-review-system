@@ -14,4 +14,5 @@ export const employees = pgTable("employees", {
   systemRole: text("system_role").$type<SystemRole>().notNull(),
   employmentStatus: text("employment_status").$type<EmploymentStatus>().notNull(),
   initials: text("initials").notNull(),
+  createdAt: text("created_at").notNull(),
 });

@@ -62,6 +62,7 @@ export function PlanForm({ initialPlan, initialStart, initialEnd, mode, employee
       departments,
       participantCount: staffCount,
       status,
+      createdAt: mode === "create" ? new Date().toISOString() : initialPlan.createdAt,
     };
   }
 

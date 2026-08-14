@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState, useTransition } from "react";
-import { Flex, Text } from "@chakra-ui/react";
+import { Flex, NativeSelect, Text } from "@chakra-ui/react";
 
 import { getTeamColumns } from "@/app/(system)/manager/team/columns";
 import { sendReminderAction } from "@/app/(system)/manager/team/teamActions";
@@ -12,11 +12,16 @@ import { FilterBar, type FilterOption } from "@/components/common/FilterBar";
 import { SearchInput } from "@/components/common/SearchInput";
 import { toaster } from "@/components/ui/toaster";
 import type { ReviewRow } from "@/data/queries";
+import type { ReviewPlan } from "@/types/review";
 
 const IN_PROGRESS_STATUSES = ["Not Started", "Self-Assessment"];
+const ALL = "All plans";
 
-export function TeamClient({ rows, planTitle }: { rows: ReviewRow[]; planTitle: string }) {
-  const needsAction = rows.filter((r) => r.status === "Employee Submitted").length;
+export function TeamClient({ rows, plans }: { rows: ReviewRow[]; plans: ReviewPlan[] }) {
+  const [planId, setPlanId] = useState(ALL);
+  const visibleRows = planId === ALL ? rows : rows.filter((r) => r.planId === planId);
+
+  const needsAction = visibleRows.filter((r) => r.status === "Employee Submitted").length;
   const [filter, setFilter] = useState(needsAction > 0 ? "action" : "all");
   const [search, setSearch] = useState("");
   const [, startTransition] = useTransition();
@@ -32,20 +37,20 @@ export function TeamClient({ rows, planTitle }: { rows: ReviewRow[]; planTitle: 
   }
 
   const options: FilterOption[] = useMemo(() => {
-    const inProgress = rows.filter((r) => IN_PROGRESS_STATUSES.includes(r.status)).length;
-    const overdue = rows.filter((r) => r.status === "Overdue").length;
-    const completed = rows.filter((r) => r.status === "Finalised").length;
+    const inProgress = visibleRows.filter((r) => IN_PROGRESS_STATUSES.includes(r.status)).length;
+    const overdue = visibleRows.filter((r) => r.status === "Overdue").length;
+    const completed = visibleRows.filter((r) => r.status === "Finalised").length;
 
     return [
       { key: "action", label: `Needs your review (${needsAction})` },
       { key: "in_progress", label: `In progress (${inProgress})` },
       { key: "overdue", label: `Overdue (${overdue})` },
       { key: "completed", label: `Completed (${completed})` },
-      { key: "all", label: `All (${rows.length})` },
+      { key: "all", label: `All (${visibleRows.length})` },
     ];
-  }, [rows, needsAction]);
+  }, [visibleRows, needsAction]);
 
-  const filtered = rows.filter((r) => {
+  const filtered = visibleRows.filter((r) => {
     const matchesFilter = filter === "action" ? r.status === "Employee Submitted"
       : filter === "in_progress" ? IN_PROGRESS_STATUSES.includes(r.status)
       : filter === "overdue" ? r.status === "Overdue"
@@ -57,13 +62,25 @@ export function TeamClient({ rows, planTitle }: { rows: ReviewRow[]; planTitle: 
 
   return (
     <Flex direction="column" gap="14px">
-      <TeamOverview rows={rows} />
+      <Flex justify="flex-end">
+        <NativeSelect.Root w="220px" size="sm">
+          <NativeSelect.Field value={planId} onChange={(e) => setPlanId(e.target.value)} fontSize="12px" pl="12px" pr="26px">
+            <option value={ALL}>{ALL}</option>
+            {plans.map((p) => <option key={p.planId} value={p.planId}>{p.title}</option>)}
+          </NativeSelect.Field>
+          <NativeSelect.Indicator />
+        </NativeSelect.Root>
+      </Flex>
+
+      <TeamOverview rows={visibleRows} />
 
       <AppCard>
         <Flex direction="column" gap="10px" p="16px 20px" borderBottomWidth="1px" borderColor="grey.20">
           <Flex direction="column" gap="2px">
             <Text fontSize="15px" fontWeight="700" color="grey.80">My team</Text>
-            <Text fontSize="12px" color="grey.60">Evaluate your direct reports&apos; reviews · {planTitle}</Text>
+            <Text fontSize="12px" color="grey.60">
+              Evaluate your direct reports&apos; reviews {planId === ALL ? "across all active cycles" : `for ${plans.find((p) => p.planId === planId)?.title ?? planId}`}
+            </Text>
           </Flex>
           <Flex justify="space-between" gap="10px" flexWrap="wrap">
             <FilterBar options={options} activeKey={filter} onChange={setFilter} />

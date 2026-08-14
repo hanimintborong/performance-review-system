@@ -8,12 +8,12 @@ import { getNotificationHistory, getReviewPlans, getReviewRows } from "@/data/qu
 export default async function DashboardPage() {
   const [plans, allRows, history] = await Promise.all([getReviewPlans(), getReviewRows(), getNotificationHistory()]);
 
-  const activePlan = plans.find((p) => p.status === "Active");
-  const rows = activePlan ? allRows.filter((r) => r.planId === activePlan.planId) : allRows;
+  const activePlanIds = new Set(plans.filter((p) => p.status === "Active").map((p) => p.planId));
+  const rows = activePlanIds.size > 0 ? allRows.filter((r) => activePlanIds.has(r.planId)) : allRows;
 
   return (
     <Flex direction="column" gap="14px">
-      <DashboardOverview rows={rows} />
+      <DashboardOverview allRows={allRows} plans={plans} />
       <RecentActivity history={history} />
       <RequiredActions rows={rows} />
     </Flex>

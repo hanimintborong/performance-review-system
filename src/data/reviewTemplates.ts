@@ -1,14 +1,14 @@
 import "server-only";
 
 import { cache } from "react";
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 
 import { reviewTemplates as reviewTemplatesTable } from "@/db/schema";
 import { db } from "@/lib/db";
 import type { ReviewTemplate } from "@/types/template";
 
 export const getReviewTemplates = cache(async (): Promise<ReviewTemplate[]> => {
-  return db.select().from(reviewTemplatesTable);
+  return db.select().from(reviewTemplatesTable).orderBy(desc(reviewTemplatesTable.createdAt));
 });
 
 export const getReviewTemplateById = cache(async (templateId: string): Promise<ReviewTemplate | undefined> => {

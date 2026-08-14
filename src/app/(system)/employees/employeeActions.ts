@@ -21,6 +21,7 @@ export type NewEmployeeInput = {
 async function buildEmployees(inputs: NewEmployeeInput[]): Promise<Employee[]> {
   const existing = await getEmployees();
   const ids = nextEmployeeIds(existing, inputs.length);
+  const now = Date.now();
 
   const created: Employee[] = inputs.map((input, i) => ({
     employeeId: ids[i],
@@ -33,6 +34,7 @@ async function buildEmployees(inputs: NewEmployeeInput[]): Promise<Employee[]> {
     systemRole: input.systemRole,
     employmentStatus: "active",
     initials: getInitials(input.name),
+    createdAt: new Date(now + i).toISOString(),
   }));
 
   const byEmail = new Map([...existing, ...created].map((e) => [e.email.toLowerCase(), e]));

@@ -11,4 +11,5 @@ export const reviewTemplates = pgTable("review_templates", {
   status: text("status").$type<ReviewTemplateStatus>().notNull(),
   workflowType: text("workflow_type").$type<WorkflowType>().notNull().default("full"),
   sections: jsonb("sections").$type<TemplateSection[]>().notNull(),
+  createdAt: text("created_at").notNull(),
 });

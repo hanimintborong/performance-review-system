@@ -16,6 +16,7 @@ export const mockReviewPlans: ReviewPlan[] = [
     departments: ALL_DEPARTMENTS,
     participantCount: 14,
     status: "Active",
+    createdAt: "2025-01-01T00:00:00.000Z",
   },
   {
     planId: "PLAN002",
@@ -31,6 +32,7 @@ export const mockReviewPlans: ReviewPlan[] = [
     departments: ALL_DEPARTMENTS,
     participantCount: 14,
     status: "Archived",
+    createdAt: "2025-01-01T00:00:00.000Z",
   },
   {
     planId: "PLAN003",
@@ -46,6 +48,7 @@ export const mockReviewPlans: ReviewPlan[] = [
     departments: ["Revenue", "Engineering"],
     participantCount: 3,
     status: "Draft",
+    createdAt: "2025-01-01T00:00:00.000Z",
   },
   {
     planId: "PLAN004",
@@ -61,5 +64,6 @@ export const mockReviewPlans: ReviewPlan[] = [
     departments: ["Revenue"],
     participantCount: 2,
     status: "Draft",
+    createdAt: "2025-01-01T00:00:00.000Z",
   },
 ];

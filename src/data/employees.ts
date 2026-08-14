@@ -1,14 +1,14 @@
 import "server-only";
 
 import { cache } from "react";
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 
 import { employees as employeesTable } from "@/db/schema";
 import { db } from "@/lib/db";
 import type { Employee } from "@/types/employee";
 
 export const getEmployees = cache(async (): Promise<Employee[]> => {
-  return db.select().from(employeesTable);
+  return db.select().from(employeesTable).orderBy(desc(employeesTable.createdAt));
 });
 
 export const getEmployeeById = cache(async (employeeId: string): Promise<Employee | undefined> => {

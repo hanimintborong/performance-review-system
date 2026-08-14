@@ -25,6 +25,7 @@ export type ReviewPlan = {
   departments: string[];
   participantCount: number;
   status: ReviewPlanStatus;
+  createdAt: string;
 };
 
 export type FinalOutcome = "Promoted" | "Increment" | "Maintained" | "Performance Improvement Plan";

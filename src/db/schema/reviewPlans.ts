@@ -16,4 +16,5 @@ export const reviewPlans = pgTable("review_plans", {
   departments: text("departments").array().notNull(),
   participantCount: integer("participant_count").notNull(),
   status: text("status").$type<ReviewPlanStatus>().notNull(),
+  createdAt: text("created_at").notNull(),
 });
