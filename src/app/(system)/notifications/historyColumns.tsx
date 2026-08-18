@@ -11,7 +11,7 @@ const FAILED_STYLE: StatusStyle = { bg: "error.10", fg: "error.70", dot: "error.
 
 export const historyColumns: DataTableColumn<NotificationHistoryEntry>[] = [
   { key: "recipient", label: "Recipient", width: "1.4fr", render: (h) => <Text fontWeight="600">{h.recipientName}</Text> },
-  { key: "type", label: "Notification type", width: "1.6fr", render: (h) => NOTIFICATION_TYPE_LABELS[h.type] },
+  { key: "type", label: "Notification type", width: "1.6fr", render: (h) => NOTIFICATION_TYPE_LABELS[h.type] ?? h.type },
   { key: "channel", label: "Channel", width: "1fr", render: (h) => CHANNEL_META[h.channel].label },
   { key: "sentAt", label: "Sent at", width: "150px", render: (h) => h.sentAt },
   {

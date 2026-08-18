@@ -2,14 +2,12 @@ import { db, closeDb } from "./migrate/pgClient";
 import {
   employees,
   notificationHistory,
-  notificationRules,
   reviewAssignments,
   reviewPlans,
   reviewTemplates,
 } from "@/db/schema";
 import { mockEmployees } from "@/data/mockEmployees";
 import { mockNotificationHistory } from "@/data/mockNotificationHistory";
-import { mockNotificationRules } from "@/data/mockNotificationRules";
 import { mockReviewAssignments } from "@/data/mockReviewAssignments";
 import { mockReviewPlans } from "@/data/mockReviewPlans";
 import { mockReviewTemplates } from "@/data/mockReviewTemplates";
@@ -28,9 +26,6 @@ async function seed() {
 
   await db.insert(reviewAssignments).values(mockReviewAssignments).onConflictDoNothing();
   console.log(`  reviewAssignments: ${mockReviewAssignments.length}`);
-
-  await db.insert(notificationRules).values(mockNotificationRules).onConflictDoNothing();
-  console.log(`  notificationRules: ${mockNotificationRules.length}`);
 
   await db.insert(notificationHistory).values(mockNotificationHistory).onConflictDoNothing();
   console.log(`  notificationHistory: ${mockNotificationHistory.length}`);

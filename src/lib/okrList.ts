@@ -2,18 +2,18 @@ export type OkrObjective = {
   id: string;
   title: string;
   weightage: number;
-  selfScore: number;
+  selfScore: number | null;
   achievement: string;
-  managerScore: number;
+  managerScore: number | null;
   managerComment: string;
 };
 
 const BLANK: Omit<OkrObjective, "id"> = {
   title: "",
   weightage: 0,
-  selfScore: 0,
+  selfScore: null,
   achievement: "",
-  managerScore: 0,
+  managerScore: null,
   managerComment: "",
 };
 
@@ -37,7 +37,7 @@ export function stringifyOkrList(objectives: OkrObjective[]): string {
 }
 
 export function weightageScore(objective: OkrObjective, ratingMax = 5): number {
-  if (objective.managerScore <= 0) return 0;
+  if (objective.managerScore === null) return 0;
   return Math.round(objective.weightage * (objective.managerScore / ratingMax) * 10) / 10;
 }
 

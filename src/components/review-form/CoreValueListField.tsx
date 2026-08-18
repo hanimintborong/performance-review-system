@@ -1,8 +1,8 @@
 "use client";
 
-import { Flex, Text } from "@chakra-ui/react";
+import { Box, Text } from "@chakra-ui/react";
 
-import { CoreValueRow } from "@/components/review-form/CoreValueRow";
+import { CoreValueTable } from "@/components/review-form/CoreValueTable";
 import { buildCoreValueRows, stringifyCoreValueList } from "@/lib/coreValueList";
 import type { Respondent } from "@/types/template";
 
@@ -12,9 +12,10 @@ type CoreValueListFieldProps = {
   editableRespondent?: Respondent;
   labels: string[];
   ratingScaleMax: number;
+  sectionWeightage?: number;
 };
 
-export function CoreValueListField({ value, onChange, editableRespondent, labels, ratingScaleMax }: CoreValueListFieldProps) {
+export function CoreValueListField({ value, onChange, editableRespondent, labels, ratingScaleMax, sectionWeightage }: CoreValueListFieldProps) {
   const rows = buildCoreValueRows(labels, value);
   const isEmployeeEditing = editableRespondent === "employee";
   const isManagerEditing = editableRespondent === "manager";
@@ -28,17 +29,15 @@ export function CoreValueListField({ value, onChange, editableRespondent, labels
   }
 
   return (
-    <Flex direction="column" gap="10px">
-      {rows.map((row) => (
-        <CoreValueRow
-          key={row.label}
-          row={row}
-          ratingScaleMax={ratingScaleMax}
-          isEmployeeEditing={isEmployeeEditing}
-          isManagerEditing={isManagerEditing}
-          onChange={(patch) => updateRow(row.label, patch)}
-        />
-      ))}
-    </Flex>
+    <Box overflowX="auto">
+      <CoreValueTable
+        rows={rows}
+        ratingScaleMax={ratingScaleMax}
+        isEmployeeEditing={isEmployeeEditing}
+        isManagerEditing={isManagerEditing}
+        sectionWeightage={sectionWeightage}
+        onChangeRow={updateRow}
+      />
+    </Box>
   );
 }

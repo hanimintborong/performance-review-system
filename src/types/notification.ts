@@ -1,33 +1,15 @@
 export type NotificationRuleType =
   | "new_review"
-  | "upcoming_deadline"
   | "pending_manager_review"
-  | "overdue"
-  | "acknowledgement_reminder"
-  | "manager_submitted"
-  | "discussion_required"
-  | "review_finalised"
   | "ready_for_management"
-  | "cycle_completed"
+  | "review_finalised"
+  | "upcoming_deadline"
+  | "custom"
   | "wfh_requested"
   | "wfh_approved"
   | "wfh_rejected";
 
 export type NotificationChannel = "in_system" | "email" | "whatsapp";
-export type NotificationSendTo = "employee" | "manager" | "hr" | "employee_and_manager";
-export type RepeatFrequency = "once" | "daily" | "weekly";
-export type NotificationRuleStatus = "Active" | "Inactive";
-
-export type NotificationRule = {
-  ruleId: string;
-  planId: string;
-  type: NotificationRuleType;
-  whenToSend: string;
-  sendTo: NotificationSendTo;
-  repeat: RepeatFrequency;
-  channel: NotificationChannel;
-  status: NotificationRuleStatus;
-};
 
 export type NotificationHistoryEntry = {
   historyId: string;
@@ -47,5 +29,23 @@ export type Notification = {
   message: string;
   assignmentId: string | null;
   read: boolean;
+  createdAt: string;
+};
+
+export type CustomNotificationTiming =
+  | { kind: "immediately" }
+  | { kind: "date"; date: string }
+  | { kind: "interval"; everyDays: number };
+
+export type CustomNotificationStatus = "Active" | "Stopped";
+
+export type CustomNotification = {
+  customNotificationId: string;
+  recipientId: string;
+  recipientName: string;
+  message: string;
+  timing: CustomNotificationTiming;
+  status: CustomNotificationStatus;
+  lastSentAt: string | null;
   createdAt: string;
 };

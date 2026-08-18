@@ -1,4 +1,4 @@
-import { Flex, Grid, Input, Text, Textarea } from "@chakra-ui/react";
+import { Checkbox, Flex, Grid, Input, Text, Textarea } from "@chakra-ui/react";
 
 import { AppCard } from "@/components/common/AppCard";
 import { DepartmentCheckboxes } from "@/components/template-builder/DepartmentCheckboxes";
@@ -40,6 +40,21 @@ export function TemplateBuilderHeader({ template, onChange, onWorkflowChange, wo
               {...FIELD_STYLE}
             />
           </Flex>
+
+          <Checkbox.Root
+            size="sm"
+            checked={template.isMasterTemplate}
+            onCheckedChange={(e) => onChange({ ...template, isMasterTemplate: e.checked === true })}
+          >
+            <Checkbox.HiddenInput />
+            <Checkbox.Control><Checkbox.Indicator /></Checkbox.Control>
+            <Checkbox.Label fontSize="12px" fontWeight="700" color="orange.70">Mark as Master Template</Checkbox.Label>
+          </Checkbox.Root>
+          {template.isMasterTemplate && (
+            <Text fontSize="11px" color="grey.50">
+              Only one master template can exist — marking this one unmarks any other on save. HR should build new templates by opening this one and using &ldquo;Save as new template&rdquo; instead of editing it directly.
+            </Text>
+          )}
 
           <Flex direction="column" gap="4px">
             <Text fontSize="12px" fontWeight="700" color="grey.70">Template description</Text>

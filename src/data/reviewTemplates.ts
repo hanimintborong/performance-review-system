@@ -26,9 +26,18 @@ export const getTemplateTitle = cache(async (templateId: string): Promise<string
 });
 
 export async function saveReviewTemplate(template: ReviewTemplate): Promise<void> {
-  await db.insert(reviewTemplatesTable).values(template).onConflictDoUpdate({
-    target: reviewTemplatesTable.templateId,
-    set: template,
+  await db.transaction(async (tx) => {
+    if (template.isMasterTemplate) {
+      await tx
+        .update(reviewTemplatesTable)
+        .set({ isMasterTemplate: false })
+        .where(eq(reviewTemplatesTable.isMasterTemplate, true));
+    }
+
+    await tx.insert(reviewTemplatesTable).values(template).onConflictDoUpdate({
+      target: reviewTemplatesTable.templateId,
+      set: template,
+    });
   });
 }
 

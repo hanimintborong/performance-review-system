@@ -1,23 +1,20 @@
 "use client";
 
 import { Flex, Grid, Icon, Text } from "@chakra-ui/react";
-import { FiCalendar, FiClipboard, FiClock, FiList, FiUsers } from "react-icons/fi";
+import { FiCalendar, FiClipboard, FiList, FiUsers } from "react-icons/fi";
 
 import { AppCard } from "@/components/common/AppCard";
 import { InfoTile } from "@/components/common/InfoTile";
 
 type PlanInfoGridProps = {
   templateTitle: string;
-  reviewPeriod: string;
   departments: string;
-  employeeDeadline: string;
-  managerDeadline: string;
-  hrReviewDeadline: string;
-  managementReviewPeriod: string;
   participantCount: string;
+  activatedAt: string | null;
+  closedAt: string | null;
 };
 
-export function PlanInfoGrid(props: PlanInfoGridProps) {
+export function PlanInfoGrid({ templateTitle, departments, participantCount, activatedAt, closedAt }: PlanInfoGridProps) {
   return (
     <AppCard p="16px 20px">
       <Flex align="center" gap="8px" mb="14px">
@@ -28,14 +25,11 @@ export function PlanInfoGrid(props: PlanInfoGridProps) {
       </Flex>
 
       <Grid templateColumns="repeat(3, 1fr)" gap="12px">
-        <InfoTile icon={FiList} label="Template" value={props.templateTitle} />
-        <InfoTile icon={FiCalendar} label="Review period" value={props.reviewPeriod} />
-        <InfoTile icon={FiUsers} label="Departments" value={props.departments} />
-        <InfoTile icon={FiClock} label="Employee deadline" value={props.employeeDeadline} />
-        <InfoTile icon={FiCalendar} label="Manager deadline" value={props.managerDeadline} />
-        <InfoTile icon={FiUsers} label="HR review deadline" value={props.hrReviewDeadline} />
-        <InfoTile icon={FiCalendar} label="Management review period" value={props.managementReviewPeriod} />
-        <InfoTile icon={FiUsers} label="Participants" value={props.participantCount} />
+        <InfoTile icon={FiList} label="Template" value={templateTitle} />
+        <InfoTile icon={FiUsers} label="Departments" value={departments} />
+        <InfoTile icon={FiUsers} label="Participants" value={participantCount} />
+        <InfoTile icon={FiCalendar} label="Activated" value={activatedAt ? activatedAt.slice(0, 10) : "Not yet activated"} />
+        <InfoTile icon={FiCalendar} label="Closed" value={closedAt ? closedAt.slice(0, 10) : "Still open"} />
       </Grid>
     </AppCard>
   );

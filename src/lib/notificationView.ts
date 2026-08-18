@@ -1,7 +1,7 @@
 import type { Notification, NotificationRuleType } from "@/types/notification";
 import type { ReviewStatus } from "@/types/review";
 
-const OPEN_STATUSES: ReviewStatus[] = ["Not Started", "Self-Assessment", "Overdue"];
+const OPEN_STATUSES: ReviewStatus[] = ["Not Started", "Self-Assessment"];
 
 export type NotificationRecipientRole = "employee" | "manager" | "topManagement";
 

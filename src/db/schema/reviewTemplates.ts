@@ -1,4 +1,4 @@
-import { jsonb, pgTable, text } from "drizzle-orm/pg-core";
+import { boolean, jsonb, pgTable, text } from "drizzle-orm/pg-core";
 
 import type { ReviewTemplateStatus } from "@/types/review";
 import type { TemplateSection, WorkflowType } from "@/types/template";
@@ -11,5 +11,6 @@ export const reviewTemplates = pgTable("review_templates", {
   status: text("status").$type<ReviewTemplateStatus>().notNull(),
   workflowType: text("workflow_type").$type<WorkflowType>().notNull().default("full"),
   sections: jsonb("sections").$type<TemplateSection[]>().notNull(),
+  isMasterTemplate: boolean("is_master_template").notNull().default(false),
   createdAt: text("created_at").notNull(),
 });

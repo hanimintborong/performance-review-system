@@ -3,7 +3,7 @@ import { Flex } from "@chakra-ui/react";
 import { NotificationInbox } from "@/components/notifications/NotificationInbox";
 import { getNotificationsForRecipient, getReviewRows } from "@/data/queries";
 import { getCurrentSystemUser } from "@/lib/currentSystemUser";
-import { computeDeadlineNotifications, mergeNotifications } from "@/lib/notificationFeed";
+import { sortNotifications } from "@/lib/notificationFeed";
 import { toNotificationView } from "@/lib/notificationView";
 
 export default async function EmployeeNotificationsPage() {
@@ -18,8 +18,7 @@ export default async function EmployeeNotificationsPage() {
   const myRows = allRows.filter((r) => r.employee.employeeId === systemUser.employeeId);
   const statusByAssignment = new Map(myRows.map((r) => [r.assignmentId, r.status]));
 
-  const merged = mergeNotifications(stored, computeDeadlineNotifications(myRows, systemUser.employeeId));
-  const items = merged.map((n) => toNotificationView(n, "employee", statusByAssignment.get(n.assignmentId ?? "")));
+  const items = sortNotifications(stored).map((n) => toNotificationView(n, "employee", statusByAssignment.get(n.assignmentId ?? "")));
 
   return (
     <Flex direction="column" gap="14px">

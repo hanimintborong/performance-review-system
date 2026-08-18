@@ -12,10 +12,11 @@ export const reviewAssignments = pgTable(
     status: text("status").$type<ReviewStatus>().notNull(),
     employeeScore: doublePrecision("employee_score"),
     managerScore: doublePrecision("manager_score"),
-    deadline: text("deadline").notNull(),
     acknowledged: boolean("acknowledged").notNull(),
     finalOutcome: text("final_outcome").$type<FinalOutcome>(),
     finalOutcomeNotes: text("final_outcome_notes"),
+    incrementPercentage: doublePrecision("increment_percentage"),
+    incrementEffectiveDate: text("increment_effective_date"),
     finalizedAt: text("finalized_at"),
   },
   (table) => [

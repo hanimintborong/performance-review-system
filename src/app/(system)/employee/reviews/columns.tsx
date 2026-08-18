@@ -18,7 +18,6 @@ export const employeeReviewColumns: DataTableColumn<ReviewRow>[] = [
     render: (row) => (
       <Flex direction="column">
         <Text fontWeight="600">{row.planTitle}</Text>
-        <Text fontSize="11px" color="grey.50">Deadline: {row.deadline}</Text>
       </Flex>
     ),
   },

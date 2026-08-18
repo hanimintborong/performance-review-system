@@ -1,12 +1,14 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import NextLink from "next/link";
 import { Flex, Icon, Text } from "@chakra-ui/react";
-import { FiArchive, FiCalendar, FiEdit3 } from "react-icons/fi";
+import { FiCalendar, FiCheckCircle, FiEdit3, FiLock } from "react-icons/fi";
 
-import { toggleReviewPlanStatusAction } from "@/app/(system)/review-plans/reviewPlanActions";
+import { activateReviewPlanAction, closeReviewPlanAction } from "@/app/(system)/review-plans/reviewPlanActions";
 import { AppCard } from "@/components/common/AppCard";
+import { ConfirmationDialog } from "@/components/common/ConfirmationDialog";
 import { PrimaryButton } from "@/components/common/PrimaryButton";
 import { SecondaryButton } from "@/components/common/SecondaryButton";
 import { StatusBadge } from "@/components/common/StatusBadge";
@@ -22,20 +24,26 @@ type PlanDetailActionsProps = {
 };
 
 export function PlanDetailActions({ planId, title, description, initialStatus }: PlanDetailActionsProps) {
+  const router = useRouter();
   const [status, setStatus] = useState(initialStatus);
   const [isPending, startTransition] = useTransition();
+  const [confirming, setConfirming] = useState<"activate" | "close" | null>(null);
 
-  function toggleStatus() {
+  function activate() {
     startTransition(async () => {
-      const nextStatus = await toggleReviewPlanStatusAction(planId);
-      if (!nextStatus) return;
+      const createdCount = await activateReviewPlanAction(planId);
+      setStatus("Active");
+      toaster.create({ title: "Cycle activated", description: `"${title}" is now open — ${createdCount} assignment${createdCount === 1 ? "" : "s"} created.`, type: "success" });
+      router.refresh();
+    });
+  }
 
-      setStatus(nextStatus);
-      toaster.create({
-        title: nextStatus === "Archived" ? "Cycle archived" : "Cycle activated",
-        description: `"${title}" is now ${nextStatus.toLowerCase()}.`,
-        type: "success",
-      });
+  function close() {
+    startTransition(async () => {
+      await closeReviewPlanAction(planId);
+      setStatus("Closed");
+      toaster.create({ title: "Cycle closed", description: `"${title}" no longer accepts submissions or edits.`, type: "success" });
+      router.refresh();
     });
   }
 
@@ -56,14 +64,51 @@ export function PlanDetailActions({ planId, title, description, initialStatus }:
         </Flex>
 
         <Flex gap="10px" flexShrink="0">
-          <NextLink href={`/review-plans/${planId}/edit`}>
-            <SecondaryButton bg="white"><FiEdit3 /> Edit plan</SecondaryButton>
-          </NextLink>
-          <PrimaryButton onClick={toggleStatus} loading={isPending}>
-            <FiArchive /> {status === "Archived" ? "Activate cycle" : "Archive cycle"}
-          </PrimaryButton>
+          {status !== "Closed" && (
+            <NextLink href={`/review-plans/${planId}/edit`}>
+              <SecondaryButton bg="white"><FiEdit3 /> Edit plan</SecondaryButton>
+            </NextLink>
+          )}
+
+          {status === "Draft" && (
+            <PrimaryButton onClick={() => setConfirming("activate")} loading={isPending}>
+              <FiCheckCircle /> Activate cycle
+            </PrimaryButton>
+          )}
+
+          {status === "Active" && (
+            <SecondaryButton
+              bg="white"
+              color="error.70"
+              borderColor="error.50"
+              _hover={{ bg: "error.10" }}
+              _active={{ bg: "error.10" }}
+              onClick={() => setConfirming("close")}
+              loading={isPending}
+            >
+              <FiLock /> Close cycle
+            </SecondaryButton>
+          )}
         </Flex>
       </Flex>
+
+      <ConfirmationDialog
+        open={confirming === "activate"}
+        onOpenChange={(open) => !open && setConfirming(null)}
+        title="Activate this cycle?"
+        description="This opens the cycle to every assigned employee and manager and notifies them immediately. Make sure the template and departments are final."
+        confirmLabel="Activate"
+        onConfirm={activate}
+      />
+
+      <ConfirmationDialog
+        open={confirming === "close"}
+        onOpenChange={(open) => !open && setConfirming(null)}
+        title="Close this cycle?"
+        description="No more submissions or edits will be allowed once closed. All existing records stay viewable. This can't be reopened."
+        confirmLabel="Close cycle"
+        onConfirm={close}
+      />
     </AppCard>
   );
 }

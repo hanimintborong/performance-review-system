@@ -18,7 +18,7 @@ const ALL = "All";
 export function ReviewsClient({ allRows, plans }: { allRows: ReviewRow[]; plans: ReviewPlan[] }) {
   const searchParams = useSearchParams();
   const [search, setSearch] = useState("");
-  const [planId, setPlanId] = useState(ALL);
+  const [planId, setPlanId] = useState(() => searchParams.get("planId") ?? ALL);
   const [department, setDepartment] = useState(ALL);
   const [statusFilter, setStatusFilter] = useState("all");
   const [quickFilter, setQuickFilter] = useState(() => readQuickFilter(searchParams));
@@ -42,7 +42,7 @@ export function ReviewsClient({ allRows, plans }: { allRows: ReviewRow[]; plans:
       const matchesSearch = row.employee.name.toLowerCase().includes(search.toLowerCase());
       return matchesStatus && matchesGroup && matchesSearch;
     })
-    .sort((a, b) => (a.deadline < b.deadline ? 1 : a.deadline > b.deadline ? -1 : 0));
+    .sort((a, b) => a.employee.name.localeCompare(b.employee.name));
 
   return (
     <Flex direction="column" gap="14px">
@@ -82,7 +82,7 @@ export function ReviewsClient({ allRows, plans }: { allRows: ReviewRow[]; plans:
       <AppCard>
         <Flex direction="column" gap="2px" p="16px 20px" borderBottomWidth="1px" borderColor="grey.20">
           <Text fontSize="15px" fontWeight="700" color="grey.80">Reviews</Text>
-          <Text fontSize="12px" color="grey.60">{tableRows.length} of {scopedRows.length} reviews · newest deadline first</Text>
+          <Text fontSize="12px" color="grey.60">{tableRows.length} of {scopedRows.length} reviews</Text>
         </Flex>
 
         <DataTable

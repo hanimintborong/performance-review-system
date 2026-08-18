@@ -14,6 +14,7 @@ export default async function NewReviewTemplatePage() {
     status: "Inactive",
     workflowType: "full",
     sections: [],
+    isMasterTemplate: false,
     createdAt: "",
   };
 

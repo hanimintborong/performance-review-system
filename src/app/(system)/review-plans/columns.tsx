@@ -1,7 +1,7 @@
 import NextLink from "next/link";
 
 import { Flex, Menu, Portal, Text } from "@chakra-ui/react";
-import { FiArchive, FiCopy, FiEdit3, FiMoreHorizontal, FiPlay, FiTrash2 } from "react-icons/fi";
+import { FiCheckCircle, FiCopy, FiEdit3, FiLock, FiMoreHorizontal, FiTrash2 } from "react-icons/fi";
 
 import type { DataTableColumn } from "@/components/common/DataTableRow";
 import { MenuAction } from "@/components/common/MenuAction";
@@ -13,12 +13,13 @@ import type { ReviewPlanRow } from "@/data/queries";
 type PlanColumnsOptions = {
   onEdit: (plan: ReviewPlanRow) => void;
   onDuplicate: (plan: ReviewPlanRow) => void;
-  onToggleStatus: (plan: ReviewPlanRow) => void;
+  onActivate: (plan: ReviewPlanRow) => void;
+  onClose: (plan: ReviewPlanRow) => void;
   onDelete: (plan: ReviewPlanRow) => void;
 };
 
 export const getPlanColumns = (
-  { onEdit, onDuplicate, onToggleStatus, onDelete }: PlanColumnsOptions,
+  { onEdit, onDuplicate, onActivate, onClose, onDelete }: PlanColumnsOptions,
 ): DataTableColumn<ReviewPlanRow>[] => [
   {
     key: "title",
@@ -27,7 +28,7 @@ export const getPlanColumns = (
     render: (plan) => (
       <Flex direction="column">
         <Text fontSize="13px" fontWeight="600" color="grey.80">{plan.title}</Text>
-        <Text fontSize="11px" color="grey.60">{plan.reviewPeriod}</Text>
+        <Text fontSize="11px" color="grey.60">{plan.description}</Text>
       </Flex>
     ),
   },
@@ -67,13 +68,12 @@ export const getPlanColumns = (
               >
                 <MenuAction icon={<FiEdit3 size={14} />} onSelect={() => onEdit(plan)} value="edit">Edit</MenuAction>
                 <MenuAction icon={<FiCopy size={14} />} onSelect={() => onDuplicate(plan)} value="duplicate">Duplicate</MenuAction>
-                <MenuAction
-                  icon={plan.status === "Archived" ? <FiPlay size={14} /> : <FiArchive size={14} />}
-                  onSelect={() => onToggleStatus(plan)}
-                  value="toggle"
-                >
-                  {plan.status === "Archived" ? "Activate" : "Archive"}
-                </MenuAction>
+                {plan.status === "Draft" && (
+                  <MenuAction icon={<FiCheckCircle size={14} />} onSelect={() => onActivate(plan)} value="activate">Activate cycle</MenuAction>
+                )}
+                {plan.status === "Active" && (
+                  <MenuAction icon={<FiLock size={14} />} onSelect={() => onClose(plan)} value="close" tone="danger">Close cycle</MenuAction>
+                )}
                 <Menu.Separator my="4px" borderColor="grey.20" />
                 <MenuAction icon={<FiTrash2 size={14} />} onSelect={() => onDelete(plan)} value="delete" tone="danger">
                   Delete

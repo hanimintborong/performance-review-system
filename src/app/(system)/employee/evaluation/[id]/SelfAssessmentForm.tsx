@@ -26,6 +26,8 @@ export function SelfAssessmentForm({ row, sections, response }: SelfAssessmentFo
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const alreadySubmitted = response.employeeSubmittedAt !== null;
+  const cycleClosed = row.planStatus === "Closed";
+  const locked = alreadySubmitted || cycleClosed;
 
   const [answers, setAnswers] = useState<Record<string, string>>(
     Object.fromEntries(response.answers.map((a) => [a.questionId, a.value])),
@@ -56,8 +58,12 @@ export function SelfAssessmentForm({ row, sections, response }: SelfAssessmentFo
 
       <AppCard p="14px 20px">
         <Text fontSize="15px" fontWeight="700" color="grey.80">{row.planTitle} — Self-Assessment</Text>
-        <Text fontSize="12px" color="grey.60" mt="2px">Deadline: {row.deadline}</Text>
-        {alreadySubmitted && (
+        {cycleClosed && (
+          <Text fontSize="12px" color="error.70" mt="6px">
+            This review cycle is closed. It&apos;s now read-only.
+          </Text>
+        )}
+        {!cycleClosed && alreadySubmitted && (
           <Text fontSize="12px" color="success.70" mt="6px">
             You submitted this on {response.employeeSubmittedAt?.slice(0, 10)}. It&apos;s now read-only.
           </Text>
@@ -69,7 +75,7 @@ export function SelfAssessmentForm({ row, sections, response }: SelfAssessmentFo
           key={section.sectionId}
           section={section}
           answers={answers}
-          editableRespondent={alreadySubmitted ? undefined : "employee"}
+          editableRespondent={locked ? undefined : "employee"}
           hideRespondent="manager"
           onAnswerChange={(questionId, value) => setAnswers((prev) => ({ ...prev, [questionId]: value }))}
         />
@@ -83,12 +89,12 @@ export function SelfAssessmentForm({ row, sections, response }: SelfAssessmentFo
           rows={3}
           px="12px"
           py="8px"
-          disabled={alreadySubmitted}
+          disabled={locked}
           placeholder="Strengths, areas to develop, and goals for the next cycle…"
         />
       </AppCard>
 
-      {!alreadySubmitted && (
+      {!locked && (
         <Flex direction="column" align="flex-end" gap="6px">
           {weightageIssues.length > 0 && (
             <Text fontSize="12px" color="error.50">

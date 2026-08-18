@@ -4,7 +4,7 @@ import { NotificationInbox } from "@/components/notifications/NotificationInbox"
 import { getNotificationsForRecipient, getReviewRows } from "@/data/queries";
 import { getCurrentSystemUser } from "@/lib/currentSystemUser";
 import { groupNotifications } from "@/lib/groupNotifications";
-import { computeDeadlineNotifications, mergeNotifications } from "@/lib/notificationFeed";
+import { sortNotifications } from "@/lib/notificationFeed";
 
 export default async function ManagerNotificationsPage() {
   const systemUser = await getCurrentSystemUser();
@@ -18,8 +18,7 @@ export default async function ManagerNotificationsPage() {
   const teamRows = allRows.filter((r) => r.managerId === systemUser.employeeId);
   const statusByAssignment = new Map(teamRows.map((r) => [r.assignmentId, r.status]));
 
-  const merged = mergeNotifications(stored, computeDeadlineNotifications(teamRows, systemUser.employeeId));
-  const items = groupNotifications(merged, "manager", statusByAssignment);
+  const items = groupNotifications(sortNotifications(stored), "manager", statusByAssignment);
 
   return (
     <Flex direction="column" gap="14px">

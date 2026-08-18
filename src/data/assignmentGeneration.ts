@@ -34,10 +34,11 @@ export async function generateAssignmentsForPlan(plan: ReviewPlan): Promise<numb
         status: "Not Started",
         employeeScore: null,
         managerScore: null,
-        deadline: plan.employeeDeadline,
         acknowledged: false,
         finalOutcome: null,
         finalOutcomeNotes: null,
+        incrementPercentage: null,
+        incrementEffectiveDate: null,
         finalizedAt: null,
       });
 
@@ -45,23 +46,12 @@ export async function generateAssignmentsForPlan(plan: ReviewPlan): Promise<numb
         recipientId: employee.employeeId,
         recipientName: employee.name,
         type: "new_review",
-        title: `New review assigned: ${plan.title}`,
-        message: `Deadline: ${plan.employeeDeadline}`,
+        title: `New review cycle: ${plan.title}`,
+        message: "Your review is now open. Complete your self-assessment when ready.",
         assignmentId,
       });
     }),
   );
 
   return eligible.length;
-}
-
-export async function syncAssignmentDeadlines(plan: ReviewPlan): Promise<number> {
-  const assignments = await getReviewAssignments();
-  const stale = assignments.filter(
-    (a) => a.planId === plan.planId && a.status !== "Finalised" && a.deadline !== plan.employeeDeadline,
-  );
-
-  await Promise.all(stale.map((a) => saveReviewAssignment({ ...a, deadline: plan.employeeDeadline })));
-
-  return stale.length;
 }

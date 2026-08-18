@@ -26,13 +26,13 @@ export {
   saveReviewTemplate,
 } from "@/data/reviewTemplates";
 export {
-  deleteNotificationRule,
+  deleteCustomNotification,
+  getCustomNotifications,
   getNotificationHistory,
-  getNotificationRules,
   getNotificationsForRecipient,
+  saveCustomNotification,
   saveNotification,
   saveNotificationHistoryEntry,
-  saveNotificationRule,
 } from "@/data/notifications";
 export { getReviewResponse, saveReviewResponse } from "@/data/reviewResponses";
 export {

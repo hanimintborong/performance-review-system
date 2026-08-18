@@ -66,6 +66,18 @@ export function SectionEditor({ section, index, workflowType, onChange, onDelete
           )}
         </Flex>
 
+        <Flex direction="column" gap="4px" flexShrink="0" w="110px">
+          <Input
+            value={section.weightage ?? ""}
+            onChange={(e) => onChange({ ...section, weightage: e.target.value === "" ? undefined : Number(e.target.value) })}
+            placeholder="Weightage %"
+            type="number"
+            fontSize="12px"
+            textAlign="center"
+            {...FIELD_STYLE}
+          />
+        </Flex>
+
         <IconButton aria-label={collapsed ? "Expand section" : "Collapse section"} variant="ghost" color="grey.60" onClick={() => setCollapsed((c) => !c)}>
           {collapsed ? <FiChevronDown /> : <FiChevronUp />}
         </IconButton>

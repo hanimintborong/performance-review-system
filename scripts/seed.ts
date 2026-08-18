@@ -3,7 +3,6 @@ import { getFirestore } from "firebase-admin/firestore";
 
 import { mockEmployees } from "@/data/mockEmployees";
 import { mockNotificationHistory } from "@/data/mockNotificationHistory";
-import { mockNotificationRules } from "@/data/mockNotificationRules";
 import { mockReviewAssignments } from "@/data/mockReviewAssignments";
 import { mockReviewPlans } from "@/data/mockReviewPlans";
 import { mockReviewTemplates } from "@/data/mockReviewTemplates";
@@ -13,7 +12,6 @@ const COLLECTIONS: { name: string; docs: Record<string, unknown>[]; idField: str
   { name: "reviewTemplates", docs: mockReviewTemplates, idField: "templateId" },
   { name: "reviewPlans", docs: mockReviewPlans, idField: "planId" },
   { name: "reviewAssignments", docs: mockReviewAssignments, idField: "assignmentId" },
-  { name: "notificationRules", docs: mockNotificationRules, idField: "ruleId" },
   { name: "notificationHistory", docs: mockNotificationHistory, idField: "historyId" },
 ];
 

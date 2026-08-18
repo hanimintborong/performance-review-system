@@ -7,7 +7,7 @@ import type { DataTableColumn } from "@/components/common/DataTableRow";
 import { MenuAction } from "@/components/common/MenuAction";
 import { SecondaryButton } from "@/components/common/SecondaryButton";
 import { StatusBadge } from "@/components/common/StatusBadge";
-import { TEMPLATE_STATUS_STYLE } from "@/constants/statusColors";
+import { MASTER_TEMPLATE_BADGE_STYLE, TEMPLATE_STATUS_STYLE } from "@/constants/statusColors";
 import { countQuestions, countSections, type ReviewTemplate } from "@/types/template";
 
 type TemplateColumnsOptions = {
@@ -25,8 +25,11 @@ export const getTemplateColumns = (
     label: "Template",
     width: "1.8fr",
     render: (template) => (
-      <Flex direction="column">
-        <Text fontSize="13px" fontWeight="600" color="grey.80">{template.title}</Text>
+      <Flex direction="column" gap="4px">
+        <Flex align="center" gap="8px">
+          <Text fontSize="13px" fontWeight="600" color="grey.80">{template.title}</Text>
+          {template.isMasterTemplate && <StatusBadge label="Master" style={MASTER_TEMPLATE_BADGE_STYLE} />}
+        </Flex>
         <Text fontSize="11px" color="grey.60">{template.description}</Text>
       </Flex>
     ),

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { runNotificationScheduler } from "@/lib/runNotificationScheduler";
+import { runCustomNotificationScheduler } from "@/lib/runCustomNotificationScheduler";
 
 export async function GET(request: Request) {
   const authHeader = request.headers.get("authorization");
@@ -8,6 +8,6 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const result = await runNotificationScheduler();
+  const result = await runCustomNotificationScheduler();
   return NextResponse.json(result);
 }

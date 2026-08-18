@@ -7,5 +7,4 @@ export const IN_PROGRESS_STATUSES: ReviewStatus[] = [
   "Self-Assessment",
   "Employee Submitted",
   "Manager Reviewing",
-  "Overdue",
 ];

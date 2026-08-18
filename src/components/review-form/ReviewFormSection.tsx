@@ -55,6 +55,7 @@ export function ReviewFormSection({ section, answers, onAnswerChange, editableRe
                 value={answers[question.questionId] ?? ""}
                 readOnly={!editable}
                 editableRespondent={isMultiRespondent ? (editableRespondent ?? (previewMode ? "employee" : undefined)) : undefined}
+                sectionWeightage={section.weightage}
                 onChange={editable ? (v) => onAnswerChange?.(question.questionId, v) : undefined}
               />
             </Flex>

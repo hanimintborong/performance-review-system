@@ -8,7 +8,7 @@ import { getReviewPlanById, getReviewPlans } from "@/data/reviewPlans";
 import { reviewAssignments as reviewAssignmentsTable, reviewResponses as reviewResponsesTable } from "@/db/schema";
 import { db } from "@/lib/db";
 import type { Employee } from "@/types/employee";
-import type { FinalOutcome, ReviewAssignment, ReviewStatus } from "@/types/review";
+import type { FinalOutcome, ReviewAssignment, ReviewPlanStatus, ReviewStatus } from "@/types/review";
 
 export const getReviewAssignments = cache(async (): Promise<ReviewAssignment[]> => {
   return db.select().from(reviewAssignmentsTable);
@@ -50,29 +50,24 @@ export type ReviewRow = {
   managerId: string;
   managerName: string;
   planTitle: string;
-  deadline: string;
+  planStatus: ReviewPlanStatus;
   status: ReviewStatus;
   employeeScore: number | null;
   managerScore: number | null;
   acknowledged: boolean;
   finalOutcome: FinalOutcome | null;
   finalOutcomeNotes: string | null;
+  incrementPercentage: number | null;
+  incrementEffectiveDate: string | null;
   finalizedAt: string | null;
 };
-
-const OPEN_STATUSES: ReviewStatus[] = ["Not Started", "Self-Assessment", "Employee Submitted", "Manager Reviewing", "Manager Submitted"];
-
-function effectiveStatus(status: ReviewStatus, deadline: string, today: string): ReviewStatus {
-  if (OPEN_STATUSES.includes(status) && deadline < today) return "Overdue";
-  return status;
-}
 
 function toReviewRow(
   assignment: ReviewAssignment,
   employee: Employee,
   manager: Employee,
   planTitle: string,
-  today: string,
+  planStatus: ReviewPlanStatus,
 ): ReviewRow {
   return {
     assignmentId: assignment.assignmentId,
@@ -81,13 +76,15 @@ function toReviewRow(
     managerId: assignment.managerId,
     managerName: manager.name,
     planTitle,
-    deadline: assignment.deadline,
-    status: effectiveStatus(assignment.status, assignment.deadline, today),
+    planStatus,
+    status: assignment.status,
     employeeScore: assignment.employeeScore,
     managerScore: assignment.managerScore,
     acknowledged: assignment.acknowledged,
     finalOutcome: assignment.finalOutcome ?? null,
     finalOutcomeNotes: assignment.finalOutcomeNotes ?? null,
+    incrementPercentage: assignment.incrementPercentage ?? null,
+    incrementEffectiveDate: assignment.incrementEffectiveDate ?? null,
     finalizedAt: assignment.finalizedAt ?? null,
   };
 }
@@ -101,7 +98,6 @@ export const getReviewRows = cache(async (): Promise<ReviewRow[]> => {
 
   const employeeById = new Map(employees.map((employee) => [employee.employeeId, employee]));
   const planById = new Map(plans.map((plan) => [plan.planId, plan]));
-  const today = new Date().toISOString().slice(0, 10);
 
   return assignments
     .map((assignment) => {
@@ -110,7 +106,7 @@ export const getReviewRows = cache(async (): Promise<ReviewRow[]> => {
       const plan = planById.get(assignment.planId);
       if (!employee || !manager || !plan) return null;
 
-      return toReviewRow(assignment, employee, manager, plan.title, today);
+      return toReviewRow(assignment, employee, manager, plan.title, plan.status);
     })
     .filter((row): row is ReviewRow => row !== null);
 });
@@ -126,5 +122,5 @@ export const getReviewRowById = cache(async (assignmentId: string): Promise<Revi
   ]);
   if (!employee || !manager || !plan) return undefined;
 
-  return toReviewRow(assignment, employee, manager, plan.title, new Date().toISOString().slice(0, 10));
+  return toReviewRow(assignment, employee, manager, plan.title, plan.status);
 });

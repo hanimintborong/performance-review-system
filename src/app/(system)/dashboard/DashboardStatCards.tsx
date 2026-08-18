@@ -1,7 +1,7 @@
 "use client";
 
 import { Flex, Grid, Icon, Text } from "@chakra-ui/react";
-import { FiAlertTriangle, FiCheckCircle, FiClock, FiFlag } from "react-icons/fi";
+import { FiCheckCircle, FiClock, FiFlag } from "react-icons/fi";
 
 import { AppCard } from "@/components/common/AppCard";
 import { RingProgress } from "@/components/common/RingProgress";
@@ -12,13 +12,15 @@ type DashboardStatCardsProps = {
   counts: Record<StatusBucket, number>;
   total: number;
   departmentCount: number;
+  planId?: string;
 };
 
-export function DashboardStatCards({ counts, total, departmentCount }: DashboardStatCardsProps) {
+export function DashboardStatCards({ counts, total, departmentCount, planId }: DashboardStatCardsProps) {
   const completionPercent = total > 0 ? (counts.completed / total) * 100 : 0;
+  const planParam = planId ? `&planId=${planId}` : "";
 
   return (
-    <Grid templateColumns="repeat(5, 1fr)" gap="12px">
+    <Grid templateColumns="repeat(4, 1fr)" gap="12px">
       <AppCard p="14px 16px" borderTopWidth="3px" borderTopColor="brand.50">
         <Flex align="center" gap="12px">
           <RingProgress percent={completionPercent} size={52} />
@@ -30,10 +32,9 @@ export function DashboardStatCards({ counts, total, departmentCount }: Dashboard
         </Flex>
       </AppCard>
 
-      <StatCard label="Reviews in progress" value={counts.inProgress} valueColor="warning.70" accentColor="warning.50" icon={<Icon as={FiClock} color="warning.70" boxSize="15px" />} href="/reviews?statusGroup=inProgress" />
-      <StatCard label="Reviews ready to finalise" value={counts.readyToFinalise} valueColor="info.70" accentColor="info.50" icon={<Icon as={FiFlag} color="info.70" boxSize="15px" />} href="/reviews?statusGroup=readyToFinalise" />
-      <StatCard label="Overdue reviews" value={counts.overdue} valueColor="error.70" accentColor="error.50" icon={<Icon as={FiAlertTriangle} color="error.70" boxSize="15px" />} href="/reviews?statusGroup=overdue" />
-      <StatCard label="Completed reviews" value={counts.completed} valueColor="success.70" accentColor="success.50" icon={<Icon as={FiCheckCircle} color="success.70" boxSize="15px" />} href="/reviews?statusGroup=completed" />
+      <StatCard label="Reviews in progress" value={counts.inProgress} valueColor="warning.70" accentColor="warning.50" icon={<Icon as={FiClock} color="warning.70" boxSize="15px" />} href={`/reviews?statusGroup=inProgress${planParam}`} />
+      <StatCard label="Reviews ready to finalise" value={counts.readyToFinalise} valueColor="info.70" accentColor="info.50" icon={<Icon as={FiFlag} color="info.70" boxSize="15px" />} href={`/reviews?statusGroup=readyToFinalise${planParam}`} />
+      <StatCard label="Completed reviews" value={counts.completed} valueColor="success.70" accentColor="success.50" icon={<Icon as={FiCheckCircle} color="success.70" boxSize="15px" />} href={`/reviews?statusGroup=completed${planParam}`} />
     </Grid>
   );
 }

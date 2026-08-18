@@ -14,9 +14,10 @@ type QuestionAnswerFieldProps = {
   onChange?: (value: string) => void;
   readOnly?: boolean;
   editableRespondent?: Respondent;
+  sectionWeightage?: number;
 };
 
-export function QuestionAnswerField({ question, value, onChange, readOnly, editableRespondent }: QuestionAnswerFieldProps) {
+export function QuestionAnswerField({ question, value, onChange, readOnly, editableRespondent, sectionWeightage }: QuestionAnswerFieldProps) {
   const label = (
     <Text fontSize="13px" color="grey.80" fontWeight="600">
       {question.text}
@@ -28,7 +29,7 @@ export function QuestionAnswerField({ question, value, onChange, readOnly, edita
     return (
       <Flex direction="column" gap="6px">
         {label}
-        <OkrListField value={value} onChange={onChange} editableRespondent={editableRespondent} targetWeightage={question.weightage ?? 100} />
+        <OkrListField value={value} onChange={onChange} editableRespondent={editableRespondent} targetWeightage={sectionWeightage ?? 100} />
       </Flex>
     );
   }
@@ -43,6 +44,7 @@ export function QuestionAnswerField({ question, value, onChange, readOnly, edita
           editableRespondent={editableRespondent}
           labels={question.options ?? []}
           ratingScaleMax={question.ratingScaleMax ?? 5}
+          sectionWeightage={sectionWeightage}
         />
       </Flex>
     );
@@ -61,7 +63,7 @@ export function QuestionAnswerField({ question, value, onChange, readOnly, edita
     return (
       <Flex direction="column" gap="6px">
         {label}
-        <RatingButtons max={question.ratingScaleMax ?? 5} value={Number(value) || 0} readOnly={readOnly} onChange={(v) => onChange?.(String(v))} />
+        <RatingButtons max={question.ratingScaleMax ?? 5} value={value === "" ? null : Number(value)} readOnly={readOnly} onChange={(v) => onChange?.(String(v))} />
       </Flex>
     );
   }

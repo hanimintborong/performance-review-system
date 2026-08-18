@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import { Flex, Text } from "@chakra-ui/react";
 
 import { AppCard } from "@/components/common/AppCard";
@@ -13,6 +16,7 @@ type TemplatePreviewProps = {
 
 export function TemplatePreview({ sections, workflowType }: TemplatePreviewProps) {
   const preset = getWorkflowPreset(workflowType);
+  const [answers, setAnswers] = useState<Record<string, string>>({});
 
   if (sections.length === 0) {
     return <EmptyState message="Add a section in Edit template to see the preview here." />;
@@ -23,6 +27,7 @@ export function TemplatePreview({ sections, workflowType }: TemplatePreviewProps
       <AppCard p="14px 18px" bg="brand.10" borderColor="brand.20">
         <Text fontSize="12px" fontWeight="700" color="brand.70">{preset.label}</Text>
         <Text fontSize="11px" color="brand.70" mt="1px">{preset.description}</Text>
+        <Text fontSize="10px" color="brand.50" mt="4px">Try it out below as an employee would — this doesn&apos;t save anything.</Text>
       </AppCard>
 
       {sections.map((section, index) => (
@@ -36,7 +41,12 @@ export function TemplatePreview({ sections, workflowType }: TemplatePreviewProps
             </Text>
           </Flex>
 
-          <ReviewFormSection section={section} answers={{}} previewMode />
+          <ReviewFormSection
+            section={section}
+            answers={answers}
+            previewMode
+            onAnswerChange={(questionId, value) => setAnswers((prev) => ({ ...prev, [questionId]: value }))}
+          />
         </Flex>
       ))}
     </Flex>

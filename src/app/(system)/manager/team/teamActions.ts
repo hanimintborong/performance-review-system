@@ -18,9 +18,9 @@ export async function sendReminderAction(assignmentId: string): Promise<void> {
   await notify({
     recipientId: employee.employeeId,
     recipientName: employee.name,
-    type: assignment.status === "Overdue" ? "overdue" : "upcoming_deadline",
+    type: "upcoming_deadline",
     title: "Reminder: complete your self-assessment",
-    message: `${manager?.name ?? "Your manager"} sent a reminder — deadline ${assignment.deadline}.`,
+    message: `${manager?.name ?? "Your manager"} sent you a reminder.`,
     assignmentId,
   });
 

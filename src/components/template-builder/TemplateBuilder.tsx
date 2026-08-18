@@ -5,8 +5,9 @@ import { useRouter } from "next/navigation";
 import { Flex, Tabs, Text } from "@chakra-ui/react";
 import { FiPlus } from "react-icons/fi";
 
-import { saveReviewTemplateAction } from "@/app/(system)/review-templates/reviewTemplateActions";
+import { saveAsNewTemplateAction, saveReviewTemplateAction } from "@/app/(system)/review-templates/reviewTemplateActions";
 import { ActivateTemplateDialog } from "@/components/template-builder/ActivateTemplateDialog";
+import { MasterTemplateFooter } from "@/components/template-builder/MasterTemplateFooter";
 import { newSection } from "@/components/template-builder/newSection";
 import { SectionEditor } from "@/components/template-builder/SectionEditor";
 import { TemplateBuilderFooter } from "@/components/template-builder/TemplateBuilderFooter";
@@ -14,6 +15,7 @@ import { TemplateBuilderHeader } from "@/components/template-builder/TemplateBui
 import { TemplatePreview } from "@/components/template-builder/TemplatePreview";
 import { ConfirmationDialog } from "@/components/common/ConfirmationDialog";
 import { toaster } from "@/components/ui/toaster";
+import { totalSectionWeightage } from "@/lib/reviewValidation";
 import { applyWorkflowChange, countIncompatibleQuestions } from "@/lib/templateWorkflow";
 import type { ReviewTemplate, TemplateSection, WorkflowType } from "@/types/template";
 
@@ -96,6 +98,24 @@ export function TemplateBuilder({ initialTemplate, mode = "create", workflowLock
     });
   }
 
+  function saveAsNew(newTitle: string) {
+    const toSave = sanitizeTemplate(template);
+    setSavingStatus("Inactive");
+    startTransition(async () => {
+      try {
+        const created = await saveAsNewTemplateAction(toSave, newTitle);
+        toaster.create({ title: "New template created", description: created.title, type: "success" });
+        router.push(`/review-templates/${created.templateId}/edit`);
+      } catch (err) {
+        toaster.create({ title: "Could not create template", description: err instanceof Error ? err.message : undefined, type: "error" });
+      } finally {
+        setSavingStatus(null);
+      }
+    });
+  }
+
+  const isEditingMaster = mode === "edit" && template.isMasterTemplate;
+
   return (
     <Flex direction="column" gap="14px">
       <Flex direction="column" gap="2px">
@@ -118,6 +138,15 @@ export function TemplateBuilder({ initialTemplate, mode = "create", workflowLock
 
         <Tabs.Content value="edit" p="0" pt="14px">
           <Flex direction="column" gap="10px">
+            {(() => {
+              const weightageUsed = totalSectionWeightage(template.sections);
+              if (weightageUsed === 0) return null;
+              return (
+                <Text fontSize="12px" fontWeight="700" color={weightageUsed === 100 ? "success.70" : "error.50"}>
+                  Section weightage used: {weightageUsed}% / 100% — sections left blank don&apos;t count toward Final Score.
+                </Text>
+              );
+            })()}
             {template.sections.map((section, index) => (
               <SectionEditor
                 key={section.sectionId}
@@ -155,12 +184,20 @@ export function TemplateBuilder({ initialTemplate, mode = "create", workflowLock
         </Tabs.Content>
       </Tabs.Root>
 
-      <TemplateBuilderFooter
-        onSaveDraft={() => persist("Inactive", "Draft saved")}
-        onActivate={() => persist("Active", "Template activated")}
-        savingDraft={isPending && savingStatus === "Inactive"}
-        activating={isPending && savingStatus === "Active"}
-      />
+      {isEditingMaster ? (
+        <MasterTemplateFooter
+          onSaveAsNew={saveAsNew}
+          onUpdateDirectly={() => persist(template.status, "Master template updated")}
+          saving={isPending}
+        />
+      ) : (
+        <TemplateBuilderFooter
+          onSaveDraft={() => persist("Inactive", "Draft saved")}
+          onActivate={() => persist("Active", "Template activated")}
+          savingDraft={isPending && savingStatus === "Inactive"}
+          activating={isPending && savingStatus === "Active"}
+        />
+      )}
 
       <ActivateTemplateDialog
         open={showActivateDialog}

@@ -21,7 +21,7 @@ export function groupNotifications(
     views.push({
       key: `group-${group[0].type}`,
       type: group[0].type,
-      title: `${group.length} ${NOTIFICATION_TYPE_LABELS[group[0].type]} notifications`,
+      title: `${group.length} ${NOTIFICATION_TYPE_LABELS[group[0].type] ?? group[0].type} notifications`,
       message: group.map((n) => n.title).join(" · "),
       createdAt: group.reduce((latest, n) => (n.createdAt > latest ? n.createdAt : latest), group[0].createdAt),
       read: group.every((n) => n.read),

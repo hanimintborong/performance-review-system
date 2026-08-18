@@ -38,13 +38,11 @@ export function TeamClient({ rows, plans }: { rows: ReviewRow[]; plans: ReviewPl
 
   const options: FilterOption[] = useMemo(() => {
     const inProgress = visibleRows.filter((r) => IN_PROGRESS_STATUSES.includes(r.status)).length;
-    const overdue = visibleRows.filter((r) => r.status === "Overdue").length;
     const completed = visibleRows.filter((r) => r.status === "Finalised").length;
 
     return [
       { key: "action", label: `Needs your review (${needsAction})` },
       { key: "in_progress", label: `In progress (${inProgress})` },
-      { key: "overdue", label: `Overdue (${overdue})` },
       { key: "completed", label: `Completed (${completed})` },
       { key: "all", label: `All (${visibleRows.length})` },
     ];
@@ -53,7 +51,6 @@ export function TeamClient({ rows, plans }: { rows: ReviewRow[]; plans: ReviewPl
   const filtered = visibleRows.filter((r) => {
     const matchesFilter = filter === "action" ? r.status === "Employee Submitted"
       : filter === "in_progress" ? IN_PROGRESS_STATUSES.includes(r.status)
-      : filter === "overdue" ? r.status === "Overdue"
       : filter === "completed" ? r.status === "Finalised"
       : true;
     const matchesSearch = r.employee.name.toLowerCase().includes(search.toLowerCase());

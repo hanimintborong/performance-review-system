@@ -37,7 +37,7 @@ export function DashboardOverview({ allRows, plans }: { allRows: ReviewRow[]; pl
         </NativeSelect.Root>
       </Flex>
 
-      <DashboardStatCards counts={counts} total={rows.length} departmentCount={departmentCount} />
+      <DashboardStatCards counts={counts} total={rows.length} departmentCount={departmentCount} planId={planId !== ALL ? planId : undefined} />
       <Grid templateColumns="1fr 1.3fr" gap="12px">
         <StatusBucketBreakdown counts={counts} total={rows.length} title="Evaluation progress by status" />
         <DepartmentProgress rows={rows} />

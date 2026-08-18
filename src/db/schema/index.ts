@@ -4,7 +4,7 @@ export * from "@/db/schema/reviewTemplates";
 export * from "@/db/schema/reviewPlans";
 export * from "@/db/schema/reviewAssignments";
 export * from "@/db/schema/reviewResponses";
-export * from "@/db/schema/notificationRules";
 export * from "@/db/schema/notificationHistory";
 export * from "@/db/schema/notifications";
+export * from "@/db/schema/customNotifications";
 export * from "@/db/schema/wfhRequests";

@@ -6,7 +6,7 @@ import { AppHeader } from "@/components/layout/AppHeader";
 import { AppSidebar } from "@/components/layout/AppSidebar";
 import { RoleProvider } from "@/components/layout/RoleContext";
 import { canvas } from "@/constants/colors";
-import { getEmployees, getNotificationsForRecipient, getReviewRows, getWfhRequestRows } from "@/data/queries";
+import { getNotificationsForRecipient, getReviewRows, getWfhRequestRows } from "@/data/queries";
 import { getCurrentSystemUser } from "@/lib/currentSystemUser";
 import { computeUnreadNotificationCount } from "@/lib/notificationFeed";
 import { computePrimaryActionCount } from "@/lib/primaryActionCount";
@@ -28,13 +28,12 @@ export default async function SystemLayout({
     redirect("/pending-access");
   }
 
-  const [notifications, reviewRows, wfhRows, employees] = await Promise.all([
+  const [notifications, reviewRows, wfhRows] = await Promise.all([
     getNotificationsForRecipient(systemUser.employeeId),
     getReviewRows(),
     getWfhRequestRows(),
-    getEmployees(),
   ]);
-  const notificationCount = computeUnreadNotificationCount(systemUser.role, systemUser.employeeId, notifications, reviewRows, employees);
+  const notificationCount = computeUnreadNotificationCount(notifications);
   const primaryActionCount = computePrimaryActionCount(systemUser.role, systemUser.employeeId, reviewRows);
   const wfhPendingCount = wfhRows.filter((r) => r.approverId === systemUser.employeeId && r.status === "Pending Approval").length;
 

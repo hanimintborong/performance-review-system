@@ -2,7 +2,7 @@
 
 import NextLink from "next/link";
 import { Flex, Icon, Text } from "@chakra-ui/react";
-import { FiCheckCircle, FiCircle } from "react-icons/fi";
+import { FiBell, FiCheckCircle, FiCircle } from "react-icons/fi";
 
 import { NOTIFICATION_TYPE_ICON } from "@/constants/notificationTypes";
 import type { NotificationView } from "@/lib/notificationView";
@@ -14,7 +14,7 @@ type NotificationRowProps = {
 };
 
 export function NotificationRow({ item, onToggleRead, loading }: NotificationRowProps) {
-  const TypeIcon = NOTIFICATION_TYPE_ICON[item.type];
+  const TypeIcon = NOTIFICATION_TYPE_ICON[item.type] ?? FiBell;
 
   const body = (
     <Flex align="start" gap="10px" p="14px 20px" bg={item.read ? "white" : "brand.10"} borderBottomWidth="1px" borderColor="grey.10">

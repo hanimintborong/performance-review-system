@@ -2,14 +2,19 @@
 
 import { revalidatePath } from "next/cache";
 
-import { getEmployeeById, getReviewAssignmentById, getReviewPlanById, getReviewResponse, getReviewTemplateById, saveReviewAssignment, saveReviewResponse } from "@/data/queries";
-import { notify, notifyMany } from "@/lib/notify";
+import { getEmployeeById, getEmployees, getReviewAssignmentById, getReviewPlanById, getReviewResponse, getReviewTemplateById, saveReviewAssignment, saveReviewResponse } from "@/data/queries";
+import { notifyMany } from "@/lib/notify";
 import { computeScore } from "@/lib/reviewScoring";
 import { mergeAnswers } from "@/types/reviewResponse";
 
 async function persist(assignmentId: string, answers: Record<string, string>, comment: string, submit: boolean) {
   const [assignment, response] = await Promise.all([getReviewAssignmentById(assignmentId), getReviewResponse(assignmentId)]);
   if (!assignment) return;
+
+  const plan = await getReviewPlanById(assignment.planId);
+  if (plan?.status === "Closed") {
+    throw new Error("This review cycle is closed — no further edits are allowed.");
+  }
 
   const mergedAnswers = mergeAnswers(response.answers, answers);
   await saveReviewResponse({
@@ -20,48 +25,21 @@ async function persist(assignmentId: string, answers: Record<string, string>, co
   });
 
   if (submit) {
-    const plan = await getReviewPlanById(assignment.planId);
     const template = plan ? await getReviewTemplateById(plan.templateId) : undefined;
     const score = template ? computeScore(template.sections, mergedAnswers, "manager") : null;
 
     await saveReviewAssignment({ ...assignment, managerScore: score, status: "Manager Submitted" });
 
-    const [employee, manager] = await Promise.all([getEmployeeById(assignment.employeeId), getEmployeeById(assignment.managerId)]);
+    const [employee, employees] = await Promise.all([getEmployeeById(assignment.employeeId), getEmployees()]);
+    const recipients = employees
+      .filter((e) => e.systemRole === "topManagement" || e.systemRole === "hr")
+      .map((e) => ({ recipientId: e.employeeId, recipientName: e.name }));
 
-    if (employee) {
-      await notify({
-        recipientId: employee.employeeId,
-        recipientName: employee.name,
-        type: "manager_submitted",
-        title: "Your manager has completed your evaluation",
-        message: "Awaiting finalisation by top management.",
-        assignmentId,
-      });
-    }
-
-    if (manager?.managerId) {
-      const topManagement = await getEmployeeById(manager.managerId);
-      if (topManagement) {
-        await notify({
-          recipientId: topManagement.employeeId,
-          recipientName: topManagement.name,
-          type: "ready_for_management",
-          title: `${employee?.name ?? "A review"} is ready for finalisation`,
-          message: `Evaluated by ${manager.name}.`,
-          assignmentId,
-        });
-      }
-    }
-
-    const discussionRecipients = [employee, manager]
-      .filter((p): p is NonNullable<typeof p> => Boolean(p))
-      .map((p) => ({ recipientId: p.employeeId, recipientName: p.name }));
-
-    if (discussionRecipients.length > 0) {
-      await notifyMany(discussionRecipients, {
-        type: "discussion_required",
-        title: "Discuss the evaluation results",
-        message: "Schedule a performance discussion outside the system before finalisation. This is informational only, not a blocking step.",
+    if (recipients.length > 0) {
+      await notifyMany(recipients, {
+        type: "ready_for_management",
+        title: `${employee?.name ?? "A review"} is ready for finalisation`,
+        message: "The manager has submitted their evaluation.",
         assignmentId,
       });
     }

@@ -6,7 +6,7 @@ import NextLink from "next/link";
 import { Flex, Text } from "@chakra-ui/react";
 
 import { getPlanColumns } from "@/app/(system)/review-plans/columns";
-import { deletePlanAction, duplicatePlanAction, toggleReviewPlanStatusAction } from "@/app/(system)/review-plans/reviewPlanActions";
+import { activateReviewPlanAction, closeReviewPlanAction, deletePlanAction, duplicatePlanAction } from "@/app/(system)/review-plans/reviewPlanActions";
 import { AppCard } from "@/components/common/AppCard";
 import { ConfirmationDialog } from "@/components/common/ConfirmationDialog";
 import { DataTable } from "@/components/common/DataTable";
@@ -20,6 +20,8 @@ export function ReviewPlansClient({ plans }: { plans: ReviewPlanRow[] }) {
   const [, startTransition] = useTransition();
   const [statusFilter, setStatusFilter] = useState("all");
   const [pendingDelete, setPendingDelete] = useState<ReviewPlanRow | null>(null);
+  const [pendingActivate, setPendingActivate] = useState<ReviewPlanRow | null>(null);
+  const [pendingClose, setPendingClose] = useState<ReviewPlanRow | null>(null);
 
   const statusOptions: FilterOption[] = useMemo(() => {
     const counts = new Map<string, number>();
@@ -41,12 +43,8 @@ export function ReviewPlansClient({ plans }: { plans: ReviewPlanRow[] }) {
         if (copy) toaster.create({ title: "Cycle duplicated", description: copy.title, type: "success" });
       });
     },
-    onToggleStatus: (plan) => {
-      startTransition(async () => {
-        const nextStatus = await toggleReviewPlanStatusAction(plan.planId);
-        if (nextStatus) toaster.create({ title: `Cycle ${nextStatus.toLowerCase()}`, description: plan.title, type: "success" });
-      });
-    },
+    onActivate: setPendingActivate,
+    onClose: setPendingClose,
     onDelete: setPendingDelete,
   });
 
@@ -77,6 +75,38 @@ export function ReviewPlansClient({ plans }: { plans: ReviewPlanRow[] }) {
           startTransition(async () => {
             await deletePlanAction(plan.planId);
             toaster.create({ title: "Cycle deleted", description: plan.title, type: "success" });
+          });
+        }}
+      />
+
+      <ConfirmationDialog
+        open={pendingActivate !== null}
+        onOpenChange={(open) => !open && setPendingActivate(null)}
+        title="Activate this cycle?"
+        description="This opens the cycle to every assigned employee and manager and notifies them immediately. Make sure the template and departments are final."
+        confirmLabel="Activate"
+        onConfirm={() => {
+          if (!pendingActivate) return;
+          const plan = pendingActivate;
+          startTransition(async () => {
+            const createdCount = await activateReviewPlanAction(plan.planId);
+            toaster.create({ title: "Cycle activated", description: `${plan.title} · ${createdCount} assignment${createdCount === 1 ? "" : "s"} created`, type: "success" });
+          });
+        }}
+      />
+
+      <ConfirmationDialog
+        open={pendingClose !== null}
+        onOpenChange={(open) => !open && setPendingClose(null)}
+        title="Close this cycle?"
+        description="No more submissions or edits will be allowed once closed. All existing records stay viewable. This can't be reopened."
+        confirmLabel="Close cycle"
+        onConfirm={() => {
+          if (!pendingClose) return;
+          const plan = pendingClose;
+          startTransition(async () => {
+            await closeReviewPlanAction(plan.planId);
+            toaster.create({ title: "Cycle closed", description: plan.title, type: "success" });
           });
         }}
       />

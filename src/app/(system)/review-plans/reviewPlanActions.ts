@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
-import { generateAssignmentsForPlan, syncAssignmentDeadlines } from "@/data/assignmentGeneration";
+import { generateAssignmentsForPlan } from "@/data/assignmentGeneration";
 import { deleteReviewAssignmentsByPlan, deleteReviewPlan, getReviewPlanById, saveReviewPlan } from "@/data/queries";
 import type { ReviewPlan } from "@/types/review";
 
@@ -18,26 +18,29 @@ function revalidateAssignmentPaths(planId: string) {
   revalidatePath("/employee/notifications");
 }
 
-export async function saveReviewPlanAction(plan: ReviewPlan): Promise<number> {
+export async function saveReviewPlanAction(plan: ReviewPlan): Promise<void> {
   await saveReviewPlan(plan);
-  const createdCount = plan.status === "Active" ? await generateAssignmentsForPlan(plan) : 0;
-  await syncAssignmentDeadlines(plan);
   revalidateAssignmentPaths(plan.planId);
+}
+
+export async function activateReviewPlanAction(planId: string): Promise<number> {
+  const plan = await getReviewPlanById(planId);
+  if (!plan || plan.status !== "Draft") return 0;
+
+  const updatedPlan: ReviewPlan = { ...plan, status: "Active", activatedAt: new Date().toISOString() };
+  await saveReviewPlan(updatedPlan);
+  const createdCount = await generateAssignmentsForPlan(updatedPlan);
+  revalidateAssignmentPaths(planId);
+
   return createdCount;
 }
 
-export async function toggleReviewPlanStatusAction(planId: string): Promise<ReviewPlan["status"] | null> {
+export async function closeReviewPlanAction(planId: string): Promise<void> {
   const plan = await getReviewPlanById(planId);
-  if (!plan) return null;
+  if (!plan || plan.status !== "Active") return;
 
-  const nextStatus = plan.status === "Archived" ? "Active" : "Archived";
-  const updatedPlan: ReviewPlan = { ...plan, status: nextStatus };
-  await saveReviewPlan(updatedPlan);
-
-  if (nextStatus === "Active") await generateAssignmentsForPlan(updatedPlan);
+  await saveReviewPlan({ ...plan, status: "Closed", closedAt: new Date().toISOString() });
   revalidateAssignmentPaths(planId);
-
-  return nextStatus;
 }
 
 export async function duplicatePlanAction(planId: string): Promise<ReviewPlan | null> {
@@ -50,6 +53,8 @@ export async function duplicatePlanAction(planId: string): Promise<ReviewPlan | 
     title: `${plan.title} (Copy)`,
     status: "Draft",
     createdAt: new Date().toISOString(),
+    activatedAt: null,
+    closedAt: null,
   };
   await saveReviewPlan(copy);
   revalidateAssignmentPaths(copy.planId);

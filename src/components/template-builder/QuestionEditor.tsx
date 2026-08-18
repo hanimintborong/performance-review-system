@@ -102,6 +102,11 @@ export function QuestionEditor({ question, number, workflowType, onChange, onDel
         {(meta.hasWeightage || meta.hasRatingScale || meta.hasOptions) && (
           <QuestionTypeFields meta={meta} question={question} onChange={onChange} />
         )}
+        {question.type === "okr_list" && (
+          <Text fontSize="11px" color="grey.50">
+            Objectives must add up to this section&apos;s Weightage % (set at the top of the section) — not set per question.
+          </Text>
+        )}
       </Flex>
     </Flex>
   );

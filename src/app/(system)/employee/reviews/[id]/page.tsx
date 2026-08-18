@@ -6,6 +6,7 @@ import { FiArrowLeft } from "react-icons/fi";
 import { AcknowledgeButton } from "@/app/(system)/employee/reviews/[id]/AcknowledgeButton";
 import { AppCard } from "@/components/common/AppCard";
 import { DiscussionGuidanceBanner } from "@/components/common/DiscussionGuidanceBanner";
+import { FinalOutcomeBanner } from "@/components/common/FinalOutcomeBanner";
 import { ScoreBadge } from "@/components/common/ScoreBadge";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import { ReviewFormSection } from "@/components/review-form/ReviewFormSection";
@@ -40,19 +41,20 @@ export default async function EmployeeReviewResultPage({ params }: PageProps) {
         <Flex align="center" justify="space-between" flexWrap="wrap" gap="10px">
           <Flex direction="column" gap="4px">
             <Text fontSize="17px" fontWeight="700" color="grey.80">{row.planTitle}</Text>
-            <Text fontSize="12px" color="grey.60">Reviewer: {row.managerName} · Deadline: {row.deadline}</Text>
+            <Text fontSize="12px" color="grey.60">Reviewer: {row.managerName}</Text>
           </Flex>
           <StatusBadge label={row.status} style={REVIEW_STATUS_STYLE[row.status]} />
         </Flex>
       </AppCard>
 
       {row.status === "Finalised" && row.finalOutcome && (
-        <AppCard p="16px 20px" bg="success.10" borderColor="success.50">
-          <Text fontSize="12px" fontWeight="700" color="success.70" mb="4px">
-            Outcome: {row.finalOutcome}
-          </Text>
-          {row.finalOutcomeNotes && <Text fontSize="13px" color="grey.70">{row.finalOutcomeNotes}</Text>}
-        </AppCard>
+        <FinalOutcomeBanner
+          outcome={row.finalOutcome}
+          finalizedAt={row.finalizedAt}
+          notes={row.finalOutcomeNotes}
+          incrementPercentage={row.incrementPercentage}
+          incrementEffectiveDate={row.incrementEffectiveDate}
+        />
       )}
 
       {row.status === "Finalised" && !row.acknowledged && <AcknowledgeButton assignmentId={row.assignmentId} />}

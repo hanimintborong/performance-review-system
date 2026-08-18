@@ -3,76 +3,63 @@
 import { useState, useTransition } from "react";
 import { Flex, Tabs, Text } from "@chakra-ui/react";
 
-import {
-  deleteNotificationRuleAction,
-  saveNotificationRuleAction,
-  toggleNotificationRuleStatusAction,
-} from "@/app/(system)/notifications/notificationActions";
+import { deleteCustomNotificationAction, stopCustomNotificationAction } from "@/app/(system)/notifications/customNotificationActions";
+import { getCustomNotificationColumns } from "@/app/(system)/notifications/customNotificationColumns";
+import { CustomNotificationDialog } from "@/app/(system)/notifications/CustomNotificationDialog";
 import { historyColumns } from "@/app/(system)/notifications/historyColumns";
-import { getRulesColumns, type NotificationRuleRow } from "@/app/(system)/notifications/rulesColumns";
-import { RuleFormDialog } from "@/app/(system)/notifications/RuleFormDialog";
 import { AppCard } from "@/components/common/AppCard";
-import { ConfirmationDialog } from "@/components/common/ConfirmationDialog";
 import { DataTable } from "@/components/common/DataTable";
 import { PrimaryButton } from "@/components/common/PrimaryButton";
 import { NotificationRowList } from "@/components/notifications/NotificationRowList";
 import { toaster } from "@/components/ui/toaster";
+import type { Employee } from "@/types/employee";
 import type { NotificationView } from "@/lib/notificationView";
-import type { NotificationHistoryEntry, NotificationRule } from "@/types/notification";
-import type { ReviewPlan } from "@/types/review";
-
-function blankRule(planId: string): NotificationRule {
-  return { ruleId: `RULE-NEW-${planId}`, planId, type: "new_review", whenToSend: "3 days before Employee deadline", sendTo: "employee", repeat: "once", channel: "in_system", status: "Active" };
-}
+import type { CustomNotification, NotificationHistoryEntry } from "@/types/notification";
 
 type NotificationsClientProps = {
-  rules: NotificationRuleRow[];
+  customNotifications: CustomNotification[];
   history: NotificationHistoryEntry[];
-  plans: ReviewPlan[];
+  employees: Employee[];
   alerts: NotificationView[];
 };
 
-export function NotificationsClient({ rules, history, plans, alerts }: NotificationsClientProps) {
+export function NotificationsClient({ customNotifications, history, employees, alerts }: NotificationsClientProps) {
   const [, startTransition] = useTransition();
-  const [editingRule, setEditingRule] = useState<NotificationRule | null>(null);
-  const [pendingDelete, setPendingDelete] = useState<NotificationRuleRow | null>(null);
+  const [showNew, setShowNew] = useState(false);
 
-  function saveRule(rule: NotificationRule) {
-    startTransition(async () => {
-      await saveNotificationRuleAction(rule);
-      toaster.create({ title: "Notification rule saved", type: "success" });
-    });
-  }
-
-  const columns = getRulesColumns({
-    onEdit: setEditingRule,
-    onToggleStatus: (rule) => {
+  const columns = getCustomNotificationColumns({
+    onStop: (entry) => {
       startTransition(async () => {
-        const nextStatus = await toggleNotificationRuleStatusAction(rule.ruleId);
-        if (nextStatus) toaster.create({ title: `Rule ${nextStatus.toLowerCase()}`, type: "success" });
+        await stopCustomNotificationAction(entry.customNotificationId, entry);
+        toaster.create({ title: "Notification stopped", type: "success" });
       });
     },
-    onDelete: setPendingDelete,
+    onDelete: (entry) => {
+      startTransition(async () => {
+        await deleteCustomNotificationAction(entry.customNotificationId);
+        toaster.create({ title: "Notification deleted", type: "success" });
+      });
+    },
   });
 
   return (
     <AppCard>
-      <Tabs.Root defaultValue="rules">
+      <Tabs.Root defaultValue="custom">
         <Flex align="center" justify="space-between" p="16px 20px" borderBottomWidth="1px" borderColor="grey.20" flexWrap="wrap" gap="10px">
           <Flex direction="column" gap="6px">
             <Text fontSize="15px" fontWeight="700" color="grey.80">Notification & Reminder</Text>
             <Tabs.List gap="20px">
-              <Tabs.Trigger value="rules">Rules</Tabs.Trigger>
+              <Tabs.Trigger value="custom">Custom notifications</Tabs.Trigger>
               <Tabs.Trigger value="history">Notification history</Tabs.Trigger>
               <Tabs.Trigger value="alerts">Alerts ({alerts.filter((a) => !a.read).length})</Tabs.Trigger>
             </Tabs.List>
           </Flex>
 
-          <PrimaryButton onClick={() => setEditingRule(blankRule(plans[0]?.planId ?? ""))}>New rule</PrimaryButton>
+          <PrimaryButton onClick={() => setShowNew(true)}>New notification</PrimaryButton>
         </Flex>
 
-        <Tabs.Content value="rules" p="0">
-          <DataTable columns={columns} rows={rules} rowKey={(r) => r.ruleId} emptyMessage="No notification rules yet." />
+        <Tabs.Content value="custom" p="0">
+          <DataTable columns={columns} rows={customNotifications} rowKey={(n) => n.customNotificationId} emptyMessage="No custom notifications yet." />
         </Tabs.Content>
 
         <Tabs.Content value="history" p="0">
@@ -84,25 +71,7 @@ export function NotificationsClient({ rules, history, plans, alerts }: Notificat
         </Tabs.Content>
       </Tabs.Root>
 
-      {editingRule && (
-        <RuleFormDialog open rule={editingRule} plans={plans} onOpenChange={(open) => !open && setEditingRule(null)} onSave={saveRule} />
-      )}
-
-      <ConfirmationDialog
-        open={pendingDelete !== null}
-        onOpenChange={(open) => !open && setPendingDelete(null)}
-        title="Delete notification rule?"
-        description="This rule will stop sending notifications immediately."
-        confirmLabel="Delete"
-        onConfirm={() => {
-          if (!pendingDelete) return;
-          const rule = pendingDelete;
-          startTransition(async () => {
-            await deleteNotificationRuleAction(rule.ruleId);
-            toaster.create({ title: "Rule deleted", type: "success" });
-          });
-        }}
-      />
+      <CustomNotificationDialog open={showNew} onOpenChange={setShowNew} employees={employees} />
     </AppCard>
   );
 }

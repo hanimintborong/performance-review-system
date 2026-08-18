@@ -59,7 +59,9 @@ export function ReviewTemplatesClient({ templates, templateUsage }: ReviewTempla
     onEdit: (template) => router.push(`/review-templates/${template.templateId}/edit`),
     onDelete: (template) => {
       const usedByPlans = templateUsage[template.templateId];
-      if (usedByPlans?.length) {
+      if (template.isMasterTemplate) {
+        setBlockedDelete({ template, plans: [] });
+      } else if (usedByPlans?.length) {
         setBlockedDelete({ template, plans: usedByPlans });
       } else {
         setPendingDelete(template);
@@ -107,7 +109,9 @@ export function ReviewTemplatesClient({ templates, templateUsage }: ReviewTempla
         onOpenChange={(open) => !open && setBlockedDelete(null)}
         title="Can't delete this template"
         description={blockedDelete
-          ? `"${blockedDelete.template.title}" is still used by ${blockedDelete.plans.length} cycle${blockedDelete.plans.length === 1 ? "" : "s"} that isn't archived: ${blockedDelete.plans.join(", ")}. Archive those cycles first, then delete the template.`
+          ? blockedDelete.template.isMasterTemplate
+            ? `"${blockedDelete.template.title}" is the master template. Unmark it as master (in its edit page) before deleting.`
+            : `"${blockedDelete.template.title}" is still used by ${blockedDelete.plans.length} cycle${blockedDelete.plans.length === 1 ? "" : "s"} that isn't archived: ${blockedDelete.plans.join(", ")}. Archive those cycles first, then delete the template.`
           : ""}
         confirmLabel="Got it"
         onConfirm={() => setBlockedDelete(null)}

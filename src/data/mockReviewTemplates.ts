@@ -9,6 +9,7 @@ export const mockReviewTemplates: ReviewTemplate[] = [
     assignedDepartments: ALL_DEPARTMENTS,
     status: "Active",
     workflowType: "full",
+    isMasterTemplate: false,
     createdAt: "2025-01-01T00:00:00.000Z",
     sections: [
       {
@@ -64,6 +65,7 @@ export const mockReviewTemplates: ReviewTemplate[] = [
     assignedDepartments: ALL_DEPARTMENTS,
     status: "Active",
     workflowType: "full",
+    isMasterTemplate: false,
     createdAt: "2025-01-01T00:00:00.000Z",
     sections: [
       {
@@ -108,6 +110,7 @@ export const mockReviewTemplates: ReviewTemplate[] = [
     assignedDepartments: ["Revenue", "Engineering"],
     status: "Inactive",
     workflowType: "full",
+    isMasterTemplate: false,
     createdAt: "2025-01-01T00:00:00.000Z",
     sections: [
       {
@@ -135,6 +138,7 @@ export const mockReviewTemplates: ReviewTemplate[] = [
     assignedDepartments: ["Revenue"],
     status: "Inactive",
     workflowType: "full",
+    isMasterTemplate: false,
     createdAt: "2025-01-01T00:00:00.000Z",
     sections: [
       {

@@ -32,13 +32,10 @@ export default async function ReviewPlanDetailPage({ params }: PlanDetailPagePro
 
       <PlanInfoGrid
         templateTitle={templateTitle}
-        reviewPeriod={plan.reviewPeriod}
         departments={plan.departments.join(", ")}
-        employeeDeadline={plan.employeeDeadline}
-        managerDeadline={plan.managerDeadline}
-        hrReviewDeadline={plan.hrReviewDeadline}
-        managementReviewPeriod={plan.managementReviewPeriod}
         participantCount={String(plan.participantCount)}
+        activatedAt={plan.activatedAt}
+        closedAt={plan.closedAt}
       />
     </Flex>
   );

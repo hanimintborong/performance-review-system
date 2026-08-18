@@ -24,7 +24,6 @@ export const reviewColumns: DataTableColumn<ReviewRow>[] = [
   { key: "department", label: "Department", width: "1.1fr", render: (row) => row.employee.department },
   { key: "plan", label: "Review plan", width: "1.2fr", render: (row) => row.planTitle },
   { key: "manager", label: "Manager", width: "1fr", render: (row) => row.managerName },
-  { key: "deadline", label: "Deadline", width: "100px", render: (row) => row.deadline },
   {
     key: "status",
     label: "Status",

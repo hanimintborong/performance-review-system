@@ -1,6 +1,6 @@
 import { parseCoreValueList } from "@/lib/coreValueList";
 import { parseKpiAnswer } from "@/lib/kpiAnswer";
-import { parseOkrList } from "@/lib/okrList";
+import { parseOkrList, totalWeightage, totalWeightageScore } from "@/lib/okrList";
 import type { Respondent, TemplateQuestion, TemplateSection } from "@/types/template";
 import type { QuestionAnswer } from "@/types/reviewResponse";
 
@@ -22,22 +22,20 @@ function scoreableValue(question: TemplateQuestion, raw: string): number | null 
 }
 
 function okrListScore(raw: string, respondent?: Respondent): number | null {
-  const objectives = parseOkrList(raw).filter((o) => o.weightage > 0);
+  const useManagerScore = respondent === "manager";
+  const objectives = parseOkrList(raw).filter((o) => o.weightage > 0 && (useManagerScore ? o.managerScore : o.selfScore) !== null);
   const totalWeight = objectives.reduce((sum, o) => sum + o.weightage, 0);
   if (totalWeight === 0) return null;
 
-  const useManagerScore = respondent === "manager";
-  const weighted = objectives.reduce((sum, o) => sum + (useManagerScore ? o.managerScore : o.selfScore) * o.weightage, 0);
-
-  const value = weighted / totalWeight;
-  return value > 0 ? value : null;
+  const weighted = objectives.reduce((sum, o) => sum + (useManagerScore ? o.managerScore! : o.selfScore!) * o.weightage, 0);
+  return weighted / totalWeight;
 }
 
 function coreValueListScore(raw: string, ratingScaleMax: number, respondent?: Respondent): number | null {
   const useManagerScore = respondent === "manager";
   const scores = parseCoreValueList(raw)
     .map((row) => (useManagerScore ? row.managerScore : row.selfScore))
-    .filter((score) => score > 0)
+    .filter((score): score is number => score !== null)
     .map((score) => (score / ratingScaleMax) * 5);
 
   if (scores.length === 0) return null;
@@ -74,4 +72,35 @@ export function computeScore(sections: TemplateSection[], answers: QuestionAnswe
 
   if (scores.length === 0) return null;
   return Math.round((scores.reduce((sum, s) => sum + s, 0) / scores.length) * 10) / 10;
+}
+
+export function computeFinalWeightedScore(sections: TemplateSection[], answers: QuestionAnswer[]): number | null {
+  const answerByQuestion = new Map(answers.map((a) => [a.questionId, a.value]));
+  let total = 0;
+  let anyWeighted = false;
+
+  for (const section of sections) {
+    const weightage = section.weightage ?? 0;
+    if (weightage <= 0) continue;
+    anyWeighted = true;
+
+    const question = section.questions.find((q) => q.type === "okr_list" || q.type === "core_value_list");
+    const raw = question ? answerByQuestion.get(question.questionId) : undefined;
+    if (!question || raw === undefined) return null;
+
+    if (question.type === "okr_list") {
+      const objectives = parseOkrList(raw).filter((o) => o.weightage > 0);
+      if (objectives.length === 0 || objectives.some((o) => o.managerScore === null)) return null;
+      total += (totalWeightageScore(objectives) / totalWeightage(objectives)) * weightage;
+    } else {
+      const ratingScaleMax = question.ratingScaleMax ?? 5;
+      const rows = parseCoreValueList(raw);
+      if (rows.length === 0 || rows.some((r) => r.managerScore === null)) return null;
+      const avg = rows.reduce((sum, r) => sum + r.managerScore! / ratingScaleMax, 0) / rows.length;
+      total += avg * weightage;
+    }
+  }
+
+  if (!anyWeighted) return null;
+  return Math.round(total * 10) / 10;
 }

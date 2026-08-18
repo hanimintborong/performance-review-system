@@ -12,9 +12,13 @@ async function persist(assignmentId: string, answers: Record<string, string>, co
   const [assignment, response] = await Promise.all([getReviewAssignmentById(assignmentId), getReviewResponse(assignmentId)]);
   if (!assignment) return;
 
+  const plan = await getReviewPlanById(assignment.planId);
+  if (plan?.status === "Closed") {
+    throw new Error("This review cycle is closed — no further edits are allowed.");
+  }
+
   let template;
   if (submit) {
-    const plan = await getReviewPlanById(assignment.planId);
     template = plan ? await getReviewTemplateById(plan.templateId) : undefined;
     if (template && findOkrWeightageIssues(template.sections, answers).length > 0) {
       throw new Error("Objective weightage must total the required budget before submitting.");

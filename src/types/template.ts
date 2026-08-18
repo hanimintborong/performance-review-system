@@ -35,6 +35,7 @@ export type TemplateSection = {
   title: string;
   description?: string;
   questions: TemplateQuestion[];
+  weightage?: number;
 };
 
 export type ReviewTemplate = {
@@ -45,6 +46,7 @@ export type ReviewTemplate = {
   status: ReviewTemplateStatus;
   workflowType: WorkflowType;
   sections: TemplateSection[];
+  isMasterTemplate: boolean;
   createdAt: string;
 };
 

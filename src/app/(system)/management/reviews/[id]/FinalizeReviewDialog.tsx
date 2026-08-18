@@ -4,22 +4,32 @@ import { useState, useTransition } from "react";
 import { Dialog, Flex, NativeSelect, Portal, Text, Textarea } from "@chakra-ui/react";
 
 import { finalizeReviewAction } from "@/app/(system)/management/reviews/[id]/finalizeReviewActions";
+import { IncrementFields } from "@/app/(system)/management/reviews/[id]/IncrementFields";
 import { PrimaryButton } from "@/components/common/PrimaryButton";
 import { SecondaryButton } from "@/components/common/SecondaryButton";
 import { toaster } from "@/components/ui/toaster";
 import type { FinalOutcome } from "@/types/review";
 
-const OUTCOMES: FinalOutcome[] = ["Promoted", "Increment", "Maintained", "Performance Improvement Plan"];
+const OUTCOMES: FinalOutcome[] = ["Promoted", "Increment", "Maintained", "Performance Improvement Plan", "On Hold", "Exempted"];
 
 export function FinalizeReviewDialog({ assignmentId }: { assignmentId: string }) {
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [outcome, setOutcome] = useState<FinalOutcome>("Increment");
   const [notes, setNotes] = useState("");
+  const [incrementPercentage, setIncrementPercentage] = useState<number | null>(null);
+  const [incrementEffectiveDate, setIncrementEffectiveDate] = useState("");
+  const isIncrement = outcome === "Increment";
 
   function submit() {
     startTransition(async () => {
-      await finalizeReviewAction(assignmentId, outcome, notes);
+      await finalizeReviewAction(
+        assignmentId,
+        outcome,
+        notes,
+        isIncrement ? incrementPercentage : null,
+        isIncrement ? incrementEffectiveDate || null : null,
+      );
       toaster.create({ title: "Review finalised", description: outcome, type: "success" });
       setOpen(false);
     });
@@ -51,10 +61,19 @@ export function FinalizeReviewDialog({ assignmentId }: { assignmentId: string })
                   </NativeSelect.Root>
                 </Flex>
 
-                <Flex direction="column" gap="4px">
-                  <Text fontSize="11px" fontWeight="700" color="grey.60">Increment details / notes</Text>
-                  <Textarea size="sm" px="12px" py="8px" rows={3} value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="e.g. 5% increment effective next payroll cycle" />
-                </Flex>
+                {isIncrement ? (
+                  <IncrementFields
+                    percentage={incrementPercentage}
+                    effectiveDate={incrementEffectiveDate}
+                    onPercentageChange={setIncrementPercentage}
+                    onEffectiveDateChange={setIncrementEffectiveDate}
+                  />
+                ) : (
+                  <Flex direction="column" gap="4px">
+                    <Text fontSize="11px" fontWeight="700" color="grey.60">Notes (optional)</Text>
+                    <Textarea size="sm" px="12px" py="8px" rows={3} value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Any context for this decision…" />
+                  </Flex>
+                )}
               </Flex>
             </Dialog.Body>
             <Dialog.Footer p="16px 26px 22px">

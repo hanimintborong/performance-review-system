@@ -2,30 +2,17 @@
 
 import { revalidatePath } from "next/cache";
 
-import { getEmployeeById, getEmployees, getReviewAssignmentById, getReviewAssignments, getReviewPlanById, saveReviewAssignment } from "@/data/queries";
-import { notify, notifyMany } from "@/lib/notify";
+import { getEmployeeById, getReviewAssignmentById, getReviewPlanById, saveReviewAssignment } from "@/data/queries";
+import { notify } from "@/lib/notify";
 import type { FinalOutcome } from "@/types/review";
 
-async function notifyIfCycleCompleted(planId: string, planTitle: string) {
-  const assignments = await getReviewAssignments();
-  const planAssignments = assignments.filter((a) => a.planId === planId);
-  const allDone = planAssignments.length > 0 && planAssignments.every((a) => a.status === "Finalised");
-  if (!allDone) return;
-
-  const employees = await getEmployees();
-  const recipients = employees
-    .filter((e) => e.systemRole === "topManagement" || e.systemRole === "hr")
-    .map((e) => ({ recipientId: e.employeeId, recipientName: e.name }));
-
-  await notifyMany(recipients, {
-    type: "cycle_completed",
-    title: `${planTitle} is fully finalised`,
-    message: `All ${planAssignments.length} reviews in this cycle have been finalised.`,
-    assignmentId: null,
-  });
-}
-
-export async function finalizeReviewAction(assignmentId: string, finalOutcome: FinalOutcome, notes: string) {
+export async function finalizeReviewAction(
+  assignmentId: string,
+  finalOutcome: FinalOutcome,
+  notes: string,
+  incrementPercentage: number | null = null,
+  incrementEffectiveDate: string | null = null,
+) {
   const assignment = await getReviewAssignmentById(assignmentId);
   if (!assignment) return;
 
@@ -34,14 +21,19 @@ export async function finalizeReviewAction(assignmentId: string, finalOutcome: F
     status: "Finalised",
     finalOutcome,
     finalOutcomeNotes: notes,
+    incrementPercentage: finalOutcome === "Increment" ? incrementPercentage : null,
+    incrementEffectiveDate: finalOutcome === "Increment" ? incrementEffectiveDate : null,
     finalizedAt: new Date().toISOString(),
   });
 
-  const [employee, manager, plan] = await Promise.all([
+  const [employee, plan] = await Promise.all([
     getEmployeeById(assignment.employeeId),
-    getEmployeeById(assignment.managerId),
     getReviewPlanById(assignment.planId),
   ]);
+
+  const outcomeSummary = finalOutcome === "Increment" && incrementPercentage
+    ? `Increment (${incrementPercentage}% effective ${incrementEffectiveDate ?? "TBC"})`
+    : finalOutcome;
 
   if (employee) {
     await notify({
@@ -49,23 +41,10 @@ export async function finalizeReviewAction(assignmentId: string, finalOutcome: F
       recipientName: employee.name,
       type: "review_finalised",
       title: "Your review has been finalised",
-      message: `${plan?.title ?? "Your review"} outcome: ${finalOutcome}`,
+      message: `${plan?.title ?? "Your review"} outcome: ${outcomeSummary}`,
       assignmentId,
     });
   }
-
-  if (manager) {
-    await notify({
-      recipientId: manager.employeeId,
-      recipientName: manager.name,
-      type: "review_finalised",
-      title: `${employee?.name ?? "An employee"}'s review has been finalised`,
-      message: `Outcome: ${finalOutcome}`,
-      assignmentId,
-    });
-  }
-
-  await notifyIfCycleCompleted(assignment.planId, plan?.title ?? "Review cycle");
 
   revalidatePath("/management/reviews");
   revalidatePath(`/management/reviews/${assignmentId}`);

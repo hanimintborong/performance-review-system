@@ -6,7 +6,6 @@ import { PlanForm } from "@/app/(system)/review-plans/PlanForm";
 import { nextPlanId } from "@/app/(system)/review-plans/nextPlanId";
 import { DEPARTMENTS } from "@/constants/departments";
 import { getEmployees, getReviewAssignments, getReviewPlans, getReviewTemplates } from "@/data/queries";
-import { addDays } from "@/lib/date";
 import type { ReviewPlan } from "@/types/review";
 
 export default async function NewReviewPlanPage() {
@@ -18,23 +17,18 @@ export default async function NewReviewPlanPage() {
   ]);
 
   const planId = nextPlanId(plans.map((p) => p.planId), assignments.map((a) => a.planId));
-  const today = new Date().toISOString().slice(0, 10);
 
   const blankPlan: ReviewPlan = {
     planId,
     title: "",
     description: "",
     templateId: "",
-    reviewPeriod: "",
     createdAt: "",
-    startDate: "",
-    employeeDeadline: "",
-    managerDeadline: "",
-    hrReviewDeadline: "",
-    managementReviewPeriod: "",
     departments: [...DEPARTMENTS],
     participantCount: 0,
     status: "Draft",
+    activatedAt: null,
+    closedAt: null,
   };
 
   return (
@@ -47,8 +41,6 @@ export default async function NewReviewPlanPage() {
 
       <PlanForm
         initialPlan={blankPlan}
-        initialStart={today}
-        initialEnd={addDays(today, 29)}
         mode="create"
         employees={employees}
         templates={templates}

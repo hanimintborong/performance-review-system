@@ -3,24 +3,9 @@ import "server-only";
 import { cache } from "react";
 import { desc, eq } from "drizzle-orm";
 
-import { notificationHistory, notificationRules, notifications } from "@/db/schema";
+import { customNotifications, notificationHistory, notifications } from "@/db/schema";
 import { db } from "@/lib/db";
-import type { Notification, NotificationHistoryEntry, NotificationRule } from "@/types/notification";
-
-export const getNotificationRules = cache(async (): Promise<NotificationRule[]> => {
-  return db.select().from(notificationRules);
-});
-
-export async function saveNotificationRule(rule: NotificationRule): Promise<void> {
-  await db.insert(notificationRules).values(rule).onConflictDoUpdate({
-    target: notificationRules.ruleId,
-    set: rule,
-  });
-}
-
-export async function deleteNotificationRule(ruleId: string): Promise<void> {
-  await db.delete(notificationRules).where(eq(notificationRules.ruleId, ruleId));
-}
+import type { CustomNotification, Notification, NotificationHistoryEntry } from "@/types/notification";
 
 export const getNotificationHistory = cache(async (): Promise<NotificationHistoryEntry[]> => {
   return db.select().from(notificationHistory).orderBy(desc(notificationHistory.sentAt)).limit(20);
@@ -47,4 +32,19 @@ export async function saveNotification(notification: Notification): Promise<void
     target: notifications.notificationId,
     set: notification,
   });
+}
+
+export const getCustomNotifications = cache(async (): Promise<CustomNotification[]> => {
+  return db.select().from(customNotifications).orderBy(desc(customNotifications.createdAt));
+});
+
+export async function saveCustomNotification(entry: CustomNotification): Promise<void> {
+  await db.insert(customNotifications).values(entry).onConflictDoUpdate({
+    target: customNotifications.customNotificationId,
+    set: entry,
+  });
+}
+
+export async function deleteCustomNotification(customNotificationId: string): Promise<void> {
+  await db.delete(customNotifications).where(eq(customNotifications.customNotificationId, customNotificationId));
 }

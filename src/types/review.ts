@@ -4,10 +4,9 @@ export type ReviewStatus =
   | "Employee Submitted"
   | "Manager Reviewing"
   | "Manager Submitted"
-  | "Finalised"
-  | "Overdue";
+  | "Finalised";
 
-export type ReviewPlanStatus = "Draft" | "Active" | "Inactive" | "Archived";
+export type ReviewPlanStatus = "Draft" | "Active" | "Closed";
 
 export type ReviewTemplateStatus = "Active" | "Inactive";
 
@@ -16,19 +15,15 @@ export type ReviewPlan = {
   title: string;
   description: string;
   templateId: string;
-  reviewPeriod: string;
-  startDate: string;
-  employeeDeadline: string;
-  managerDeadline: string;
-  hrReviewDeadline: string;
-  managementReviewPeriod: string;
   departments: string[];
   participantCount: number;
   status: ReviewPlanStatus;
   createdAt: string;
+  activatedAt: string | null;
+  closedAt: string | null;
 };
 
-export type FinalOutcome = "Promoted" | "Increment" | "Maintained" | "Performance Improvement Plan";
+export type FinalOutcome = "Promoted" | "Increment" | "Maintained" | "Performance Improvement Plan" | "On Hold" | "Exempted";
 
 export type ReviewAssignment = {
   assignmentId: string;
@@ -38,9 +33,10 @@ export type ReviewAssignment = {
   status: ReviewStatus;
   employeeScore: number | null;
   managerScore: number | null;
-  deadline: string;
   acknowledged: boolean;
   finalOutcome: FinalOutcome | null;
   finalOutcomeNotes: string | null;
+  incrementPercentage: number | null;
+  incrementEffectiveDate: string | null;
   finalizedAt: string | null;
 };

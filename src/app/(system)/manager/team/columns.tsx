@@ -6,10 +6,9 @@ import { StatusBadge } from "@/components/common/StatusBadge";
 import { UserAvatar } from "@/components/common/UserAvatar";
 import { REVIEW_STATUS_STYLE } from "@/constants/statusColors";
 import type { ReviewRow } from "@/data/queries";
-import { deadlineLabel } from "@/lib/deadlineLabel";
 import { STATUS_PROGRESS } from "@/lib/teamProgressStats";
 
-const WAITING = ["Not Started", "Self-Assessment", "Overdue"];
+const WAITING = ["Not Started", "Self-Assessment"];
 
 function actionLabel(status: ReviewRow["status"]) {
   if (WAITING.includes(status)) return "Send reminder";
@@ -38,19 +37,8 @@ export const getTeamColumns = ({ onSendReminder, isSending }: TeamColumnsOptions
       </Flex>
     ),
   },
-  { key: "plan", label: "Review plan", width: "1fr", render: (row) => row.planTitle },
-  { key: "department", label: "Department", width: "0.9fr", render: (row) => row.employee.department },
-  {
-    key: "deadline",
-    label: "Deadline",
-    width: "110px",
-    render: (row) => (
-      <Flex direction="column">
-        <Text>{row.deadline}</Text>
-        <Text fontSize="10px" color={row.status === "Overdue" ? "error.60" : "grey.40"}>{deadlineLabel(row.deadline, row.status)}</Text>
-      </Flex>
-    ),
-  },
+  { key: "plan", label: "Review plan", width: "1.2fr", render: (row) => row.planTitle },
+  { key: "department", label: "Department", width: "1fr", render: (row) => row.employee.department },
   {
     key: "status",
     label: "Status",

@@ -1,4 +1,4 @@
-import { error, grey, info, success, warning } from "@/constants/colors";
+import { error, grey, info, orange, success, warning } from "@/constants/colors";
 import type {
   ReviewPlanStatus,
   ReviewStatus,
@@ -23,20 +23,20 @@ export const REVIEW_STATUS_STYLE: Record<ReviewStatus, StatusStyle> = {
   "Manager Reviewing": styleOf(warning),
   "Manager Submitted": styleOf(warning),
   Finalised: styleOf(success),
-  Overdue: styleOf(error),
 };
 
 export const PLAN_STATUS_STYLE: Record<ReviewPlanStatus, StatusStyle> = {
   Draft: neutral,
   Active: styleOf(success),
-  Inactive: neutral,
-  Archived: neutral,
+  Closed: styleOf(error),
 };
 
 export const TEMPLATE_STATUS_STYLE: Record<ReviewTemplateStatus, StatusStyle> = {
   Active: styleOf(success),
   Inactive: neutral,
 };
+
+export const MASTER_TEMPLATE_BADGE_STYLE: StatusStyle = styleOf(orange);
 
 export const WFH_STATUS_STYLE: Record<WfhStatus, StatusStyle> = {
   "Pending Approval": styleOf(warning),

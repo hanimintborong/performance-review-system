@@ -6,14 +6,17 @@ import { AppCard } from "@/components/common/AppCard";
 import { getReviewRows } from "@/data/queries";
 import { getCurrentSystemUser } from "@/lib/currentSystemUser";
 
-const PENDING_STATUSES = ["Not Started", "Self-Assessment", "Overdue"];
+const PENDING_STATUSES = ["Not Started", "Self-Assessment"];
 
 export default async function EmployeeEvaluationEntryPage() {
   const systemUser = await getCurrentSystemUser();
   const rows = await getReviewRows();
 
   const pendingRows = rows.filter(
-    (r) => r.employee.employeeId === systemUser?.employeeId && PENDING_STATUSES.includes(r.status),
+    (r) =>
+      r.employee.employeeId === systemUser?.employeeId &&
+      PENDING_STATUSES.includes(r.status) &&
+      r.planStatus !== "Closed",
   );
 
   if (pendingRows.length === 1) redirect(`/employee/evaluation/${pendingRows[0].assignmentId}`);

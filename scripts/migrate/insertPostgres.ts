@@ -2,7 +2,6 @@ import { db } from "./pgClient";
 import {
   employees,
   notificationHistory,
-  notificationRules,
   notifications,
   reviewAssignments,
   reviewPlans,
@@ -18,7 +17,6 @@ const TABLE_BY_COLLECTION = {
   reviewPlans,
   reviewAssignments,
   reviewResponses,
-  notificationRules,
   notificationHistory,
   notifications,
 };
